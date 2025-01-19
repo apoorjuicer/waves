@@ -32,6 +32,7 @@
     <ProjectGuid>{1edaac64-8887-403b-a99f-aca577cde715}</ProjectGuid>
     <RootNamespace>setup</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+    <ProjectName>Waves</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
