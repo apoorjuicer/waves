@@ -32,7 +32,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	AEGfxVertexList* pDonutMesh = CreateDonutMesh(1000.0f, 200.0f, 48, 0x00000000);
 	AEGfxVertexList* PlayerMesh = Player_Mesh(48, 0x00000000, 10.0f);
-	AEGfxVertexList* testing = testing_only(); //to delete for testing only
 
 
 	AEGfxVertexList* wallMesh = CreateSquareMesh(500.0f, 0xFF0000FF); // Blue for walls
@@ -82,11 +81,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 
 		// Your own rendering logic goes here
-		//drawing the donut mesh
 		RenderMaze(maze, 500.0f, wallMesh, pathMesh); // 50.0f is the tile size
 		RenderMesh(PlayerMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
-		//RenderMesh(testing, 0.0f, 0.0f, 100, 100, 0.0f);//to delete for testing only
-		//RenderMesh(pDonutMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
+		RenderMesh(pDonutMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
 
 
 		AEGfxSetCamPosition(MoveX, MoveY);

@@ -1,4 +1,5 @@
 #include "AEEngine.h"
+#include "Player.h"
 #include<iostream>
 
 // Function to create a donut mesh with an empty center
@@ -87,16 +88,5 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
     return AEGfxMeshEnd();
 }
 
-AEGfxVertexList* testing_only()
-{
-    AEGfxTriAdd(
-        -0.5f, -0.5f, 0xFFFFFFFF, 0.0f, 1.0f,
-        0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
 
-    AEGfxTriAdd(
-        0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-        0.5f, 0.5f, 0xFFFFFFFF, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
-    return AEGfxMeshEnd();
-}
+
