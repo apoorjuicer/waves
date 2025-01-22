@@ -33,9 +33,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	AEGfxVertexList* pDonutMesh = CreateDonutMesh(1000.0f, 200.0f, 48, 0x00000000);
 	AEGfxVertexList* PlayerMesh = Player_Mesh(48, 0x00000000, 10.0f);
 
-
-	AEGfxVertexList* wallMesh = CreateSquareMesh(500.0f, 0xFF0000FF); // Blue for walls
-	AEGfxVertexList* pathMesh = CreateSquareMesh(500.0f, 0xFFFFFFFF); // White for paths
+	//change first parameter for tile size
+	AEGfxVertexList* wallMesh = CreateSquareMesh(100.0f, 0xFF0000FF); // Blue for walls
+	AEGfxVertexList* pathMesh = CreateSquareMesh(100.0f, 0xFFFFFFFF); // White for paths
 
 
 	// Changing the window title
@@ -81,9 +81,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 
 		// Your own rendering logic goes here
-		RenderMaze(maze, 500.0f, wallMesh, pathMesh); // 50.0f is the tile size
+		RenderMaze(maze, 100.0f, wallMesh, pathMesh); // 100.0f is the tile size
 		RenderMesh(PlayerMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
-		RenderMesh(pDonutMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
+		//RenderMesh(pDonutMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
 
 
 		AEGfxSetCamPosition(MoveX, MoveY);
