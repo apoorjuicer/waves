@@ -2,6 +2,8 @@
 #include "Player.h"
 #include<iostream>
 
+struct playermovement playermove = { 0, 0 }; // Initialize with starting values
+
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)
 {
@@ -89,4 +91,28 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 }
 
 
+//chcek if area is walkable 
+bool IsWalkable(float x, float y, int maze[10][10], float tileSize, int number_of_tiles) //number of tiles means the number of tiles height and width
+{
+    int gridX = (int)(x / tileSize);
+    int gridY = (int)(y / tileSize);
 
+    return (gridX >= 0 && gridX < number_of_tiles && gridY >= 0 && gridY < number_of_tiles && maze[gridY][gridX] == 0);
+}
+
+void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tilesize)
+{
+    f32 NewX = playmove.x + (x * dt);
+    f32 NewY = playmove.y + (y * dt);
+
+    if (IsWalkable(NewX, NewY, maze, tilesize, 10))
+    {
+        playmove.x = NewX;
+        playmove.y = NewY;
+    }
+    else
+    {
+        playmove.x = playmove.x;
+        playmove.y = playmove.y;
+    }
+}

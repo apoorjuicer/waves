@@ -5,6 +5,17 @@ AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegmen
 void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
 AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
 
+struct playermovement
+{
+	f32 x;
+	f32 y;
+};
+
+extern struct playermovement playermove;
+
+bool IsWalkable(float x, float y, int maze[10][10], float tileSize, int number_of_tiles); //number of tiles means the number of tiles height and width
+
+void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tilesize);
 
 
 

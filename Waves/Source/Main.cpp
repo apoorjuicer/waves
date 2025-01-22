@@ -34,8 +34,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	AEGfxVertexList* PlayerMesh = Player_Mesh(48, 0x00000000, 10.0f);
 
 	//change first parameter for tile size
-	AEGfxVertexList* wallMesh = CreateSquareMesh(100.0f, 0xFF0000FF); // Blue for walls
-	AEGfxVertexList* pathMesh = CreateSquareMesh(100.0f, 0xFFFFFFFF); // White for paths
+	f32 tilesize = 100.0f;
+	AEGfxVertexList* wallMesh = CreateSquareMesh(tilesize, 0xFF0000FF); // Blue for walls
+	AEGfxVertexList* pathMesh = CreateSquareMesh(tilesize, 0xFFFFFFFF); // White for paths
 
 
 	// Changing the window title
@@ -63,27 +64,20 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
 		// Your own update logic goes here
 		//player movement
-		if (AEInputCheckCurr(AEVK_W))
-		{
-			MoveY += 1000*dt;
-		}
-		if (AEInputCheckCurr(AEVK_S))
-		{
-			MoveY -= 1000 * dt;
-		}
-		if (AEInputCheckCurr(AEVK_A))
-		{
-			MoveX -= 1000 * dt;
-		}
-		if (AEInputCheckCurr(AEVK_D))
-		{
-			MoveX += 1000 * dt;
-		}
+		//if (AEInputCheckCurr(AEVK_W)){MoveY += 1000 * dt;}
+		//if (AEInputCheckCurr(AEVK_S)){MoveY -= 1000 * dt;}
+		//if (AEInputCheckCurr(AEVK_A)){MoveX -= 1000 * dt;}
+		//if (AEInputCheckCurr(AEVK_D)){MoveX += 1000 * dt;}
+
+		if (AEInputCheckCurr(AEVK_W)) { PlayerMovement(playermove, 0.0f, 100.0f, dt, maze, 10); }
+		if (AEInputCheckCurr(AEVK_S)) { PlayerMovement(playermove, 0.0f, -100.0f, dt, maze, 10); }
+		if (AEInputCheckCurr(AEVK_A)) { PlayerMovement(playermove, -100.0f, 0.0f, dt, maze, 10); }
+		if (AEInputCheckCurr(AEVK_D)) { PlayerMovement(playermove, 100.0f, 0.0f, dt, maze, 10); }
 
 		// Your own rendering logic goes here
-		RenderMaze(maze, 100.0f, wallMesh, pathMesh); // 100.0f is the tile size
+		RenderMaze(maze, tilesize, wallMesh, pathMesh); // 100.0f is the tile size
 		RenderMesh(PlayerMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
-		//RenderMesh(pDonutMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
+		RenderMesh(pDonutMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
 
 
 		AEGfxSetCamPosition(MoveX, MoveY);

@@ -38,3 +38,5 @@ AEGfxVertexList* CreateSquareMesh(float size, u32 color)
 
     return AEGfxMeshEnd();
 }
+
+
