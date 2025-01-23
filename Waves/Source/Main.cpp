@@ -7,6 +7,7 @@
 #include "enemy_henrey.h"
 #include "Player.h"
 #include <cstdlib>
+#include "Player.h"
 
 
 
@@ -51,6 +52,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	for (int i = 0; i < boundaryCount; i++) {
 		printf("Boundary %f: x=%f, y=%f, width=%f, height=%f\n", i, boundaryList[i].x, boundaryList[i].y, boundaryList[i].scale_x, boundaryList[i].scale_y);
 	}
+	AEGfxVertexList* pDonutMesh = CreateDonutMesh(1000.0f, 200.0f, 48, 0x00000000);
+	AEGfxVertexList* PlayerMesh = Player_Mesh(48, 0x00000000, 10.0f);
+	AEGfxVertexList* testing = testing_only(); //to delete for testing only
 
 	// Changing the window title
 	AESysSetWindowTitle("My New Demo!");
@@ -98,6 +102,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		drawWalls(wallMesh);
 		drawBoundaries(boundaryMesh);
 		RenderMesh(enemy1, 450.0f, -200.0f, 50.0f, 50.0f, 0.0f);
+		//drawing the donut mesh
+		RenderMesh(PlayerMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
+		RenderMesh(testing, 0.0f, 0.0f, 100, 100, 0.0f);//to delete for testing only
+		RenderMesh(pDonutMesh, MoveX, MoveY, 1.0f, 1.0f, 45.0f);
 
 
 		AEGfxSetCamPosition(MoveX, MoveY);
@@ -109,6 +117,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	AEGfxMeshFree(enemy1);
 	free(wallList);
 	free(boundaryList);
+	AEGfxMeshFree(pDonutMesh);
 
 	// free the system
 	AESysExit();
