@@ -9,7 +9,6 @@
 #include <cstdlib>
 
 
-
 // ---------------------------------------------------------------------------
 // main
 
@@ -30,11 +29,16 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	// Using custom window procedure
 	AESysInit(hInstance, nCmdShow, 1600, 900, 1, 60, false, NULL);
-
+	
 
 	AEGfxVertexList* wallMesh = createWallMesh(0xFF008080);
 	AEGfxVertexList* boundaryMesh = createBoundaryMesh(0xFF654321);
 	AEGfxVertexList* enemy1 = createEnemyMesh(0xFFFF0000);
+
+	float max_x;
+	float max_y;
+	float min_x;
+	float min_y;
 
 	addWall(0.0f, 0.0f, 600.0f, 300.0f);
 	addBoundary(0.0f, 300.0f, 1000.0f, 50.0f);
