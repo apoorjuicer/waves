@@ -213,10 +213,12 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     <ClCompile Include="..\Source\Main.cpp" />
     <ClCompile Include="..\Source\Maze.cpp" />
     <ClCompile Include="..\Source\Player.cpp" />
+    <ClCompile Include="..\Source\Rock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\Maze.h" />
     <ClInclude Include="..\Source\Player.h" />
+    <ClInclude Include="..\Source\Rock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

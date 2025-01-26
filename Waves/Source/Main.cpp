@@ -5,6 +5,7 @@
 #include "AEEngine.h"
 #include "Player.h"
 #include "Maze.h"
+#include "Rock.h"
 
 
 
@@ -85,8 +86,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		// Your own rendering logic goes here
 		RenderMaze(maze, tilesize, wallMesh, pathMesh); // 100.0f is the tile size
 		RenderPlayer(player, PlayerMesh);
+		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f);
 		//RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-		RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+		//RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
 
 		AEGfxSetCamPosition(player.x, player.y);

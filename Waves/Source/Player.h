@@ -22,6 +22,6 @@ struct Player {
 
 extern Player player; // Start at (50, 50) in world space
 
-bool IsWalkable(float x, float y, int maze[10][10], float tileSize);
+bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY);
 void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh);
