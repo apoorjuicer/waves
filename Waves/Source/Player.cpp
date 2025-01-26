@@ -2,7 +2,7 @@
 #include "Player.h"
 #include<iostream>
 
-struct playermovement playermove = { 0, 0 }; // Initialize with starting values
+extern Player player = { 100.0f, -100.0f };
 
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)
@@ -92,27 +92,76 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 
 
 //chcek if area is walkable 
-bool IsWalkable(float x, float y, int maze[10][10], float tileSize, int number_of_tiles) //number of tiles means the number of tiles height and width
-{
-    int gridX = (int)(x / tileSize);
-    int gridY = (int)(y / tileSize);
+//bool IsWalkable(float x, float y, int maze[10][10], float tileSize, int number_of_tiles) //number of tiles means the number of tiles height and width
+//{
+//    int gridX = (int)(x / tileSize);
+//    int gridY = (int)(y / tileSize);
+//
+//    return (gridX >= 0 && gridX < number_of_tiles && gridY >= 0 && gridY < number_of_tiles && maze[gridY][gridX] == 0);
+//}
+//
+//void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tileSize) {
+//    // Calculate the new position
+//    f32 NewX = playmove.x + (x * dt);
+//    f32 NewY = playmove.y + (y * dt);
+//
+//    // Check if the new position is walkable
+//    if (IsWalkable(NewX, NewY, maze, tileSize, 10)) {
+//        playmove.x = NewX; // Update X position
+//        playmove.y = NewY; // Update Y position
+//        std::cout << "Player Position: (" << playmove.x << ", " << playmove.y << ")\n";
+//    }
+//    else {
+//        std::cout << "Collision detected!\n";
+//    }
+//}
 
-    return (gridX >= 0 && gridX < number_of_tiles && gridY >= 0 && gridY < number_of_tiles && maze[gridY][gridX] == 0);
+bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+    // Convert world-space coordinates to grid indices
+    int gridX = static_cast<int>((x - mazeStartX + (tileSize/2)) / tileSize);
+    int gridY = static_cast<int>(((tileSize/2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
+
+    std::cout << "World Position: (" << x << ", " << y << ")\n";
+    std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
+
+    // Check for out-of-bounds
+    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+        std::cout << "Out of Bounds\n";
+        return false;
+    }
+
+    // Check if the grid cell is walkable
+    if (maze[gridY][gridX] == 0) {
+        std::cout << "Walkable\n";
+        return true;
+    }
+    else {
+        std::cout << "Blocked\n";
+        return false;
+    }
 }
 
-void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tilesize)
-{
-    f32 NewX = playmove.x + (x * dt);
-    f32 NewY = playmove.y + (y * dt);
 
-    if (IsWalkable(NewX, NewY, maze, tilesize, 10))
-    {
-        playmove.x = NewX;
-        playmove.y = NewY;
+void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize) {
+    float mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
+
+    // Calculate the potential new position
+    float newX = player.x + dx * speed * dt;
+    float newY = player.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
+
+    // Check if the new position is walkable
+    if (IsWalkable(newX, player.y, maze, tileSize, 0.0f, 0)) {
+        player.x = newX;
     }
-    else
-    {
-        playmove.x = playmove.x;
-        playmove.y = playmove.y;
+    if (IsWalkable(player.x, newY, maze, tileSize, 0.0f, 0)) {
+        player.y = newY;
     }
+}
+
+
+void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh) {
+    AEMtx33 transform = { 0 };
+    AEMtx33Trans(&transform, player.x, player.y); // Adjust for screen space
+    AEGfxSetTransform(transform.m);
+    AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
 }
