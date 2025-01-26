@@ -15,27 +15,33 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source\draw_map.cpp">
+    <ClCompile Include="..\Source\draw_map.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\enemy_henrey.cpp">
+    <ClCompile Include="..\Source\enemy_henrey.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Main.cpp">
+    <ClCompile Include="..\Source\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Source\Player.cpp">
+    <ClCompile Include="..\Source\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\boundary.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\draw_map.h">
+    <ClInclude Include="..\Source\draw_map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\enemy_henrey.h">
+    <ClInclude Include="..\Source\enemy_henrey.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Source\Player.h">
+    <ClInclude Include="..\Source\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\boundary.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

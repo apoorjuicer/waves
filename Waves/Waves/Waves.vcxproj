@@ -32,7 +32,6 @@
     <ProjectGuid>{1edaac64-8887-403b-a99f-aca577cde715}</ProjectGuid>
     <RootNamespace>Waves</RootNamespace>
     <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
-    <ProjectName>Waves</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -210,15 +209,17 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="Source\draw_map.cpp" />
-    <ClCompile Include="Source\enemy_henrey.cpp" />
-    <ClCompile Include="Source\Main.cpp" />
-    <ClCompile Include="Source\Player.cpp" />
+    <ClCompile Include="..\Source\boundary.cpp" />
+    <ClCompile Include="..\Source\draw_map.cpp" />
+    <ClCompile Include="..\Source\enemy_henrey.cpp" />
+    <ClCompile Include="..\Source\Main.cpp" />
+    <ClCompile Include="..\Source\Player.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Source\draw_map.h" />
-    <ClInclude Include="Source\enemy_henrey.h" />
-    <ClInclude Include="Source\Player.h" />
+    <ClInclude Include="..\Source\boundary.h" />
+    <ClInclude Include="..\Source\draw_map.h" />
+    <ClInclude Include="..\Source\enemy_henrey.h" />
+    <ClInclude Include="..\Source\Player.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
