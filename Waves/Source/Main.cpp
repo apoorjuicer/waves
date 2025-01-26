@@ -86,7 +86,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		RenderMaze(maze, tilesize, wallMesh, pathMesh); // 100.0f is the tile size
 		RenderPlayer(player, PlayerMesh);
 		//RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-		//RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+		RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
 
 		AEGfxSetCamPosition(player.x, player.y);
