@@ -19,11 +19,33 @@
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="..\Source\sonar.cpp">
+    <ClCompile Include="..\Source\collision_henrey.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\draw_map.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\enemy_henrey.cpp">
+    <ClCompile Include="..\Source\Player.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\Player.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\sonar.hpp">
+    <ClInclude Include="..\Source\collision_henrey.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\draw_map.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\enemy_henrey.h">
+    <ClInclude Include="..\Source\Player.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\Player.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
