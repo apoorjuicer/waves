@@ -13,7 +13,7 @@ struct wall_s {
 };
 
 struct wave_s {
-	s32 x, y;
+	f32 x, y;
 	f32 current_size;	// radius
 	f32 max_size;		// max radius
 
