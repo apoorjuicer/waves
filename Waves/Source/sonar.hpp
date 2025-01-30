@@ -2,11 +2,16 @@
 
 #include "AEEngine.h"
 
-enum SonarDirection { UP, DOWN, LEFT, RIGHT };
+//=============================================================================
+// const expressions for functions;
+//=============================================================================
 constexpr size_t MAX_NUM_REFLECTIONS{ 6 };
 constexpr size_t NUM_WALLS{ 5 };
 constexpr f32 REFLECTIONS_MAX_SIZE{ 200.f };
 
+//=============================================================================
+// temporary testing struct for wall
+//=============================================================================
 struct wall_s {
 	f32 x, y;
 	f32 width;
@@ -16,7 +21,9 @@ struct wall_s {
 
 	AEMtx33 transform;
 };
-
+//=============================================================================
+// wave struct; used for both main and reflection waves;
+//=============================================================================
 struct wave_s {
 	f32 x, y;
 	f32 current_size;	// radius
@@ -32,18 +39,32 @@ struct wave_s {
 	f32 rotation;
 	
 };
-void init_reflection_waves(wave_s(&reflection_waves)[MAX_NUM_REFLECTIONS], AEGfxVertexList* mesh);
+//=============================================================================
+// general wave functions
+//=============================================================================
+// general update and draw; can be used for both main waves and reflections;
 void update_waves(struct wave_s& wave);
 void draw_wave(struct wave_s const& wave, AEGfxVertexList const* mesh);
 
-AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments);
-// semicircle faces upwards;
-AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int numSegments);
-
+//=============================================================================
+// reflection waves
+//=============================================================================
+// check collision with wall; circle rect collision;
 bool wave_collision(struct wave_s wave, struct wall_s const wall);
-void bounce_wave(struct wave_s& wave, struct wall_s const& wall, AEGfxVertexList* mesh);
-void draw_bounce_wave(struct wave_s& wave, struct wall_s wall);
+// make a reflection wave come alive;
+void init_reflection_waves(wave_s(&reflection_waves)[MAX_NUM_REFLECTIONS], AEGfxVertexList* mesh);
+// init array of reflection waves; use before game loop;
+void spawn_reflection_wave(struct wave_s &wave, struct wall_s const(&wall), struct wave_s(&reflections)[MAX_NUM_REFLECTIONS]);
 
+//=============================================================================
+// temporary testing functions
+//=============================================================================
 void draw_wall(struct wall_s wall, AEGfxVertexList* mesh);
 
-void spawn_reflection_wave(struct wave_s &wave, struct wall_s const(&wall), struct wave_s(&reflections)[MAX_NUM_REFLECTIONS]);
+//=============================================================================
+// temp meshes for testing
+//=============================================================================
+AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int numSegments);
+AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments);
+
+

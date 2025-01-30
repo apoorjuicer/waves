@@ -199,9 +199,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		// for testing;
 		if (AEInputCheckTriggered(AEVK_LBUTTON)) {
-			//AEInputGetCursorPosition(&wave2.x, &wave2.y);
-			//wave[0].alive = true;
-			//wave[1].alive = true;
 			wave[2].alive = true;
 		}
 		if (AEInputCheckTriggered(AEVK_RBUTTON)) {
