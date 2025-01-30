@@ -67,21 +67,27 @@ void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32
     AEGfxMeshDraw(NameOfMesh, AE_GFX_MDM_TRIANGLES);
 }
 
-AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
+AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour)
 {
     int slices = NumOfSlices;
     f32 anglestep = 2.0f * PI / slices;
     float centerX = 0.0f;
     float centerY = 0.0f;
-
+    f32 radius = 0.5;
     for (int i = 0; i < slices; ++i)
     {
         f32 angle1 = i * anglestep;
         f32 angle2 = (i + 1) * anglestep;
+
+        f32 x1 = centerX + cos(angle1) * radius;
+        f32 y1 = centerY + sin(angle1) * radius;
+        f32 x2 = centerX + cos(angle2) * radius;
+        f32 y2 = centerY + sin(angle2) * radius;
+
         AEGfxTriAdd(
             centerX, centerY, colour, 0.5f, 0.5f,
-            centerX + radius * cos(angle1), centerY + radius * sin(angle1), colour, 0.5f + 0.5f * cos(angle1), 0.5f - 0.5f * sin(angle1),
-            centerX + radius * cos(angle2), centerY + radius * sin(angle2), colour, 0.5f + 0.5f * cos(angle2), 0.5f - 0.5f * sin(angle2)
+            x1, y1, colour,0.5f + 0.5f * cos(angle1), 0.5f - 0.5f * sin(angle1),
+            x2, y2, colour, 0.5f + 0.5f * cos(angle2), 0.5f - 0.5f * sin(angle2)
         );
     }
     return AEGfxMeshEnd();
