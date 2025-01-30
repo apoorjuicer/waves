@@ -19,6 +19,14 @@ namespace {
 		return (num < 0) ? -num : num;
 	}
 
+	bool point_rect_collision(f32 x, f32 y, f32 rx, f32 ry, f32 width, f32 height) {
+		f32 left = rx - width / 2.f;
+		f32 right = rx + width / 2.f;
+		f32 bot = ry - height / 2.f;
+		f32 top = ry + height / 2.f;
+
+		return ((x >= left && x <= right) && (y <= top && y >= bot)) ? true : false;
+	}
 }
 //=============================================================================
 // general wave functions
@@ -121,24 +129,24 @@ void spawn_reflection_wave(struct wave_s &wave, struct wall_s const(&wall), stru
 			f32 dist_x{}, dist_y{};
 
 			if (wave.x < wall_left) {		// if wave to left of wall;
-				dist_x = (wall.x - wall.width / 2.f) - wave.x;
-				r.x = (wall.x - wall.width / 2.f) + dist_x;
+				dist_x = wall_left - wave.x;
+				r.x = wall_left + dist_x;
 			}
 			else if (wave.x > wall_right) {	// else wave is right of wall;
-				dist_x = wave.x - (wall.x + wall.width / 2.f);
-				r.x = (wall.x + wall.width / 2.f) - dist_x;
+				dist_x = wave.x - wall_right;
+				r.x = wall_right - dist_x;
 			}
 			else {
 				r.x = wave.x;
 			}
 
 			if (wave.y < wall_bot) {		// if below wall;
-				dist_y = (wall.y - wall.height / 2.f) - wave.y;
-				r.y = (wall.y - wall.height / 2.f) + dist_y;
+				dist_y = wall_bot - wave.y;
+				r.y = wall_bot + dist_y;
 			}
-			else if (wave.y > wall_top){
-				dist_y = wave.y - (wall.x + wall.width / 2.f);
-				r.y = (wall.y + wall.height / 2.f) + dist_y;
+			else if (wave.y > wall_top){	// if above wall;
+				dist_y = wave.y - wall_top;
+				r.y = wall_top - dist_y;
 			}
 			else {
 				r.y = wave.y;
@@ -183,6 +191,138 @@ void init_reflection_waves(wave_s (&reflection_waves)[MAX_NUM_REFLECTIONS], AEGf
 
 		i.rotation = 0.f;
 	}
+}
+
+//=============================================================================
+// outlines
+//=============================================================================
+
+void update_outlines(struct line_s& line) {
+
+	if (!line.alive) {
+		return;
+	}
+	static f32 time = 0.f; f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+	time += dt;
+
+	if (time >= 1.0f) {
+		line.alive = false;
+		line.width = line.height = line.growth_rate = 0;
+
+		time = 0.f;
+	}
+
+	if (Top == line.type || Bottom == line.type) {
+		line.width += line.growth_rate * dt;
+	}
+	else {
+		line.height += line.growth_rate * dt;
+	}
+
+	line.growth_rate *= 1.05f;
+	if (line.width >= MAX_LINE_LENGTH || line.height >= MAX_LINE_LENGTH) {
+		line.growth_rate = 0.f;
+	}
+}
+
+void draw_outlines(struct line_s& line, AEGfxVertexList* mesh) {
+	if (!line.alive) {
+		return;
+	}
+
+	AEMtx33 transform = { 0 }; AEMtx33 scale = { 0 }; 
+	AEMtx33 translate = { 0 }; //AEMtx33 rotate = { 0 };
+
+	AEMtx33Scale(&scale, line.width, line.height);
+	//AEMtx33RotDeg(&rotate, line.rotation);
+	AEMtx33Trans(&translate, line.x, line.y);
+
+	//AEMtx33Concat(&transform, &rotate, &scale);
+	AEMtx33Concat(&transform, &translate, &scale);
+
+	AEGfxSetTransform(transform.m);
+
+	AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
+}
+
+void spawn_outlines(struct wave_s const& wave, struct wall_s const(&wall), struct line_s(&line)[MAX_NUM_OUTLINES]) {
+	f32 right = wall.x + (wall.width / 2.f);
+	f32 left = wall.x - (wall.width / 2.f);
+	f32 top = wall.y + (wall.height / 2.f);
+	f32 bot = wall.y - (wall.height / 2.f);
+
+	for (line_s& l : line) {
+		if (!l.alive) {
+			l.alive = true;
+			l.width = l.height = 2.f;
+			l.growth_rate = wave.growth_rate;
+
+			//l.maxheight = wall.height;
+			//l.maxwidth = wall.width;
+
+			if (wave.x >= left && wave.x <= right) {
+				l.x = wave.x;
+				/*l.y = top + 2.f;
+				l.type = Bottom;*/
+
+				if (wave.y < wall.y) {
+					l.type = Bottom;
+					l.y = bot - 1.f;
+				}
+				else {
+					l.type = Top;
+					l.y = top + 1.f;
+				}
+			}
+			else if (wave.y >= bot && wave.y <= top) {
+				l.y = wave.y;
+
+				if (wave.x > wall.x) {
+					l.type = Right;
+					l.x = right + 1.f;
+				}
+				else {
+					l.type = Left;
+					l.x = left -1.f;
+				}
+			}
+
+			//if (wave.x < wall.x) {
+			//	if (wave.y < wall.y) {
+			//		l.type = BotLeft;
+
+			//		l.x = left - 1.f;
+			//		l.y = bot - 1.f;
+			//		l.rotation = 0.f;
+			//	}
+			//	else {
+			//		l.type = TopLeft;
+
+			//		l.x = left - 1.f;
+			//		l.y = top + 1.f;
+			//		l.rotation = 90.f;
+			//	}
+			//}
+			//else if (wave.y < wall.y) {
+			//	l.type = BotRight;
+
+			//	l.x = right + 1.f;
+			//	l.y = bot - 1.f;
+			//	l.rotation = -90.f;
+			//}
+			//else {
+			//	l.type = TopRight;
+
+			//	l.x = right + 1.f;
+			//	l.y = top + 1.f;
+			//	l.rotation = 180.f;
+			//}
+
+			return;
+		}
+
+	}
+	
 }
 
 //=============================================================================
@@ -286,3 +426,4 @@ AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegmen
 	// End the mesh and return it
 	return AEGfxMeshEnd();
 }
+
