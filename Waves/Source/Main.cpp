@@ -150,31 +150,41 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	AEGfxVertexList* donutmesh = CreateDonutMesh(1.0f, 0.95f, 36);
 	AEGfxVertexList* semicirclemesh = Create_SemiCircle_Mesh(1.0f, 0.95f, 36);
 
-	struct wave_s wave[5] = {};
+	wave_s wave[3] = {};
+	// testing waves;
+	wave[0] = { -400.f, 50.f, 1.f, 150.f, true, false, 50.f, donutmesh };
+	wave[1] = { 350.f, 100.f, 1.f, 150.f, true, false, 50.f, donutmesh };
+	wave[2] = { 50.f, 50.f, 1.f, 150.f, true, false, 50.f, donutmesh };
 
-	wave[0] = { -400.f, 50.f, 1.f, 150.f, true, 50.f, donutmesh };
-	wave[1] = { 350.f, 100.f, 1.f, 150.f, true, 50.f, donutmesh };
-	wave[2] = { 50.f, 50.f, 1.f, 150.f, true, 50.f, donutmesh };
-
+	//=============================================================================
+	// initialize reflect waves;
+	wave_s reflection_waves[MAX_NUM_REFLECTIONS];
+	init_reflection_waves(reflection_waves, semicirclemesh);
 	//=============================================================================
 
 
 	AEGfxMeshStart();
 
 	AEGfxTriAdd(
-		-0.5f, -0.5f, 0xFFFFFFFF, 0.0f, 1.0f,
-		0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-		-0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
+		-0.5f, -0.5f, 0x00000000, 0.0f, 1.0f,
+		0.5f, -0.5f, 0x00000000, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0x00000000, 0.0f, 0.0f);
 
 	AEGfxTriAdd(
-		0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-		0.5f, 0.5f, 0xFFFFFFFF, 1.0f, 0.0f,
-		-0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
+		0.5f, -0.5f, 0x00000000, 1.0f, 1.0f,
+		0.5f, 0.5f, 0x00000000, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0x00000000, 0.0f, 0.0f);
 	
 	AEGfxVertexList* squaremesh = AEGfxMeshEnd();
 
-	wall_s wall1 = { 200.f, 50.f, 100.f, 400.f};
+	wall_s walls[2] = {};
+	walls[0] = { 200.f, 50.f, 100.f, 400.f, false };
+	walls[1] = { 350.f, 250.f, 500.f, 100.f, false };
+
 	int count{1};
+	//=============================================================================
+
+	
 	// Game Loop
 	while (gGameRunning)
 	{
@@ -187,17 +197,43 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		if (AEInputCheckTriggered(AEVK_ESCAPE) || 0 == AESysDoesWindowExist())
 			gGameRunning = 0;
 
+		// for testing;
 		if (AEInputCheckTriggered(AEVK_LBUTTON)) {
 			//AEInputGetCursorPosition(&wave2.x, &wave2.y);
-			wave[0].alive = true;
-			wave[1].alive = true;
+			//wave[0].alive = true;
+			//wave[1].alive = true;
 			wave[2].alive = true;
 		}
+		if (AEInputCheckTriggered(AEVK_RBUTTON)) {
+			wave[1].alive = true;
+		}
 
-		update_wave_size(wave[0]);
-		update_wave_size(wave[1]);
-		update_wave_size(wave[2]);
-		
+		//=============================================================================
+		// update size of main waves;
+		for (wave_s& i : wave) {
+			// skip wave if not alive;
+			if (i.alive) {
+				update_waves(i);
+
+				// check for collision with any walls for current live wave;
+				for (wall_s const& w : walls) {
+					// if colliding; spawn reflection wave;
+					if (wave_collision(i, w) && !w.reflected) {
+						spawn_reflection_wave(i, w, reflection_waves);
+					}
+				}
+			}
+		}
+
+		// update size of reflection waves;
+		for (wave_s& i : reflection_waves) {
+			// skip wave if not alive;
+			if (i.alive) {
+				update_waves(i);
+			}
+		}
+		/*=============================================================================		
+		 for testing;
 		if (wave_collision(wave[1], wall1)) {
 			std::cout << "COLLISION DETECTED\n";
 			count = 1;
@@ -205,18 +241,27 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		else if (1 == count) {
 			std::cout << "NO COLLISION\n";
 			count = 0;
+		}*/
+		
+		//=============================================================================		
+		// draw main waves;
+		for (wave_s& i : wave) {
+			if (i.alive) {
+				draw_wave(i, donutmesh);
+			}
+		}
+		// draw reflection waves;
+		for (wave_s& i : reflection_waves) {
+			if (i.alive) {
+				draw_wave(i, semicirclemesh);
+			}
+		}
+
+		// draw walls;
+		for (wall_s const& i : walls) {
+			draw_wall(i, squaremesh);
 		}
 		
-		draw_wave(wave[0]);
-		draw_wave(wave[1]);
-		draw_wave(wave[2]);
-
-		bounce_wave(wave[1], wall1, semicirclemesh);
-		bounce_wave(wave[2], wall1, semicirclemesh);
-		//draw_bounce_wave(wave3, wall1);
-
-		AEGfxSetColorToMultiply(1.f, 1.f, 1.f, 1.f);
-		draw_wall(wall1, squaremesh);
 
 		// AEGfxSetCamPosition(MoveX, MoveY);
 		// Informing the system about the loop's end

@@ -5,52 +5,81 @@
 #include <iostream>
 
 namespace {
+
 	f32 clamp(f32 value, f32 min, f32 max) {
 		if (value < min) return min;    // If value is less than min, return min
 		if (value > max) return max;    // If value is greater than max, return max
 		return value;                   // Otherwise, return the value itself
 	}
+
+	f32 float_abs(f32 num) {
+		return (num < 0) ? -num : num;
+	}
+
+}
+void init_reflection_waves(wave_s (&reflection_waves)[MAX_NUM_REFLECTIONS], AEGfxVertexList* mesh) {
+	for (wave_s& i : reflection_waves) {
+		i.x = 0; i.y = 0;
+		i.current_size = 0.f;
+		i.max_size = REFLECTIONS_MAX_SIZE;
+
+		i.alive = false;
+		i.reflected = true;
+
+		i.growth_rate = 50.f;
+		i.mesh = mesh;
+
+		i.rotation = 0.f;
+	}
 }
 
-void update_wave_size(struct wave_s& wave) {
+void update_waves(struct wave_s& wave) {
 
 	if (!wave.alive) {
 		return;
 	}
-
-	f32 dt = (f32)AEFrameRateControllerGetFrameTime();
 
 	if (wave.current_size >= wave.max_size) {
 		wave.alive = false;
 
 		wave.current_size = 0;
 		wave.growth_rate = 50.f;
+		wave.reflected = false;
 
 		return;
 	}
 
+	f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+
 	wave.current_size += wave.growth_rate * dt;
 	wave.growth_rate *= 1.05f;
 
-	//std::cout << "Wave update - wave current size: " << wave.current_size << "\n";
 }
 
-void draw_wave(struct wave_s& wave) {
-	AEMtx33 scale = { 0 }; AEMtx33 translate = { 0 };
-		
-	AEMtx33Trans(&translate, wave.x, wave.y);
+void draw_wave(struct wave_s const& wave, AEGfxVertexList const* mesh) {
+	if (!wave.alive) {
+		return;
+	}
+
+	AEMtx33 transform = { 0 }; AEMtx33 scale = { 0 };
+	AEMtx33 translate = { 0 }; AEMtx33 rotate = { 0 };
+
+	AEMtx33RotDeg(&rotate, wave.rotation);
 	AEMtx33Scale(&scale, wave.current_size, wave.current_size);
-	AEMtx33Concat(&wave.transform, &translate, &scale);
-		
-	AEGfxSetTransform(wave.transform.m);
-		
+	AEMtx33Trans(&translate, wave.x, wave.y);
+
+	AEMtx33Concat(&transform, &rotate, &scale);
+	AEMtx33Concat(&transform, &translate, &transform);
+
+	AEGfxSetTransform(transform.m);
+
 	AEGfxMeshDraw(wave.mesh, AE_GFX_MDM_TRIANGLES);
 
 	//std::cout << "Wave draw - wave current size: " << wave.current_size << "\n";
 }
 
 
-bool wave_collision(struct wave_s wave, struct wall_s wall) {
+bool wave_collision(struct wave_s wave, struct wall_s const wall) {
 
 	if (!wave.alive) {
 		return false;
@@ -72,10 +101,6 @@ bool wave_collision(struct wave_s wave, struct wall_s wall) {
 
 	return false;
 
-}
-
-f32 float_abs(f32 num) {
-	return (num < 0) ? -num : num;
 }
 
 void bounce_wave(struct wave_s& wave, struct wall_s const& wall, AEGfxVertexList* mesh) {
@@ -274,4 +299,74 @@ AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int nu
 
 	// End the mesh and return it
 	return AEGfxMeshEnd();
+}
+
+void spawn_reflection_wave(struct wave_s &wave, struct wall_s const(&wall), struct wave_s(&reflections)[MAX_NUM_REFLECTIONS]) {
+
+	for (wave_s& r : reflections) {
+
+		if (!r.alive) {
+
+			r.alive = true;
+			r.reflected = true;
+
+			r.current_size = wave.current_size;
+			r.growth_rate = wave.growth_rate;
+
+			//=============================================================================
+			// initialize reflection wave;
+			//=============================================================================
+			f32 wall_left = wall.x - (wall.width / 2.f);
+			f32 wall_right = wall.x + (wall.width / 2.f);
+			f32 wall_top = wall.y + (wall.height / 2.f);
+			f32 wall_bot = wall.y - (wall.height / 2.f);
+
+			f32 dist_x{}, dist_y{};
+
+			if (wave.x < wall_left) {		// if wave to left of wall;
+				dist_x = (wall.x - wall.width / 2.f) - wave.x;
+				r.x = (wall.x - wall.width / 2.f) + dist_x;
+			}
+			else if (wave.x > wall_right) {	// else wave is right of wall;
+				dist_x = wave.x - (wall.x + wall.width / 2.f);
+				r.x = (wall.x + wall.width / 2.f) - dist_x;
+			}
+			else {
+				r.x = wave.x;
+			}
+
+			if (wave.y < wall_bot) {		// if below wall;
+				dist_y = (wall.y - wall.height / 2.f) - wave.y;
+				r.y = (wall.y - wall.height / 2.f) + dist_y;
+			}
+			else if (wave.y > wall_top){
+				dist_y = wave.y - (wall.x + wall.width / 2.f);
+				r.y = (wall.y + wall.height / 2.f) + dist_y;
+			}
+			else {
+				r.y = wave.y;
+			}
+
+			if (abs(wave.x - wall.x) > abs(wave.y - wall.y)) {
+				if (wave.x < wall.x) {
+					r.rotation = 120;	// bounce -> left
+				}
+				else {
+					r.rotation = -60;	// bounce -> right
+				}
+			}
+			else {
+				if (wave.y < wall.y) {
+					r.rotation = 210; // bounce -> down
+				}
+				else {
+					r.rotation = 30;	// bounce -> up
+				}
+			}
+			return;
+			//=============================================================================
+		}
+
+	}
+
 }
