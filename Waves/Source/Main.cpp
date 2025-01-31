@@ -116,38 +116,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		// }
 
 		// //=============================================================================
-		// // update size of main waves;
-		// for (wave_s& i : wave) {
-		// 	// skip wave if not alive;
-		// 	if (i.alive) {
-		// 		update_waves(i);
-		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-		// Your own update logic goes here
-		//player movement
-		//if (AEInputCheckCurr(AEVK_W)){MoveY += 1000 * dt;}
-		//if (AEInputCheckCurr(AEVK_S)){MoveY -= 1000 * dt;}
-		//if (AEInputCheckCurr(AEVK_A)){MoveX -= 1000 * dt;}
-		//if (AEInputCheckCurr(AEVK_D)){MoveX += 1000 * dt;}
+		 // update size of main waves;
+		 for (wave_s& i : wave) {
+		 	// skip wave if not alive;
+		 	if (i.alive) {
+		 		update_waves(i);
 
-		//if (AEInputCheckCurr(AEVK_W)) { PlayerMovement(playermove, 0.0f, 100.0f, dt, maze, tilesize); }
-		//if (AEInputCheckCurr(AEVK_S)) { PlayerMovement(playermove, 0.0f, -100.0f, dt, maze, tilesize); }
-		//if (AEInputCheckCurr(AEVK_A)) { PlayerMovement(playermove, -100.0f, 0.0f, dt, maze, tilesize); }
-		//if (AEInputCheckCurr(AEVK_D)) { PlayerMovement(playermove, 100.0f, 0.0f, dt, maze, tilesize); }
-		float speed = 100.0f; // Speed in units per second
-		float dt = (float)AEFrameRateControllerGetFrameTime();
-
-		if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, dt, maze, tilesize); // Move up
-		if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, dt, maze, tilesize);  // Move down
-		if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, dt, maze, tilesize); // Move left
-		if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, dt, maze, tilesize);  // Move right
-
-		// Your own rendering logic goes here
-		RenderMaze(maze, tilesize, wallMesh, pathMesh); // 100.0f is the tile size
-		RenderPlayer(player, PlayerMesh);
-		//RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-		RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-
-				// check for collision with any walls for current live wave;
+		// check for collision with any walls for current live wave;
 				for (wall_s const& w : walls) {
 					// if colliding; spawn reflection wave;
 					if (wave_collision(i, w)) {
@@ -199,6 +174,23 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		for (wall_s const& i : walls) {
 			draw_wall(i, squaremesh);
 		}
+
+		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+		// Your own update logic goes here
+		//player movement
+		float speed = 100.0f; // Speed in units per second
+		float dt = (float)AEFrameRateControllerGetFrameTime();
+
+		if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, dt, maze, tilesize); // Move up
+		if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, dt, maze, tilesize);  // Move down
+		if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, dt, maze, tilesize); // Move left
+		if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, dt, maze, tilesize);  // Move right
+
+		// Your own rendering logic goes here
+		RenderMaze(maze, tilesize, wallMesh, pathMesh); // 100.0f is the tile size
+		RenderPlayer(player, PlayerMesh);
+		//RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+		RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
 		// AEGfxSetCamPosition(MoveX, MoveY);
 		AEGfxSetCamPosition(player.x, player.y);
