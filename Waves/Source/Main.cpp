@@ -58,9 +58,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	wave_s wave[3] = {};
 	// testing waves;
-	wave[0] = { -400.f, 50.f, 1.f, 150.f, true, false, 50.f, donutmesh };
-	wave[1] = { 350.f, 80.f, 1.f, 150.f, true, false, 50.f, donutmesh };
-	wave[2] = { 50.f, 100.f, 1.f, 150.f, true, false, 50.f, donutmesh };
+	wave[0] = { -400.f, 50.f, 1.f, 150.f, false, false, 50.f, donutmesh };
+	wave[1] = { 350.f, 80.f, 1.f, 150.f, false, false, 50.f, donutmesh };
+	wave[2] = { 50.f, 100.f, 1.f, 150.f, false, false, 50.f, donutmesh };
 
 	//=============================================================================
 	// initialize reflect waves;
