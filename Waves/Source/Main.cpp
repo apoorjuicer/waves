@@ -86,7 +86,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		// Informing the system about the loop's start
 		AESysFrameStart();
 		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-		AEGfxSetBackgroundColor(0.5, 0.5, 0.5);
+		AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
 
 		// Exit application
 		if (AEInputCheckTriggered(AEVK_ESCAPE) || 0 == AESysDoesWindowExist())

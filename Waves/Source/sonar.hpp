@@ -93,5 +93,4 @@ void draw_wall(struct wall_s wall, AEGfxVertexList* mesh);
 //=============================================================================
 AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int numSegments);
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments);
-AEGfxVertexList* CreateOutlineMesh();
 
