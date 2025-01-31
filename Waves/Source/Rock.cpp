@@ -84,13 +84,27 @@ namespace rock {
         }
 
         if (rockActive) {
+            float prevX = rock.x;
+            float prevY = rock.y;
+
             rock.x += rock.dx;
             rock.y += rock.dy;
+            //call waves function here
 
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 rock.dx = -rock.dx;
                 rock.dy = -rock.dy;
+
+                int prevGridX = static_cast<int>((prevX - mazeStartX + tileSize / 2) / tileSize);
+                int prevGridY = static_cast<int>((mazeStartY - prevY) / tileSize);
+                int currGridX = static_cast<int>((rock.x - mazeStartX + tileSize / 2) / tileSize);
+                int currGridY = static_cast<int>(mazeStartY - prevY / tileSize);
+
+                /*if(prevGridX)*/
+
+
                 rock.currBounce++;
+
 
                 if (rock.currBounce >= rock.maxBounce) {
                     rockActive = false;
