@@ -3,10 +3,16 @@
 
 #include <crtdbg.h> // To check for memory leaks
 #include "AEEngine.h"
+//#include "draw_map.h"
+//#include "enemy_henrey.h"
+//#include "Player.h"
+//#include <cstdlib>
 #include "Player.h"
 #include "Maze.h"
 #include "Rock.h"
 
+#include <iostream>
+#include "sonar.hpp"
 
 
 // ---------------------------------------------------------------------------
@@ -47,34 +53,132 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// reset the system modules
 	AESysReset();
 
-	//printf("Hello World\n");
-	f32 MoveX = 0.0f;
-	f32 MoveY = 0.0f;
-	f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+	//=============================================================================
+	AEGfxVertexList* donutmesh = CreateDonutMesh(1.0f, 0.95f, 36);
+	AEGfxVertexList* semicirclemesh = Create_SemiCircle_Mesh(1.0f, 0.95f, 36);
 
+	wave_s wave[3] = {};
+	// testing waves;
+	wave[0] = { -400.f, 50.f, 1.f, 150.f, false, false, 50.f, donutmesh };
+	wave[1] = { 350.f, 80.f, 1.f, 150.f, false, false, 50.f, donutmesh };
+	wave[2] = { 50.f, 100.f, 1.f, 150.f, false, false, 50.f, donutmesh };
+
+	//=============================================================================
+	// initialize reflect waves;
+	wave_s reflection_waves[MAX_NUM_REFLECTIONS];
+	init_reflection_waves(reflection_waves, semicirclemesh);
+	//=============================================================================
+	// outlines;
+	line_s outlines[MAX_NUM_OUTLINES] = {};
+
+
+
+	AEGfxMeshStart();
+
+	AEGfxTriAdd(
+		-0.5f, -0.5f, 0x00000000, 0.0f, 1.0f,
+		0.5f, -0.5f, 0x00000000, 1.0f, 1.0f,
+		-0.5f, 0.5f, 0x00000000, 0.0f, 0.0f);
+
+	AEGfxTriAdd(
+		0.5f, -0.5f, 0x00000000, 1.0f, 1.0f,
+		0.5f, 0.5f, 0x00000000, 1.0f, 0.0f,
+		-0.5f, 0.5f, 0x00000000, 0.0f, 0.0f);
+	
+	AEGfxVertexList* squaremesh = AEGfxMeshEnd();
+
+	wall_s walls[3] = {};
+	walls[0] = { 200.f, 50.f, 100.f, 400.f, false };
+	walls[1] = { 350.f, -80.f, 500.f, 100.f, false };
+	walls[2] = { -100.f, 50.f, 80.f, 600.f, false };
+
+	int count{1};
+	//=============================================================================
+
+	
 	// Game Loop
 	while (gGameRunning)
 	{
 		// Informing the system about the loop's start
 		AESysFrameStart();
-		AEGfxSetBackgroundColor(0.5, 0.5, 0.5);
-		// Basic way to trigger exiting the application
-		// when ESCAPE is hit or when the window is closed
+		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+		AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
+
+		// Exit application
 		if (AEInputCheckTriggered(AEVK_ESCAPE) || 0 == AESysDoesWindowExist())
 			gGameRunning = 0;
+
+		// for testing;
+		// if (AEInputCheckTriggered(AEVK_LBUTTON)) {
+		// 	wave[2].alive = true;
+		// }
+		// if (AEInputCheckTriggered(AEVK_RBUTTON)) {
+		// 	wave[1].alive = true;
+		// }
+
+		// //=============================================================================
+		 // update size of main waves;
+		 for (wave_s& i : wave) {
+		 	// skip wave if not alive;
+		 	if (i.alive) {
+		 		update_waves(i);
+
+		// check for collision with any walls for current live wave;
+				for (wall_s const& w : walls) {
+					// if colliding; spawn reflection wave;
+					if (wave_collision(i, w)) {
+						spawn_reflection_wave(i, w, reflection_waves);
+						spawn_outlines(i, w, outlines);
+					}
+				}
+			}
+		}
+
+		for (line_s& l : outlines) {
+			if (l.alive) {
+				update_outlines(l);
+			}
+		}
+
+		// update size of reflection waves;
+		for (wave_s& i : reflection_waves) {
+			// skip wave if not alive;
+			if (i.alive) {
+				update_waves(i);
+			}
+		}
+		//=============================================================================		
+
+		//=============================================================================		
+		AEGfxSetColorToAdd(0.f, 0.f, 0.f, 0.f);
+		// draw main waves;
+		for (wave_s& i : wave) {
+			if (i.alive) {
+				draw_wave(i, donutmesh);
+			}
+		}
+		// draw reflection waves;
+		for (wave_s& i : reflection_waves) {
+			if (i.alive) {
+				draw_wave(i, semicirclemesh);
+			}
+		}
+		AEGfxSetColorToAdd(1.f, 1.f, 1.f, 1.f);
+		// draw outlines;
+		for (line_s& l : outlines) {
+			if (l.alive) {
+				draw_outlines(l, squaremesh);
+			}
+		}
+		AEGfxSetColorToAdd(0.f, 0.f, 0.f, 0.f);
+		// draw walls;
+		for (wall_s const& i : walls) {
+			draw_wall(i, squaremesh);
+		}
 
 		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
 		// Your own update logic goes here
 		//player movement
-		//if (AEInputCheckCurr(AEVK_W)){MoveY += 1000 * dt;}
-		//if (AEInputCheckCurr(AEVK_S)){MoveY -= 1000 * dt;}
-		//if (AEInputCheckCurr(AEVK_A)){MoveX -= 1000 * dt;}
-		//if (AEInputCheckCurr(AEVK_D)){MoveX += 1000 * dt;}
-
-		//if (AEInputCheckCurr(AEVK_W)) { PlayerMovement(playermove, 0.0f, 100.0f, dt, maze, tilesize); }
-		//if (AEInputCheckCurr(AEVK_S)) { PlayerMovement(playermove, 0.0f, -100.0f, dt, maze, tilesize); }
-		//if (AEInputCheckCurr(AEVK_A)) { PlayerMovement(playermove, -100.0f, 0.0f, dt, maze, tilesize); }
-		//if (AEInputCheckCurr(AEVK_D)) { PlayerMovement(playermove, 100.0f, 0.0f, dt, maze, tilesize); }
 		float speed = 100.0f; // Speed in units per second
 		float dt = (float)AEFrameRateControllerGetFrameTime();
 
@@ -90,12 +194,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		//RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 		//RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
-
+		// AEGfxSetCamPosition(MoveX, MoveY);
 		AEGfxSetCamPosition(player.x, player.y);
 		// Informing the system about the loop's end
 		AESysFrameEnd();
 	}
-	AEGfxMeshFree(pDonutMesh);
+	AEGfxMeshFree(donutmesh);
+	AEGfxMeshFree(squaremesh);
+	AEGfxMeshFree(semicirclemesh);
 
 	// free the system
 	AESysExit();
