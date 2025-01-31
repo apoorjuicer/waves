@@ -11,6 +11,7 @@
 #include "Maze.h"
 #include "Rock.h"
 
+#include "enemy_henrey.h"
 #include <iostream>
 #include "sonar.hpp"
 
@@ -38,14 +39,14 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	AESysInit(hInstance, nCmdShow, 1600, 900, 1, 60, false, NULL);
 
 
-	AEGfxVertexList* pDonutMesh = CreateDonutMesh(1000.0f, 200.0f, 48, 0x00000000);
+	AEGfxVertexList* pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0x00000000);
 	AEGfxVertexList* PlayerMesh = Player_Mesh(48, 0x00000000, 10.0f);
 
 	//change first parameter for tile size
 
 	AEGfxVertexList* wallMesh = CreateSquareMesh(tilesize, 0xFF0000FF); // Blue for walls
 	AEGfxVertexList* pathMesh = CreateSquareMesh(tilesize, 0xFFFFFFFF); // White for paths
-
+	AEGfxVertexList* enemy1 = createEnemyMesh(0xFFFF0000); //draw enemy
 
 	// Changing the window title
 	AESysSetWindowTitle("My New Demo!");
@@ -192,7 +193,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		RenderPlayer(player, PlayerMesh);
 		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f);
 		//RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-		//RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+		RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
+		RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+
 
 		// AEGfxSetCamPosition(MoveX, MoveY);
 		AEGfxSetCamPosition(player.x, player.y);
