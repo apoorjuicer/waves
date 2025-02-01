@@ -128,7 +128,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 		// Your own rendering logic goes here
 		RenderPlayer(player, PlayerMesh);
-		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f);
+		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wavemesh);
 		RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 		RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
 		//RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);

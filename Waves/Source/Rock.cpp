@@ -3,6 +3,7 @@
 #include "Player.h"
 #include <cmath>      // for std::floor
 #include <iostream>   // for std::cout
+#include "sonar.hpp"
 
 namespace rock {
 
@@ -50,11 +51,11 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+    void drawRock(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
-        static AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFF000000, 10.0f);
+        static AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
 
         // Launch the rock when the left mouse button is clicked (and if not already active)
         if (AEInputCheckCurr(AEVK_LBUTTON) && !rockActive) {
@@ -85,7 +86,27 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
         }
 
         if (rockActive) {
-            // Store previous valid position
+            // Assume dt is the time elapsed this frame in seconds
+            float dt =AEFrameRateControllerGetFrameTime();
+
+            // Base damping factor: 2% reduction per second.
+            const float baseDamping = 0.40f;
+
+            // Calculate the frame damping factor.
+            float dampingFactor = std::pow(baseDamping, dt);
+
+            // Apply damping to the rock's velocity.
+            rock.dx *= dampingFactor;
+            rock.dy *= dampingFactor;
+
+            // Optional: Stop the rock completely if the speed is very low.
+            const float epsilon = 0.35f;
+            if (std::fabs(rock.dx) < epsilon) {
+                rock.dx = 0.0f;
+            }
+            if (std::fabs(rock.dy) < epsilon) {
+                rock.dy = 0.0f;
+            }
             float prevX = rock.x;
             float prevY = rock.y;
 
@@ -107,8 +128,8 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
                 rock.currBounce++;
             }
 
-            // If exceeded maximum bounces, disable the rock
-            if (rock.currBounce >= rock.maxBounce) {
+            if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
+                spawn_wave(MainWaves, rock.x, rock.y, mesh);
                 rockActive = false;
             }
 
