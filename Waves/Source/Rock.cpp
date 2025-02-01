@@ -22,30 +22,29 @@ namespace rock {
         return AEGfxMeshEnd();
     }
 
-    bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
-        // Convert world-space coordinates to grid indices
-        int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
-        int gridY = static_cast<int>(std::floor((mazeStartY - y) / tileSize));
+bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+    // Convert world-space coordinates to grid indices with half-tile offsets for centering
+    int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
+    int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
 
-        std::cout << "World Position: (" << x << ", " << y << ")\n";
-        std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
+    std::cout << "World Position: (" << x << ", " << y << ")\n";
+    std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
-        // Check for out-of-bounds
-        if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
-            std::cout << "Out of Bounds\n";
-            return false;
-        }
-
-        // Return true if cell is walkable, false if blocked
-        if (maze[gridY][gridX] == 0) {
-            std::cout << "Walkable\n";
-            return true;
-        }
-        else {
-            std::cout << "Blocked\n";
-            return false;
-        }
+    // Check for out-of-bounds
+    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+        std::cout << "Out of Bounds\n";
+        return false;
     }
+
+    // Return true if cell is walkable, false if blocked
+    if (maze[gridY][gridX] == 0) {
+        std::cout << "Walkable\n";
+        return true;
+    } else {
+        std::cout << "Blocked\n";
+        return false;
+    }
+}
 
     // Global rock object
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
@@ -95,7 +94,7 @@ namespace rock {
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on X axis, revert X and reverse the X velocity
                 rock.x = prevX;
-                rock.dx *= -1;
+                rock.dx *= -0.6;
                 rock.currBounce++;
             }
 
@@ -104,7 +103,7 @@ namespace rock {
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on Y axis, revert Y and reverse the Y velocity
                 rock.y = prevY;
-                rock.dy *= -1;
+                rock.dy *= -0.6;
                 rock.currBounce++;
             }
 
