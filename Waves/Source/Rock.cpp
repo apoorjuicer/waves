@@ -1,6 +1,8 @@
 #include "AEEngine.h"
 #include "Rock.h"
 #include "Player.h"
+#include <cmath>      // for std::floor
+#include <iostream>   // for std::cout
 
 namespace rock {
 
@@ -22,9 +24,8 @@ namespace rock {
 
     bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
         // Convert world-space coordinates to grid indices
-        int gridX = static_cast<int>((x - mazeStartX + (tileSize / 2)) / tileSize);
-        //int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
-        int gridY = static_cast<int>((mazeStartY - y) / tileSize);
+        int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
+        int gridY = static_cast<int>(std::floor((mazeStartY - y) / tileSize));
 
         std::cout << "World Position: (" << x << ", " << y << ")\n";
         std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
@@ -35,7 +36,7 @@ namespace rock {
             return false;
         }
 
-        // Check if the grid cell is walkable
+        // Return true if cell is walkable, false if blocked
         if (maze[gridY][gridX] == 0) {
             std::cout << "Walkable\n";
             return true;
@@ -56,16 +57,17 @@ namespace rock {
         AEVec2 mouseWorld{ 0.0f, 0.0f };
         static AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFF000000, 10.0f);
 
+        // Launch the rock when the left mouse button is clicked (and if not already active)
         if (AEInputCheckCurr(AEVK_LBUTTON) && !rockActive) {
             AEInputGetCursorPosition(&mouseX, &mouseY);
 
-            // Get proper screen dimensions
-            f32 screenWidth = static_cast<f32>(AEGfxGetWindowWidth());  // Changed from AEGfxGetWindowWidth()
-            f32 screenHeight = static_cast<f32>(AEGfxGetWindowHeight()); // Changed from AEGfxGetWindowHeight()
+            // Get screen dimensions
+            f32 screenWidth = static_cast<f32>(AEGfxGetWindowWidth());
+            f32 screenHeight = static_cast<f32>(AEGfxGetWindowHeight());
 
-            // Convert to world coordinates with camera offset
-            mouseWorld.x = (static_cast<f32>(mouseX) - screenWidth / 2) + player.x;  // Add camera X
-            mouseWorld.y = (screenHeight / 2 - static_cast<f32>(mouseY)) + player.y; // Add camera Y
+            // Convert to world coordinates (taking camera/player position into account)
+            mouseWorld.x = (static_cast<f32>(mouseX) - screenWidth / 2) + player.x;
+            mouseWorld.y = (screenHeight / 2 - static_cast<f32>(mouseY)) + player.y;
 
             AEVec2 direction = { mouseWorld.x - player.x, mouseWorld.y - player.y };
 
@@ -75,7 +77,7 @@ namespace rock {
                 rock.x = player.x;
                 rock.y = player.y;
 
-                // Adjust speed as needed
+                // Set the rock velocity (adjust the multiplier as needed)
                 rock.dx = normalisedVec.x * 15.0f;
                 rock.dy = normalisedVec.y * 15.0f;
                 rock.currBounce = 0;
@@ -84,35 +86,36 @@ namespace rock {
         }
 
         if (rockActive) {
+            // Store previous valid position
             float prevX = rock.x;
             float prevY = rock.y;
 
+            // --- Process X Movement ---
             rock.x += rock.dx;
-            rock.y += rock.dy;
-            //call waves function here
-
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
-                rock.dx = -rock.dx;
-                rock.dy = -rock.dy;
-
-                int prevGridX = static_cast<int>((prevX - mazeStartX + tileSize / 2) / tileSize);
-                int prevGridY = static_cast<int>((mazeStartY - prevY) / tileSize);
-                int currGridX = static_cast<int>((rock.x - mazeStartX + tileSize / 2) / tileSize);
-                int currGridY = static_cast<int>(mazeStartY - prevY / tileSize);
-
-                /*if(prevGridX)*/
-
-
+                // If collision on X axis, revert X and reverse the X velocity
+                rock.x = prevX;
+                rock.dx *= -1;
                 rock.currBounce++;
-
-
-                if (rock.currBounce >= rock.maxBounce) {
-                    rockActive = false;
-                }
             }
 
+            // --- Process Y Movement ---
+            rock.y += rock.dy;
+            if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
+                // If collision on Y axis, revert Y and reverse the Y velocity
+                rock.y = prevY;
+                rock.dy *= -1;
+                rock.currBounce++;
+            }
+
+            // If exceeded maximum bounces, disable the rock
+            if (rock.currBounce >= rock.maxBounce) {
+                rockActive = false;
+            }
+
+            // Draw the rock at its current position
             AEMtx33 transform = { 0 };
-            AEMtx33Trans(&transform, rock.x, rock.y); // Adjust for screen space
+            AEMtx33Trans(&transform, rock.x, rock.y);
             AEGfxSetTransform(transform.m);
             AEGfxMeshDraw(RockMesh, AE_GFX_MDM_TRIANGLES);
         }
