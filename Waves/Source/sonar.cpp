@@ -133,7 +133,7 @@ bool wave_collision(struct wave_s wave, int index_x, int index_y, float tileSize
 	f32 radiusSquared = (wave.current_size) * (wave.current_size);
 
 	if (distanceSquared <= radiusSquared) {
-		std::cout << "Wave collided with Wall[" << index_y << "][" << index_x << "]\n";
+		//std::cout << "Wave collided with Wall[" << index_y << "][" << index_x << "]\n";
 		return true;
 	}
 	

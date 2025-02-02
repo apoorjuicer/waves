@@ -6,7 +6,7 @@
 // const expressions for functions;
 //=============================================================================
 constexpr size_t MAX_NUM_WAVES{ 6 };
-constexpr size_t MAX_NUM_OUTLINES{ 20 };
+constexpr size_t MAX_NUM_OUTLINES{ 100 };
 constexpr size_t MAX_LINE_LENGTH{ 100 };
 constexpr size_t NUM_WAVE_MESHES{ 6 };
 

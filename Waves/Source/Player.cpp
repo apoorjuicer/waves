@@ -91,52 +91,27 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 }
 
 
-//chcek if area is walkable 
-//bool IsWalkable(float x, float y, int maze[10][10], float tileSize, int number_of_tiles) //number of tiles means the number of tiles height and width
-//{
-//    int gridX = (int)(x / tileSize);
-//    int gridY = (int)(y / tileSize);
-//
-//    return (gridX >= 0 && gridX < number_of_tiles && gridY >= 0 && gridY < number_of_tiles && maze[gridY][gridX] == 0);
-//}
-//
-//void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tileSize) {
-//    // Calculate the new position
-//    f32 NewX = playmove.x + (x * dt);
-//    f32 NewY = playmove.y + (y * dt);
-//
-//    // Check if the new position is walkable
-//    if (IsWalkable(NewX, NewY, maze, tileSize, 10)) {
-//        playmove.x = NewX; // Update X position
-//        playmove.y = NewY; // Update Y position
-//        std::cout << "Player Position: (" << playmove.x << ", " << playmove.y << ")\n";
-//    }
-//    else {
-//        std::cout << "Collision detected!\n";
-//    }
-//}
-
 bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
     // Convert world-space coordinates to grid indices
     int gridX = static_cast<int>((x - mazeStartX + (tileSize/2)) / tileSize);
     int gridY = static_cast<int>(((tileSize/2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
 
-    std::cout << "World Position: (" << x << ", " << y << ")\n";
-    std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
+    //std::cout << "World Position: (" << x << ", " << y << ")\n";
+    //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
     // Check for out-of-bounds
     if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
-        std::cout << "Out of Bounds\n";
+        //std::cout << "Out of Bounds\n";
         return false;
     }
 
     // Check if the grid cell is walkable
     if (maze[gridY][gridX] == 0) {
-        std::cout << "Walkable\n";
+        //std::cout << "Walkable\n";
         return true;
     }
     else {
-        std::cout << "Blocked\n";
+        //std::cout << "Blocked\n";
         return false;
     }
 }

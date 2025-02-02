@@ -28,21 +28,21 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
     int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
     int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
 
-    std::cout << "World Position: (" << x << ", " << y << ")\n";
-    std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
+    //std::cout << "World Position: (" << x << ", " << y << ")\n";
+    //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
     // Check for out-of-bounds
     if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
-        std::cout << "Out of Bounds\n";
+        //std::cout << "Out of Bounds\n";
         return false;
     }
 
     // Return true if cell is walkable, false if blocked
     if (maze[gridY][gridX] == 0) {
-        std::cout << "Walkable\n";
+        //std::cout << "Walkable\n";
         return true;
     } else {
-        std::cout << "Blocked\n";
+        //std::cout << "Blocked\n";
         return false;
     }
 }
@@ -100,7 +100,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             rock.dy *= dampingFactor;
 
             // Optional: Stop the rock completely if the speed is very low.
-            const float epsilon = 0.35f;
+            const float epsilon = 1.0f;
             if (std::fabs(rock.dx) < epsilon) {
                 rock.dx = 0.0f;
             }
@@ -114,8 +114,9 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             rock.x += rock.dx;
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on X axis, revert X and reverse the X velocity
+                spawn_wave(MainWaves, rock.x, rock.y, mesh);
                 rock.x = prevX;
-                rock.dx *= -0.6;
+                rock.dx *= -0.4;
                 rock.currBounce++;
             }
 
@@ -123,8 +124,9 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             rock.y += rock.dy;
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on Y axis, revert Y and reverse the Y velocity
+                spawn_wave(MainWaves, rock.x, rock.y, mesh);
                 rock.y = prevY;
-                rock.dy *= -0.6;
+                rock.dy *= -0.4;
                 rock.currBounce++;
             }
 
