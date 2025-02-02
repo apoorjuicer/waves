@@ -6,11 +6,15 @@
     <ClCompile Include="..\Source\Main.cpp" />
     <ClCompile Include="..\Source\sonar.cpp" />
     <ClCompile Include="..\Source\Player.cpp" />
+    <ClCompile Include="..\Source\Rock.cpp" />
+    <ClCompile Include="..\Source\Maze.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\sonar.hpp" />
     <ClInclude Include="..\Source\draw_map.h" />
     <ClInclude Include="..\Source\enemy_henrey.h" />
     <ClInclude Include="..\Source\Player.h" />
+    <ClInclude Include="..\Source\Maze.h" />
+    <ClInclude Include="..\Source\Rock.h" />
   </ItemGroup>
 </Project>
