@@ -18,7 +18,6 @@ namespace {
 	f32 float_abs(f32 num) {
 		return (num < 0) ? -num : num;
 	}
-
 	bool point_rect_collision(f32 x, f32 y, f32 rx, f32 ry, f32 width, f32 height) {
 		f32 left = rx - width / 2.f;
 		f32 right = rx + width / 2.f;
@@ -27,7 +26,152 @@ namespace {
 
 		return ((x >= left && x <= right) && (y <= top && y >= bot)) ? true : false;
 	}
+
 }
+
+//=============================================================================
+// WAVE CLASS
+//=============================================================================
+// constructor
+wave_c::wave_c() : x{}, y{}, curr_size{}, rotation{}, growth_rate{ 50.f }, mesh{}, max_size{ WAVES_SIZE }, is_active{ false } { /*empty by design*/ }
+// utility
+void wave_c::spawn(f32 x_in, f32 y_in, AEGfxVertexList* mesh_in, f32 rot) {
+	// make wave active;
+	is_active = true;
+	// set position to input;
+	x = x_in; y = y_in;
+	// set parameters;
+	curr_size = 0.f;
+	max_size = WAVES_SIZE;
+	growth_rate = 50.f;
+
+	rotation = rot;
+	mesh = mesh_in;
+
+	//std::cout << "wave spawn\n";
+
+	return;
+}
+
+void wave_c::update() {
+	// quick exit for non-active wave;
+	if (!is_active) {
+		return;
+	}
+	
+	if (curr_size >= max_size) {
+		is_active = false;
+
+		curr_size = 0.f;
+		growth_rate = 50.f;
+
+		reflected = { 0,0,0,0 };
+
+		return;
+	}
+
+	f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+
+	curr_size += growth_rate * dt;
+	growth_rate *= 1.05f;
+
+	//std::cout << "wave update: " << curr_size << "\n";
+	for (bool& i : reflected) {
+		std::cout << "reflected: " << i << '\n';
+	}
+
+	return;
+}
+
+void wave_c::draw() {
+	// quick exit for non-active wave;
+	if (!is_active) {
+		return;
+	}
+	// set transforms;
+	AEMtx33 transform = { 0 }; AEMtx33 scale = { 0 };
+	AEMtx33 translate = { 0 }; AEMtx33 rotate = { 0 };
+
+	AEMtx33RotDeg(&rotate, rotation);
+	AEMtx33Scale(&scale, curr_size, curr_size);
+	AEMtx33Trans(&translate, x, y);
+
+	AEMtx33Concat(&transform, &rotate, &scale);
+	AEMtx33Concat(&transform, &translate, &transform);
+
+	AEGfxSetTransform(transform.m);
+	// draw wave;
+	AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
+
+	//std::cout << "wave draw" << '\n';
+
+	return;
+}
+
+void wave_c::check_collision(int wall_x, int wall_y, f32 tile_size) {
+	// quick exit for non-active waves;
+	if (!is_active) {
+		return;
+	}
+
+	// location of current tile;
+	f32 posX = 0.0f + (wall_x * tile_size);
+	f32 posY = tile_size - ((wall_y + 1) * tile_size);
+
+	// clamp nearest x and y from tile;
+	f32 near_x = clamp(x, posX - tile_size / 2.f, posX + tile_size / 2.f);
+	f32 near_y = clamp(y, posY - tile_size / 2.f, posY + tile_size / 2.f);
+
+	// calculate the distance from the circle center to this closest point
+	f32 dx = x - near_x;
+	f32 dy = y - near_y;
+
+	// if the distance is less than or equal to the circle's radius, they collide
+	f32 distanceSquared = (dx * dx) + (dy * dy);
+	f32 radiusSquared = (curr_size) * (curr_size);
+
+	int collsion_idx = 0;
+
+	if (distanceSquared <= radiusSquared) {
+		std::cout << "Wave collided with Wall[" << wall_y << "][" << wall_x << "]\n";
+
+		// update array of bools with reference to direction from tile;
+		if (posX >= (x - curr_size) && posX <= (x + curr_size)) {	// vertically aligned with current wave;
+			// collision top;
+			if (posY > y) {
+				std::cout << "Collision TOP ^^^\n";
+				collsion_idx = TOP;
+			}
+			// collision bot;
+			else {
+				std::cout << "Collision BOT vvv\n";
+				collsion_idx = BOT;
+			}
+		}
+		else {	// horizontally aligned with current wave;
+			// collision left;
+			if (posX < x) {
+				std::cout << "Collision LEFT <<<\n";
+				collsion_idx = LEFT;
+			}
+			// collision right;
+			else {
+				std::cout << "Collision RIGHT >>>\n";
+				collsion_idx = RIGHT;
+			}
+		}
+		// update collision array
+		reflected[collsion_idx]	= true;
+
+		return;
+	}
+
+	return;
+}
+
+
+
+
 //=============================================================================
 // general wave functions
 //=============================================================================

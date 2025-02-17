@@ -1,6 +1,7 @@
 #pragma once
 
 #include "AEEngine.h"
+#include <array>
 
 //=============================================================================
 // const expressions for functions;
@@ -11,9 +12,16 @@ constexpr size_t MAX_LINE_LENGTH{ 250 };
 
 constexpr size_t NUM_WALLS{ 5 };
 
+<<<<<<< Updated upstream
 constexpr f32 REFLECTIONS_MAX_SIZE{ 200.f };
 
 enum LineType { Left, Right, Top, Bottom };
+=======
+enum Direction { TOP = 0, BOT, LEFT, RIGHT};
+
+enum LineType { Horizontal, Vertical, Corner };
+enum LineOrigin { BottomLeft, TopLeft, BottomRight, TopRight, OriginH, OriginV};
+>>>>>>> Stashed changes
 
 //=============================================================================
 // temporary testing struct for wall
@@ -58,6 +66,37 @@ struct wave_s {
 	f32 rotation;
 	
 };
+
+class wave_c {
+
+protected:
+	f32 x, y;
+	f32 curr_size;
+
+	AEGfxVertexList* mesh;
+
+	f32 rotation;
+	f32 growth_rate;
+
+	f32 max_size;
+
+public:
+	// public variables
+	bool is_active;
+	// directional checks
+	std::array<bool, 4> reflected{};		// top, bot, left, right;
+	//std::array<bool, 4> is_colliding{};		// top, bot, left, right;
+
+	// main wave functions
+	wave_c();
+	void spawn(f32 x_in, f32 y_in, AEGfxVertexList* mesh, f32 rot = 0.f);
+	void update();
+	void draw();
+
+	// reflection wave functions;
+	void check_collision(int wall_x, int wall_y, f32 tile_size);
+};
+
 //=============================================================================
 // general wave functions
 //=============================================================================
