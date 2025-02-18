@@ -1,6 +1,19 @@
 #include "AEEngine.h"
 #include <iostream>
 
+int maze[10][10] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+};
+
 void RenderMaze(int maze[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
@@ -28,8 +41,6 @@ void RenderMaze(int maze[10][10], float tileSize, AEGfxVertexList* wallMesh, AEG
         }
     }
 }
-
-
 
 AEGfxVertexList* CreateSquareMesh(float size, u32 color)
 {
