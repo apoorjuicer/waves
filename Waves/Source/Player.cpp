@@ -117,26 +117,26 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
 }
 
 
-void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize) {
-    float mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
+void MovePlayer(Player& pplayer, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize) {
+    //float mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position
-    float newX = player.x + dx * speed * dt;
-    float newY = player.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
+    float newX = pplayer.x + dx * speed * dt;
+    float newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
 
     // Check if the new position is walkable
-    if (IsWalkable(newX, player.y, maze, tileSize, 0.0f, 0)) {
-        player.x = newX;
+    if (IsWalkable(newX, pplayer.y, maze, tileSize, 0.0f, 0)) {
+        pplayer.x = newX;
     }
-    if (IsWalkable(player.x, newY, maze, tileSize, 0.0f, 0)) {
-        player.y = newY;
+    if (IsWalkable(pplayer.x, newY, maze, tileSize, 0.0f, 0)) {
+        pplayer.y = newY;
     }
 }
 
 
-void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh) {
+void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh) {
     AEMtx33 transform = { 0 };
-    AEMtx33Trans(&transform, player.x, player.y); // Adjust for screen space
+    AEMtx33Trans(&transform, pplayer.x, pplayer.y); // Adjust for screen space
     AEGfxSetTransform(transform.m);
     AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
 }

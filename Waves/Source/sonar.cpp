@@ -414,7 +414,7 @@ void draw_outlines(struct line_s& line, AEGfxVertexList* (&mesh)[NUM_WAVE_MESHES
 }
 
 void spawn_outlines(struct wave_s const& wave, f32 posX, f32 posY, f32 tilesize, struct line_s(&line)[MAX_NUM_OUTLINES], int origin) {
-
+	(void)tilesize;
 	for (line_s& l : line) {
 		if (!l.alive) {
 			// make line live;
