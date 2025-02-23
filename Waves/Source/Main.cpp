@@ -35,11 +35,13 @@ void init() {
 	 MoveY = 0.0f;
 	 dt = (f32)AEFrameRateControllerGetFrameTime();
 
+	/* enemy.x = 100.f;
+	 enemy.y = -100.f;*/
 	 enemy.x = 100.f;
 	 enemy.y = -100.f;
 	 enemy.w = 50.f;
 	 enemy.h = 50.f;
-
+	
 }
 
 void update() {
@@ -61,13 +63,43 @@ void update() {
 	if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, dt, maze, tilesize); // Move left
 	if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, dt, maze, tilesize);  // Move right
 	
-	// Source is the left-most bottom-most corner	// Destination is the left-most top-most corner
-	Pair src = std::make_pair(1, 1), dest = std::make_pair(3, 3);
-	AstarSearch2(maze, src, dest);
 
-	// Source is the left-most bottom-most corner	// Destination is the left-most top-most corner
-	Pair src2 = std::make_pair(3, 3), dest2 = std::make_pair(7, 1);
-	AstarSearch2(maze, src2, dest2);
+	Pair src = std::make_pair(1, 1), dest = std::make_pair(8, 8);
+	//AstarSearch2(maze, src, dest);
+	AstarSearch2(maze, src, dest, enemy.path);
+	//enemy.FindPath(maze, src, dest);
+
+
+
+
+	//Pair src2 = std::make_pair(3, 3), dest2 = std::make_pair(8, 8);
+	//AstarSearch2(maze, src2, dest2);
+	//AstarSearch2(maze, src2, dest2, enemy.path);
+	//enemy.FindPath(maze, src2, dest2);
+
+	//printf("enemy",enemy.pathIndex);1
+	//std::cout << enemy.path.size() << "\n";
+	//std::cout << enemy.pathIndex << "\n";
+	// Move enemy step-by-step
+	//while (enemy.pathIndex < enemy.path.size()) {
+	//	enemy.moveToNextStep();  // Move to next step
+	//	
+	//}
+
+	
+		static int frameCounter = 0;
+		if (frameCounter % 5 == 0) {  // 
+
+			if (enemy.pathIndex < enemy.path.size()) {
+				enemy.moveToNextStep();
+				enemy.printPosition();   // Print the updated position
+			}
+		
+		}
+		frameCounter++;
+	
+
+	
 
 }
 
