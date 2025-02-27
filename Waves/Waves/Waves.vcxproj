@@ -78,7 +78,7 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmodL.dll" "$(OutDir)" /s /r /y /q</
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <SDLCheck>true</SDLCheck>
@@ -102,17 +102,30 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
   <ItemGroup>
     <ClCompile Include="..\Source\draw_map.cpp" />
     <ClCompile Include="..\Source\enemy_henrey.cpp" />
+    <ClCompile Include="..\Source\game.cpp" />
+    <ClCompile Include="..\Source\GSM.cpp" />
     <ClCompile Include="..\Source\Main.cpp" />
+    <ClCompile Include="..\Source\mainMenu.cpp" />
     <ClCompile Include="..\Source\sonar.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Source\baseStates.h" />
+    <ClInclude Include="..\Source\game.h" />
+    <ClInclude Include="..\Source\GSM.h" />
+    <ClInclude Include="..\Source\mainMenu.h" />
     <ClInclude Include="..\Source\sonar.hpp" />
     <ClCompile Include="..\Source\Player.cpp" />
+    <ClCompile Include="..\Source\Rock.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\draw_map.h" />
     <ClInclude Include="..\Source\enemy_henrey.h" />
+    <ClCompile Include="..\Source\Maze.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Source\Maze.h" />
     <ClInclude Include="..\Source\Player.h" />
+    <ClInclude Include="..\Source\Rock.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

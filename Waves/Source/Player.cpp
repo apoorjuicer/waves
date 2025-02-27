@@ -1,5 +1,8 @@
 #include "AEEngine.h"
+#include "Player.h"
 #include<iostream>
+
+extern Player player = { 100.0f, -100.0f };
 
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)
@@ -87,16 +90,53 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
     return AEGfxMeshEnd();
 }
 
-AEGfxVertexList* testing_only()
-{
-    AEGfxTriAdd(
-        -0.5f, -0.5f, 0xFFFFFFFF, 0.0f, 1.0f,
-        0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
 
-    AEGfxTriAdd(
-        0.5f, -0.5f, 0xFFFFFFFF, 1.0f, 1.0f,
-        0.5f, 0.5f, 0xFFFFFFFF, 1.0f, 0.0f,
-        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);
-    return AEGfxMeshEnd();
+bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+    // Convert world-space coordinates to grid indices
+    int gridX = static_cast<int>((x - mazeStartX + (tileSize/2)) / tileSize);
+    int gridY = static_cast<int>(((tileSize/2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
+
+    //std::cout << "World Position: (" << x << ", " << y << ")\n";
+    //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
+
+    // Check for out-of-bounds
+    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+        //std::cout << "Out of Bounds\n";
+        return false;
+    }
+
+    // Check if the grid cell is walkable
+    if (maze[gridY][gridX] == 0) {
+        //std::cout << "Walkable\n";
+        return true;
+    }
+    else {
+        //std::cout << "Blocked\n";
+        return false;
+    }
+}
+
+
+void MovePlayer(Player& pplayer, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize) {
+    //float mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
+
+    // Calculate the potential new position
+    float newX = pplayer.x + dx * speed * dt;
+    float newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
+
+    // Check if the new position is walkable
+    if (IsWalkable(newX, pplayer.y, maze, tileSize, 0.0f, 0)) {
+        pplayer.x = newX;
+    }
+    if (IsWalkable(pplayer.x, newY, maze, tileSize, 0.0f, 0)) {
+        pplayer.y = newY;
+    }
+}
+
+
+void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh) {
+    AEMtx33 transform = { 0 };
+    AEMtx33Trans(&transform, pplayer.x, pplayer.y); // Adjust for screen space
+    AEGfxSetTransform(transform.m);
+    AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
 }
