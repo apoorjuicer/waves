@@ -12,16 +12,14 @@ constexpr size_t MAX_LINE_LENGTH{ 250 };
 
 constexpr size_t NUM_WALLS{ 5 };
 
-<<<<<<< Updated upstream
-constexpr f32 REFLECTIONS_MAX_SIZE{ 200.f };
+constexpr f32 WAVES_SIZE{ 200.f };
 
-enum LineType { Left, Right, Top, Bottom };
-=======
-enum Direction { TOP = 0, BOT, LEFT, RIGHT};
-
-enum LineType { Horizontal, Vertical, Corner };
-enum LineOrigin { BottomLeft, TopLeft, BottomRight, TopRight, OriginH, OriginV};
->>>>>>> Stashed changes
+//enum LineType { Left, Right, Top, Bottom };
+//
+//enum Direction { TOP = 0, BOT, LEFT, RIGHT};
+//
+//enum LineType { Horizontal, Vertical, Corner };
+//enum LineOrigin { BottomLeft, TopLeft, BottomRight, TopRight, OriginH, OriginV};
 
 //=============================================================================
 // temporary testing struct for wall
