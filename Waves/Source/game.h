@@ -20,6 +20,7 @@ private:
     wave_s wave[MAX_NUM_WAVES] = {};
     wave_s reflection_waves[MAX_NUM_WAVES] = {};
     line_s outlines[MAX_NUM_OUTLINES] = {};
+    wave_c class_waves_array[MAX_NUM_WAVES]{};
 
 public:
     GameState();

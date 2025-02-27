@@ -33,24 +33,33 @@ void GameState::Update(float deltaTime) {
     if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         exitGame = true;
     }
+    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
-    // Update wave behavior
-    for (wave_s& i : wave) {
-        if (i.alive) {
-            update_waves(i);
-            reflections_spawner(i, maze, tilesize, reflection_waves, outlines, wave_meshes);
-        }
-    }
+    //// Update wave behavior
+    //for (wave_s& i : wave) {
+    //    if (i.alive) {
+    //        update_waves(i);
+    //        reflections_spawner(i, maze, tilesize, reflection_waves, outlines, wave_meshes);
+    //    }
+    //}
 
-    for (wave_s& i : reflection_waves) {
-        if (i.alive) {
-            update_waves(i);
-        }
-    }
+    //for (wave_s& i : reflection_waves) {
+    //    if (i.alive) {
+    //        update_waves(i);
+    //    }
+    //}
 
-    for (line_s& l : outlines) {
-        if (l.alive) {
-            update_outlines(l);
+    //for (line_s& l : outlines) {
+    //    if (l.alive) {
+    //        update_outlines(l);
+    //    }
+    //}
+
+    // Update waves
+    for (wave_c& i : class_waves_array) {
+        if (i.is_active) {
+            i.update();
+            i.reflections_manager(maze, tilesize, class_waves_array);
         }
     }
 
@@ -62,7 +71,13 @@ void GameState::Update(float deltaTime) {
     if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
 
     if (AEInputCheckTriggered(AEVK_SPACE)) {
-        spawn_wave(wave, player.x, player.y, wave_meshes[0]);
+        //spawn_wave(wave, player.x, player.y, wave_meshes[0]);
+        for (wave_c& i : class_waves_array) {
+            if (!i.is_active) {
+                i.spawn(player.x, player.y, wave_meshes[0]);
+                break;
+            }
+        }
     }
 }
 
@@ -74,12 +89,19 @@ void GameState::Draw() {
     RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
-    draw_wave(wave);
-    draw_wave(reflection_waves);
+    //draw_wave(wave);
+    //draw_wave(reflection_waves);
 
-    for (line_s& l : outlines) {
-        if (l.alive) {
-            draw_outlines(l, wave_meshes);
+    //for (line_s& l : outlines) {
+    //    if (l.alive) {
+    //        draw_outlines(l, wave_meshes);
+    //    }
+    //}
+
+    // Draw waves
+    for (wave_c& i : class_waves_array) {
+        if (i.is_active) {
+            i.draw();
         }
     }
 

@@ -23,6 +23,7 @@ namespace {
 	f32 float_abs(f32 num) {
 		return (num < 0) ? -num : num;
 	}
+
 	bool point_rect_collision(f32 x, f32 y, f32 rx, f32 ry, f32 width, f32 height) {
 		f32 left = rx - width / 2.f;
 		f32 right = rx + width / 2.f;
@@ -32,6 +33,9 @@ namespace {
 		return ((x >= left && x <= right) && (y <= top && y >= bot)) ? true : false;
 	}
 
+	int wave_binary_collision(f32 x, f32 y, f32 scale) {
+
+	}
 }
 
 //=============================================================================
@@ -52,6 +56,8 @@ void wave_c::spawn(f32 x_in, f32 y_in, AEGfxVertexList* mesh_in, f32 rot) {
 
 	rotation = rot;
 	mesh = mesh_in;
+
+	collision_flag = 0;
 
 	//std::cout << "wave spawn\n";
 
@@ -75,15 +81,15 @@ void wave_c::update() {
 		return;
 	}
 
-	f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+	f32 dt = static_cast<f32>(AEFrameRateControllerGetFrameTime());
 
 	curr_size += growth_rate * dt;
 	growth_rate *= 1.05f;
 
-	//std::cout << "wave update: " << curr_size << "\n";
-	for (bool& i : reflected) {
-		std::cout << "reflected: " << i << '\n';
-	}
+	////std::cout << "wave update: " << curr_size << "\n";
+	//for (bool& i : reflected) {
+	//	//std::cout << "reflected: " << i << '\n';
+	//}
 
 	return;
 }

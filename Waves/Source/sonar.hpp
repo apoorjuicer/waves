@@ -3,6 +3,8 @@
 #include "AEEngine.h"
 #include <array>
 
+#include <iostream>
+
 //=============================================================================
 // const expressions for functions;
 //=============================================================================
@@ -14,14 +16,17 @@ constexpr size_t NUM_WAVE_MESHES{ 6 };
 constexpr f32 WAVES_SIZE{ 100.f };
 constexpr f32 REFLECTIONS_MAX_SIZE{ 120.f };
 
-constexpr f32 WAVES_SIZE{ 200.f };
+const int COLLISION_LEFT	= 0x00000001;		// 0001
+const int COLLISION_RIGHT	= 0x00000002;		// 0010
+const int COLLISION_TOP		= 0x00000004;		// 0100
+const int COLLISION_BOTTOM	= 0x00000008;		// 1000
 
 //enum LineType { Left, Right, Top, Bottom };
-//
-//enum Direction { TOP = 0, BOT, LEFT, RIGHT};
-//
-//enum LineType { Horizontal, Vertical, Corner };
-//enum LineOrigin { BottomLeft, TopLeft, BottomRight, TopRight, OriginH, OriginV};
+
+enum Direction { TOP = 0, BOT, LEFT, RIGHT};
+
+enum LineType { Horizontal, Vertical, Corner };
+enum LineOrigin { BottomLeft, TopLeft, BottomRight, TopRight, OriginH, OriginV};
 
 //=============================================================================
 // line struct;
@@ -68,13 +73,14 @@ protected:
 	f32 growth_rate;
 
 	f32 max_size;
+	
 
 public:
 	// public variables
 	bool is_active;
 	// directional checks
 	std::array<bool, 4> reflected{};		// top, bot, left, right;
-	//std::array<bool, 4> is_colliding{};		// top, bot, left, right;
+	int collision_flag;
 
 	// main wave functions
 	wave_c();
@@ -84,6 +90,11 @@ public:
 
 	// reflection wave functions;
 	void check_collision(int wall_x, int wall_y, f32 tile_size);
+
+	template <typename T, std::size_t ROW, std::size_t COL, std::size_t S>
+	void reflections_manager(int const (&maze)[ROW][COL], f32 tile_size, T (&reflections)[S]) {
+
+	}
 };
 
 //=============================================================================
