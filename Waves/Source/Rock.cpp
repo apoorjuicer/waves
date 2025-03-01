@@ -23,7 +23,7 @@ namespace rock {
         return AEGfxMeshEnd();
     }
 
-bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+bool BounceCollision(float x, float y, int maze[20][20], float tileSize, float mazeStartX, float mazeStartY) {
     // Convert world-space coordinates to grid indices with half-tile offsets for centering
     int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
     int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
@@ -32,7 +32,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
     //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
     // Check for out-of-bounds
-    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+    if (gridX < 0 || gridX >= 20 || gridY < 0 || gridY >= 20) {
         //std::cout << "Out of Bounds\n";
         return false;
     }
@@ -51,7 +51,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh) {
+    void drawRock(Player& rplayer, int maze[20][20], float tileSize, float mazeStartX, float mazeStartY, wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };

@@ -61,7 +61,7 @@ void spawn_wave(struct wave_s(&MainWaves)[MAX_NUM_WAVES], f32 x, f32 y, AEGfxVer
 //=============================================================================
 // reflection waves
 //=============================================================================
-void reflections_spawner(wave_s wave, int const (&maze)[10][10], f32 tilesize, struct wave_s(&reflections)[MAX_NUM_WAVES], struct line_s(&line)[MAX_NUM_OUTLINES], AEGfxVertexList* (&mesh)[NUM_WAVE_MESHES]);
+void reflections_spawner(wave_s wave, int const (&maze)[20][20], f32 tilesize, struct wave_s(&reflections)[MAX_NUM_WAVES], struct line_s(&line)[MAX_NUM_OUTLINES], AEGfxVertexList* (&mesh)[NUM_WAVE_MESHES]);
 // check collision with wall; circle rect collision;
 bool wave_collision(struct wave_s wave, int index_x, int index_y, float tileSize);
 // make a reflection wave come alive;

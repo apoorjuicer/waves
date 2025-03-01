@@ -141,10 +141,10 @@ bool wave_collision(struct wave_s wave, int index_x, int index_y, float tileSize
 }
 
 // spawns reflections and outlines based on maze array and tilesize;
-void reflections_spawner(wave_s wave, int const (&maze)[10][10], f32 tilesize, struct wave_s(&reflections)[MAX_NUM_WAVES], struct line_s(&line)[MAX_NUM_OUTLINES], AEGfxVertexList* (&mesh)[NUM_WAVE_MESHES]) {
+void reflections_spawner(wave_s wave, int const (&maze)[20][20], f32 tilesize, struct wave_s(&reflections)[MAX_NUM_WAVES], struct line_s(&line)[MAX_NUM_OUTLINES], AEGfxVertexList* (&mesh)[NUM_WAVE_MESHES]) {
 	// iterate though index of wall
-	for (int y = 0; y < 10; ++y) {
-		for (int x = 0; x < 10; ++x) {
+	for (int y = 0; y < 20; ++y) {
+		for (int x = 0; x < 20; ++x) {
 			if (maze[y][x]) {
 				// location of current tile;
 				f32 posX = 0.0f + (x * tilesize);

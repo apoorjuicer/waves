@@ -2,27 +2,40 @@
 #include <iostream>
 #include "Maze.h"
 
-int maze[10][10] = {
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
-    { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-    { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+#define MAZE_WIDTH  20
+#define MAZE_HEIGHT 20
+
+int maze[MAZE_HEIGHT][MAZE_WIDTH] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 1, 1, 1, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+    { 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 0, 1, 0, 1, 0, 1 },
+    { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1 },
+    { 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1 },
+    { 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1, 0, 1, 0, 1 },
+    { 1, 0, 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1, 0, 0, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1, 1, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 0, 1 },
+    { 1, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 0, 0, 1, 0, 0, 0, 1 },
+    { 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 1, 1, 0, 1, 1, 1, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 };
 
-void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
-    (void)pathMesh;
+void RenderMaze(int maze1[20][20], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
+    //(void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
-    for (int y = 0; y < 10; ++y) {
-        for (int x = 0; x < 10; ++x) {
+    for (int y = 0; y < MAZE_HEIGHT; ++y) {
+        for (int x = 0; x < MAZE_WIDTH; ++x) {
             // Calculate the position of each tile
             f32 posX = startX + (x * tileSize);
             f32 posY = startY - ((y + 1) * tileSize); // Subtract to flip the direction
@@ -34,13 +47,13 @@ void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AE
                 AEGfxSetTransform(transform.m);
                 AEGfxMeshDraw(wallMesh, AE_GFX_MDM_TRIANGLES);
             }
-            //if (maze[y][x] == 0) {
-            //    continue;
-            //    AEMtx33 transform = { 0 };
-            //    AEMtx33Trans(&transform, posX, posY);
-            //    AEGfxSetTransform(transform.m);
-            //    AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
-            //}
+            if (maze[y][x] == 0) {
+                continue;
+                AEMtx33 transform = { 0 };
+                AEMtx33Trans(&transform, posX, posY);
+                AEGfxSetTransform(transform.m);
+                AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
+            }
         }
     }
 }

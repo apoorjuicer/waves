@@ -91,7 +91,7 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 }
 
 
-bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+bool IsWalkable(float x, float y, int maze[20][20], float tileSize, float mazeStartX, float mazeStartY) {
     // Convert world-space coordinates to grid indices
     int gridX = static_cast<int>((x - mazeStartX + (tileSize/2)) / tileSize);
     int gridY = static_cast<int>(((tileSize/2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
@@ -100,7 +100,7 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
     //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
     // Check for out-of-bounds
-    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+    if (gridX < 0 || gridX >= 20 || gridY < 0 || gridY >= 20) {
         //std::cout << "Out of Bounds\n";
         return false;
     }
@@ -117,7 +117,7 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
 }
 
 
-void MovePlayer(Player& pplayer, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize) {
+void MovePlayer(Player& pplayer, float dx, float dy, float speed, float dt, int maze[20][20], float tileSize) {
     //float mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position

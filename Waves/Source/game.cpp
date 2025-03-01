@@ -1,5 +1,8 @@
 #include "game.h"
 #include "mainMenu.h"
+#include "vector"
+#include "enemy_henrey.h"
+
 
 GameState::GameState() : exitGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
@@ -8,7 +11,7 @@ pathMesh(nullptr), enemy1(nullptr) {
 }
 
 void GameState::Load() {
-    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
+    AEGfxSetBackgroundColor(0.5f, 0.5f, 0.5f);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0x00000000);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
@@ -71,8 +74,36 @@ void GameState::Draw() {
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes[0]);
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-    RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
+    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+
+
+    std::vector<std::pair<int, int>> enemyPath;  // Path for enemy movement
+    // Enemy's current position
+    float enemyX = 350.0f, enemyY = -100.0f;
+
+    // Target Position (Goal)
+    int goalX = 8, goalY = 8; // Example: Goal in the grid
+
+    // Convert enemy world position to grid indices
+    int enemyGridX = (int)(enemyX / tilesize);
+    int enemyGridY = (int)(enemyY / tilesize);
+
+    // Compute path only once at the start
+    enemyPath = AStarPathfinding(enemyGridX, enemyGridY, goalX, goalY);
+
+    if (!enemyPath.empty()) {
+        // Move to the next step in the path
+        enemyX = enemyPath[0].first * tilesize;
+        enemyY = enemyPath[0].second * tilesize;
+
+        // Remove the first step (since we moved)
+        enemyPath.erase(enemyPath.begin());
+    }
+
+    // Render the enemy at its updated position
+    RenderMesh(enemy1, enemyX, enemyY, 50.0f, 50.0f, 0.0f);
+
 
     draw_wave(wave);
     draw_wave(reflection_waves);
