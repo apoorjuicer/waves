@@ -2,7 +2,7 @@
 #define WAV_HPP
 
 #include "AEEngine.h"
-#include <array>
+#include <utility>
 
 constexpr int MAZE_HEIGHT{ 10 };
 constexpr int MAZE_WIDTH{ 10 };
@@ -14,10 +14,11 @@ constexpr f32 WAVES_SIZE{ 60.f };
 constexpr f32 REFLECTIONS_MAX_SIZE{ 80.f };
 constexpr f32 GROWTH_R{ 50.f };
 
-constexpr size_t MAX_NUM_WAVES{ 20 };
-constexpr size_t MAX_NUM_REFLECTIONS{20};
+constexpr size_t MAX_NUM_WAVES{ 10 };
+constexpr size_t MAX_NUM_REFLECTIONS{ 10 };
+constexpr size_t MAX_NUM_OUTLINES{ 20 };
 
-constexpr size_t NUM_WAVE_MESHES{ 6 };
+constexpr size_t NUM_WAVE_MESHES{ 3 };
 
 //==================================================================================================================
 // ENUMS;
@@ -47,7 +48,7 @@ enum DIRECTION{
 // prefix overload
 DIRECTION& operator++(DIRECTION& dir);
 DIRECTION operator-(DIRECTION& dir);
-//std::ostream& operator<<(std::ostream& os, DIRECTION& dir);
+//static std::ostream& operator<<(std::ostream& os, DIRECTION& dir);
 
 //==================================================================================================================
 // CLASS DECLARATIONS;
@@ -65,6 +66,18 @@ struct GameObj {
 	GameObj();
 };
 
+struct Outline : public GameObj {
+	f32 max_len;
+	f32 growth_rate;
+	f32 lifespan;
+
+	Outline();
+
+	void spawn(AEVec2 pos_in, f32 max_in, f32 grow_r, AEGfxVertexList** mesh_in, DIRECTION dir_in);
+	void update();
+	void draw();
+
+};
 
 class Wave : public GameObj {
 protected:
@@ -80,27 +93,7 @@ public:
 	void update();
 	void draw();
 
-	void echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS]);
-	
-};
-
-//class Wall : public GameObj {
-//	bool reflected[4]{ false };
-//
-//public:
-//	void create_reflection();
-//	void create_outline();
-//};
- 
-class Outline : public GameObj {
-private:
-	f32 max_len;
-	f32 growth_rate;
-
-public:
-	void spawn(AEVec2 pos_in, f32 max_in, f32 grow_r, AEGfxVertexList* mesh_in, DIRECTION dir_in);
-	void update();
-	void draw();
+	void echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS], Outline(&outlines)[MAX_NUM_OUTLINES]);
 	
 };
 
@@ -114,7 +107,8 @@ AEVec2 locate_reflection(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size);
 
 void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in);
 
-
+void create_two_outlines(Outline(&outlines)[MAX_NUM_OUTLINES], AEVec2 pos_in, AEVec2 maxlen_in,
+	std::pair<DIRECTION, DIRECTION> dir_pair, AEGfxVertexList** mesh_in, f32 g_rate);
 
 //==================================================================================================================
 // TEMPLATES
@@ -136,6 +130,6 @@ T abs(T num) {
 //==================================================================================================================
 AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int numSegments, int divisor = 3);
 AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegments);
-AEGfxVertexList* Create_LineMesh(bool skew);
+AEGfxVertexList* Create_LineMesh();
 
 #endif

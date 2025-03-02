@@ -18,10 +18,8 @@ void GameState::Load() {
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
-    wave_meshes[2] = Create_LineMesh(false);
-    wave_meshes[3] = Create_LineMesh(true);
+    wave_meshes[2] = Create_LineMesh();
 
-    //init_reflection_waves(reflection_waves, wave_meshes[1]);
 }
 
 void GameState::Initialize() {
@@ -53,12 +51,17 @@ void GameState::Update(float deltaTime) {
         if (w.is_active) {
             // update wave size;
             w.update();
-            w.echolocation(maze, tilesize, reflections);
+            w.echolocation(maze, tilesize, reflections, outlines);
         }
     }
     for (Wave& r : reflections) {
         if (r.is_active) {
             r.update();
+        }
+    }
+    for (Outline& l : outlines) {
+        if (l.is_active) {
+            l.update();
         }
     }
 }
@@ -69,7 +72,7 @@ void GameState::Draw() {
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
-    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {
@@ -81,7 +84,11 @@ void GameState::Draw() {
             r.draw();
         }
     }
-
+    for (Outline& l : outlines) {
+        if (l.is_active) {
+            l.draw();
+        }
+    }
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh);
     AEGfxSetCamPosition(player.x, player.y);

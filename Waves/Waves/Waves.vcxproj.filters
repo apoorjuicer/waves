@@ -19,9 +19,6 @@
     <ClCompile Include="..\Source\Rock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\sonar.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="..\Source\GSM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -66,6 +63,7 @@
     <ClInclude Include="..\Source\Wave.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\sonar.hpp" />
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
