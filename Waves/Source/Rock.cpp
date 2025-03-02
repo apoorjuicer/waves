@@ -3,7 +3,7 @@
 #include "Player.h"
 #include <cmath>      // for std::floor
 #include <iostream>   // for std::cout
-#include "sonar.hpp"
+// #include "sonar.hpp"
 
 namespace rock {
 
@@ -51,7 +51,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh) {
+    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
@@ -101,10 +101,8 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
 
             // Optional: Stop the rock completely if the speed is very low.
             const float epsilon = 1.0f;
-            if (std::fabs(rock.dx) < epsilon) {
+            if (std::fabs(rock.dx) < epsilon || std::fabs(rock.dy) < epsilon) {
                 rock.dx = 0.0f;
-            }
-            if (std::fabs(rock.dy) < epsilon) {
                 rock.dy = 0.0f;
             }
             float prevX = rock.x;
@@ -131,7 +129,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             }
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
-                spawn_wave(MainWaves, rock.x, rock.y, mesh);
+                //spawn_wave(MainWaves, rock.x, rock.y, mesh);
                 rockActive = false;
             }
 

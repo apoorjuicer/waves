@@ -609,7 +609,7 @@ void spawn_outlines(struct wave_s const& wave, f32 posX, f32 posY, f32 tilesize,
 //=============================================================================
 // create meshes for waves and outlines
 //=============================================================================
-AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int numSegments, int divisor) {
+AEGfxVertexList* Create_SemiCircle_Mesh1(f32 outerRadius, f32 innerRadius, int numSegments, int divisor) {
 	// Start creating the mesh
 	AEGfxMeshStart();
 
@@ -650,7 +650,7 @@ AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int nu
 	// End the mesh and return it
 	return AEGfxMeshEnd();
 }
-AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegments) {
+AEGfxVertexList* CreateWaveMesh1(f32 outerRadius, f32 innerRadius, int numSegments) {
 	// Start creating the mesh
 	AEGfxMeshStart();
 		
@@ -691,7 +691,7 @@ AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegment
 	// End the mesh and return it
 	return AEGfxMeshEnd();
 }
-AEGfxVertexList* Create_LineMesh(bool skew) {
+AEGfxVertexList* Create_LineMesh1(bool skew) {
 	if (!skew) {
 
 		AEGfxMeshStart();

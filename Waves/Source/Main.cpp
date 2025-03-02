@@ -3,14 +3,10 @@
 
 #include <crtdbg.h> // To check for memory leaks
 #include "AEEngine.h"
-#include "Player.h"
-#include "Maze.h"
-#include "Rock.h"
-#include "enemy_henrey.h"
-#include "sonar.hpp"
+
 #include "GSM.h"
 #include "mainMenu.h"
-#include <iostream>
+
 
 // ---------------------------------------------------------------------------
 // main
