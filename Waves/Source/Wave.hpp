@@ -10,8 +10,8 @@ constexpr int MAZE_WIDTH{ 10 };
 //==================================================================================================================
 // CONST EXPRESSIONS;
 //==================================================================================================================
-constexpr f32 WAVES_SIZE{ 60.f };
-constexpr f32 REFLECTIONS_MAX_SIZE{ 80.f };
+constexpr f32 WAVES_SIZE{ 150.f };
+constexpr f32 REFLECTIONS_MAX_SIZE{ 100.f };
 constexpr f32 GROWTH_R{ 50.f };
 
 constexpr size_t MAX_NUM_WAVES{ 10 };
