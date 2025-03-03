@@ -14,14 +14,17 @@ void GameStateManager::SetState(BaseState* newState) {
 
     currentState = newState;
     if (currentState) {
+        if (auto mm = dynamic_cast<MainMenuState*>(currentState)) {
+            mm->SetGameRunningPtr(pGameRunning);
+        }
+
         currentState->Load();
         currentState->Initialize();
     }
-    ignoreEsc = true;
 }
 
 
-void GameStateManager::Update(f32 deltaTime, int& gGameRunning) {
+void GameStateManager::Update(f32 deltaTime) {
     if (!currentState) return;
 
     currentState->Update(deltaTime);
@@ -31,24 +34,24 @@ void GameStateManager::Update(f32 deltaTime, int& gGameRunning) {
         SetState(nextState);    
     }
 
-    if (0 == AESysDoesWindowExist()) {
-        gGameRunning = 0;
-    }
+    //if (0 == AESysDoesWindowExist()) {
+    //    gGameRunning = 0;
+    //}
 
-    // If we are in ignore mode, check if the ESC key has been released
-    if (ignoreEsc) {
-        if (AEInputCheckReleased(AEVK_ESCAPE)) {
-            ignoreEsc = false;
-        }
-    }
+    //// If we are in ignore mode, check if the ESC key has been released
+    //if (ignoreEsc) {
+    //    if (AEInputCheckReleased(AEVK_ESCAPE)) {
+    //        ignoreEsc = false;
+    //    }
+    //}
 
-    // Only process ESC if we are not ignoring it.
-    if (!ignoreEsc && AEInputCheckTriggered(AEVK_ESCAPE)) {
-        // If in MainMenuState, quit the program.
-        if (dynamic_cast<class MainMenuState*>(currentState)) {
-            gGameRunning = 0;
-        }
-    }
+    //// Only process ESC if we are not ignoring it.
+    //if (!ignoreEsc && AEInputCheckTriggered(AEVK_ESCAPE)) {
+    //    // If in MainMenuState, quit the program.
+    //    if (dynamic_cast<class MainMenuState*>(currentState)) {
+    //        gGameRunning = 0;
+    //    }
+    //}
 }
 
 void GameStateManager::Draw() {

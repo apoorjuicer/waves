@@ -4,12 +4,14 @@
 class GameStateManager {
 private:
     BaseState* currentState = nullptr;
-    bool ignoreEsc = false;
+    int* pGameRunning = nullptr;
 public:
     GameStateManager();
 
+    void SetGameRunningPtr(int* ptr) { pGameRunning = ptr; }
+
     void SetState(BaseState* newState);
-    void Update(f32 deltaTime, int& gGameRunning);
+    void Update(f32 deltaTime);
     void Draw();
     ~GameStateManager();
 };
