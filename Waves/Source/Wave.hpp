@@ -101,6 +101,7 @@ public:
 // FUNCTION DECLARATIONS;
 //==================================================================================================================
 AEVec2 locate_reflection(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size);
+std::pair<int, int> find_wave_index(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], AEVec2 wpos, f32 tilesize);
 //AEVec2 locate_outline(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size);
 
 //void WM_collision_check(Wave& wave, int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize);

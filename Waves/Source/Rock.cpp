@@ -112,7 +112,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             rock.x += rock.dx;
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on X axis, revert X and reverse the X velocity
-                spawn_wave(MainWaves, rock.x, rock.y, mesh);
+                spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.x = prevX;
                 rock.dx *= static_cast<float>( - 0.4);
                 rock.currBounce++;
@@ -122,14 +122,14 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             rock.y += rock.dy;
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on Y axis, revert Y and reverse the Y velocity
-                spawn_wave(MainWaves, rock.x, rock.y, mesh);
+                spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.y = prevY;
                 rock.dy *= static_cast<float>( - 0.4);
                 rock.currBounce++;
             }
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
-                //spawn_wave(MainWaves, rock.x, rock.y, mesh);
+                spawn_wave(MainWaves, prevX, prevY, mesh);
                 rockActive = false;
             }
 
