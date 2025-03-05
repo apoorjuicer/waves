@@ -23,6 +23,11 @@ typedef std::pair<int, int> Pair; //contains i and j
 typedef std::pair<double, std::pair<int, int> > pPair; //contains fcost,i,j
 constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
 
+enum class Path {
+	NO_PATH = 0,
+	PATH_FOUND = 1
+};
+
 enum Enemy_State { // enemy states
 	IDLE,
 	PATROL,
@@ -98,7 +103,7 @@ void RenderEnemy_Mesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scale
 AEGfxVertexList* createEnemy_mesh(u32 color);
 void EnemyState(Enemy& e);
 void UpdateEnemystate(Enemy& e);
-void astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path);
+Path astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path);
 
 //class Enemy {
 //public:

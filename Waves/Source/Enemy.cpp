@@ -88,19 +88,12 @@ namespace {// Utility Functions
 
 	void processNeighbor(int new_i, int new_j, int i, int j, Pair dest,
 		Node gridNodes[][COL], bool closedList[][COL],
-		int grid[][COL], std::vector<pPair>& openList, bool& foundDest, std::vector<Pair>& path) {
+		int grid[][COL], std::vector<pPair>& openList,  std::vector<Pair>& path) {
 
+		
 		if (!isValid(new_i, new_j, grid)) { return; }
 
-		if (isDestination(new_i, new_j, dest)) {
-			gridNodes[new_i][new_j].parent_i = i;
-			gridNodes[new_i][new_j].parent_j = j;
-			printf("The destination cell is found\n");
-			//printPath(gridNodes, dest);
-			reconstructPath(gridNodes, dest, path);
-			foundDest = true;
-			return;
-		}
+
 
 		if (!closedList[new_i][new_j]) {
 			double gNew = gridNodes[i][j].g + 1.0;
@@ -123,17 +116,17 @@ namespace {// Utility Functions
 
 }// end of anon namespace
 
-void astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) {
+Path astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) {
 
 	path.clear(); //reset path
 	if (!isValid(dest.first, dest.second,grid) || !isValid(src.first, src.second, grid)) {
 		printf("Source or Destination is invalid\n");
-		return;
+		return Path::NO_PATH;
 	}
 	// If the destination cell is the same as source cell
 	if (isDestination(src.first, src.second, dest)){
 		printf("Already at the destination\n");
-		return;
+		return Path::NO_PATH;
 	}
 
 	//ini closed list and grid nodes
@@ -169,7 +162,16 @@ void astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) 
 
 	std::sort(openList.begin(), openList.end(), sort_lowerF);
 
-	bool path_found = false; //set to true if path found
+	//bool path_found = false; //set to true if path found
+
+	int directions[4][2] = {
+	{-1, 0},  // North  (++y)
+	{1, 0},   // South  (--y)
+	{0, -1},  // West   (--x)
+	{0, 1}    // East   (++x)
+	};
+
+
 	while (!openList.empty()) { //if openlist not empty
 		pPair p = *openList.begin();
 		//erase point in open list
@@ -180,17 +182,36 @@ void astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) 
 		j = p.second.second;
 		closedList[i][j] = true;
 
-		processNeighbor(i - 1, j, i, j, dest, gridNodes, closedList, grid, openList, path_found,path); // North ++y
-		if (path_found) return;
+		// Loop over all four directions
+		for (int d = 0; d < 4; d++) {
+			int new_i = i + directions[d][0];  // Update row
+			int new_j = j + directions[d][1];  // Update column
 
-		processNeighbor(i + 1, j, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // South --y
-		if (path_found) return;
+			if (isDestination(new_i, new_j, dest)) {
+				gridNodes[new_i][new_j].parent_i = i;
+				gridNodes[new_i][new_j].parent_j = j;
+				printf("The destination cell is found\n");
+				//printPath(gridNodes, dest);
+				reconstructPath(gridNodes, dest, path);
+				Path::PATH_FOUND;
+			}
 
-		processNeighbor(i, j - 1, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // West --x
-		if (path_found) return;
+			processNeighbor(new_i, new_j, i, j, dest, gridNodes, closedList, grid, openList, path);
 
-		processNeighbor(i, j + 1, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // East ++x
-		if (path_found) return;
+			//if (path_found) return;  // Stop immediately if the destination is found
+		}
+
+		//processNeighbor(i - 1, j, i, j, dest, gridNodes, closedList, grid, openList, path_found,path); // North ++y
+		//if (path_found) return;
+
+		//processNeighbor(i + 1, j, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // South --y
+		//if (path_found) return;
+
+		//processNeighbor(i, j - 1, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // West --x
+		//if (path_found) return;
+
+		//processNeighbor(i, j + 1, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // East ++x
+		//if (path_found) return;
 
 		// When the destination cell is not found and the open
 		// list is empty, then we conclude that we failed to
@@ -199,10 +220,9 @@ void astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) 
 		// blockages)
 	}//end of openlist check
 
-	if (!path_found) { //debug
-		printf("Pathfinding failed");
-	}
-	return;
+
+	printf("Pathfinding failed");
+	Path::NO_PATH;
 }
 
 void EnemyState(Enemy& e) {
