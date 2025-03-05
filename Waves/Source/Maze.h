@@ -1,5 +1,5 @@
 #pragma once
-#define maze_size 10
+#define maze_size 20
 extern int maze[maze_size][maze_size];
 
 

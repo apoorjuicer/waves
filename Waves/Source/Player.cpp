@@ -116,7 +116,7 @@ bool IsWalkable(float x, float y, int maze[maze_size][maze_size], float tileSize
     std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
     // Check for out-of-bounds
-    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+    if (gridX < 0 || gridX >= maze_size || gridY < 0 || gridY >= maze_size) {
         std::cout << "Out of Bounds\n";
         return false;
     }
