@@ -31,8 +31,8 @@ enum class Path {
 enum Enemy_State { // enemy states
 	IDLE,
 	PATROL,
-	PURSUIT_PLAYER,
-	PURSUIT_ROCK
+	PURSUIT_PLAYER, //CHASE, when player in vicinity
+	PURSUIT_ROCK //ALERT, when rock in vicinitity
 };
 
 struct Node {

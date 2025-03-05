@@ -49,10 +49,6 @@ namespace {// Utility Functions
 	//calc h cost 
 	double findHeuristic(int row, int col, Pair dest)
 	{
-		// euclidean distance)
-	/*	return (static_cast<double>(sqrt(
-			(row - dest.first) * (row - dest.first)
-			+ (col - dest.second) * (col - dest.second))));*/
 		//manhattan distance
 		return abs(row - dest.first) + abs(col - dest.second);
 	}
@@ -68,8 +64,8 @@ namespace {// Utility Functions
 		int i = dest.first;
 		int j = dest.second;
 		//if it's not its own parent keep looping
-		while (!(gridNodes[i][j].parent_i == i
-			&& gridNodes[i][j].parent_j == j)) {
+		while (!(gridNodes[i][j].parent_i == -1
+			&& gridNodes[i][j].parent_j == -1)) {
 			path.push_back({i,j});
 			//update i and j to parent,if dont use temp bad diagonal movement occurs
 			int temp_i = gridNodes[i][j].parent_i; 
@@ -90,10 +86,7 @@ namespace {// Utility Functions
 		Node gridNodes[][COL], bool closedList[][COL],
 		int grid[][COL], std::vector<pPair>& openList,  std::vector<Pair>& path) {
 
-		
-		if (!isValid(new_i, new_j, grid)) { return; }
-
-
+		//if (!isValid(new_i, new_j, grid)) { return ; }
 
 		if (!closedList[new_i][new_j]) {
 			double gNew = gridNodes[i][j].g + 1.0;
@@ -141,8 +134,8 @@ Path astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) 
 			gridNodes[i][j].f = VAL_INF;
 			gridNodes[i][j].g = VAL_INF;
 			gridNodes[i][j].h = VAL_INF;
-			gridNodes[i][j].parent_i = -1;
-			gridNodes[i][j].parent_j = -1;
+			gridNodes[i][j].parent_i = 0;
+			gridNodes[i][j].parent_j = 0;
 		}
 	}
 
@@ -151,18 +144,13 @@ Path astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) 
 	gridNodes[i][j].f = 0.0;
 	gridNodes[i][j].g = 0.0;
 	gridNodes[i][j].h = 0.0;
-	gridNodes[i][j].parent_i = j;
-	gridNodes[i][j].parent_j = i;
-
+	gridNodes[i][j].parent_i = -1;
+	gridNodes[i][j].parent_j = -1;
 	std::vector<pPair> openList;
 
 	//add start node to end of openlist
-	//openList.push_back(std::make_pair(0.0, std::make_pair(i, j)));
-	openList.push_back({ 0.0, {i, j} });
-
-	std::sort(openList.begin(), openList.end(), sort_lowerF);
-
-	//bool path_found = false; //set to true if path found
+	openList.push_back({ 0.0, {i, j} }); //push pair to vector
+	std::sort(openList.begin(), openList.end(), sort_lowerF); //sort vector
 
 	int directions[4][2] = {
 	{-1, 0},  // North  (++y)
@@ -186,43 +174,25 @@ Path astarsearch(int grid[][COL], Pair src, Pair dest, std::vector<Pair>& path) 
 		for (int d = 0; d < 4; d++) {
 			int new_i = i + directions[d][0];  // Update row
 			int new_j = j + directions[d][1];  // Update column
-
+	
+			if (!isValid(new_i, new_j, grid)) { continue; }
 			if (isDestination(new_i, new_j, dest)) {
 				gridNodes[new_i][new_j].parent_i = i;
 				gridNodes[new_i][new_j].parent_j = j;
 				printf("The destination cell is found\n");
 				//printPath(gridNodes, dest);
 				reconstructPath(gridNodes, dest, path);
-				Path::PATH_FOUND;
+				return Path::PATH_FOUND;
 			}
 
 			processNeighbor(new_i, new_j, i, j, dest, gridNodes, closedList, grid, openList, path);
 
-			//if (path_found) return;  // Stop immediately if the destination is found
 		}
-
-		//processNeighbor(i - 1, j, i, j, dest, gridNodes, closedList, grid, openList, path_found,path); // North ++y
-		//if (path_found) return;
-
-		//processNeighbor(i + 1, j, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // South --y
-		//if (path_found) return;
-
-		//processNeighbor(i, j - 1, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // West --x
-		//if (path_found) return;
-
-		//processNeighbor(i, j + 1, i, j, dest, gridNodes, closedList, grid, openList, path_found, path); // East ++x
-		//if (path_found) return;
-
-		// When the destination cell is not found and the open
-		// list is empty, then we conclude that we failed to
-		// reach the destination cell. This may happen when the
-		// there is no way to destination cell (due to
-		// blockages)
 	}//end of openlist check
 
 
 	printf("Pathfinding failed");
-	Path::NO_PATH;
+	return Path::NO_PATH;
 }
 
 void EnemyState(Enemy& e) {
