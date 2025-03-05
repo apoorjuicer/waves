@@ -1,5 +1,6 @@
 #pragma once
 #include<iostream>
+#include"Maze.h"
 
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color);
 void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
@@ -21,7 +22,7 @@ struct Player {
 };
 
 extern Player player; // Start at (50, 50) in world space
-
-bool IsWalkable(float x, float y, int maze[10][10], float tileSize);
-void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize);
+void InitializePlayer(Player& player, f32 tileSize);
+bool IsWalkable(float x, float y, int maze[maze_size][maze_size], float tileSize, float mazeStartX, float mazeStartY);
+void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[maze_size][maze_size], float tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh);

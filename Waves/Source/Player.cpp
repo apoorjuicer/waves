@@ -1,8 +1,25 @@
 #include "AEEngine.h"
 #include "Player.h"
+#include "maze.h"
 #include<iostream>
 
-extern Player player = { 100.0f, -100.0f };
+extern Player player = { 1.0f, -1.0f }; //starting point
+
+void InitializePlayer(Player& player, f32 tileSize) {
+    // Get the current window dimensions
+    f32 screenWidth = static_cast<f32>(AEGfxGetWindowWidth());
+    f32 screenHeight = static_cast<f32>(AEGfxGetWindowHeight());
+
+    // Calculate the starting position to center the maze
+    f32 mazeWidth = 10.0f * tileSize;  // Total width of the maze
+    f32 mazeHeight = 10.0f * tileSize; // Total height of the maze
+    f32 startX = (screenWidth - mazeWidth) / 2.0f; // Center horizontally
+    f32 startY = (screenHeight - mazeHeight) / 2.0f; // Center vertically (top-down)
+
+    // Convert player's grid coordinates to screen coordinates
+    player.x = startX + (player.x * tileSize);
+    player.y = startY + (player.y * tileSize); // Y increases as you move down
+}
 
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)
@@ -90,33 +107,7 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
     return AEGfxMeshEnd();
 }
 
-
-//chcek if area is walkable 
-//bool IsWalkable(float x, float y, int maze[10][10], float tileSize, int number_of_tiles) //number of tiles means the number of tiles height and width
-//{
-//    int gridX = (int)(x / tileSize);
-//    int gridY = (int)(y / tileSize);
-//
-//    return (gridX >= 0 && gridX < number_of_tiles && gridY >= 0 && gridY < number_of_tiles && maze[gridY][gridX] == 0);
-//}
-//
-//void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tileSize) {
-//    // Calculate the new position
-//    f32 NewX = playmove.x + (x * dt);
-//    f32 NewY = playmove.y + (y * dt);
-//
-//    // Check if the new position is walkable
-//    if (IsWalkable(NewX, NewY, maze, tileSize, 10)) {
-//        playmove.x = NewX; // Update X position
-//        playmove.y = NewY; // Update Y position
-//        std::cout << "Player Position: (" << playmove.x << ", " << playmove.y << ")\n";
-//    }
-//    else {
-//        std::cout << "Collision detected!\n";
-//    }
-//}
-
-bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+bool IsWalkable(float x, float y, int maze[maze_size][maze_size], float tileSize, float mazeStartX, float mazeStartY) {
     // Convert world-space coordinates to grid indices
     int gridX = static_cast<int>((x - mazeStartX + (tileSize/2)) / tileSize);
     int gridY = static_cast<int>(((tileSize/2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
@@ -142,7 +133,7 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
 }
 
 
-void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize) {
+void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[maze_size][maze_size], float tileSize) {
     float mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position

@@ -1,17 +1,7 @@
 #pragma once
+#define maze_size 10
+extern int maze[maze_size][maze_size];
 
-int maze[10][10] = {
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
-    { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
-    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-    { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
-    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-};
 
-void RenderMaze(int maze[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh);
+void RenderMaze(int maze[maze_size][maze_size], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);

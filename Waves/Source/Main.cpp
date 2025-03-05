@@ -25,11 +25,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	int gGameRunning = 1;
 
 	// Initialization of your own variables go here
-	f32 tilesize = 100.0f;
+	//f32 tilesize = 100.0f;
 
 	// Using custom window procedure
 	AESysInit(hInstance, nCmdShow, 1600, 900, 1, 60, false, NULL);
 
+	f32 tilesize = (((AEGfxGetWindowWidth() / 10.0f) < (AEGfxGetWindowHeight() / 10.0f)) ? (AEGfxGetWindowWidth() / 10.0f) : (AEGfxGetWindowHeight() / 10.0f));
+	InitializePlayer(player, tilesize);
 
 	AEGfxVertexList* pDonutMesh = CreateDonutMesh(1000.0f, 200.0f, 48, 0x00000000);
 	AEGfxVertexList* PlayerMesh = Player_Mesh(48, 0x00000000, 10.0f);
@@ -47,8 +49,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	AESysReset();
 
 	//printf("Hello World\n");
-	f32 MoveX = 0.0f;
-	f32 MoveY = 0.0f;
+	//f32 MoveX = 0.0f;
+	//f32 MoveY = 0.0f;
 	f32 dt = (f32)AEFrameRateControllerGetFrameTime();
 
 	// Game Loop
@@ -74,7 +76,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		//if (AEInputCheckCurr(AEVK_S)) { PlayerMovement(playermove, 0.0f, -100.0f, dt, maze, tilesize); }
 		//if (AEInputCheckCurr(AEVK_A)) { PlayerMovement(playermove, -100.0f, 0.0f, dt, maze, tilesize); }
 		//if (AEInputCheckCurr(AEVK_D)) { PlayerMovement(playermove, 100.0f, 0.0f, dt, maze, tilesize); }
-		float speed = 100.0f; // Speed in units per second
+		float speed = 10000.0f * dt; // Speed in units per second
 		float dt = (float)AEFrameRateControllerGetFrameTime();
 
 		if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, dt, maze, tilesize); // Move up

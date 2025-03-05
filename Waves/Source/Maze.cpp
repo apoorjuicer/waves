@@ -1,7 +1,22 @@
 #include "AEEngine.h"
 #include <iostream>
+#include "Maze.h"
 
-void RenderMaze(int maze[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
+
+int maze[maze_size][maze_size] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+};
+
+void RenderMaze(int maze[maze_size][maze_size], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
