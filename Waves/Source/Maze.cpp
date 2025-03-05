@@ -1,13 +1,40 @@
-#include "AEEngine.h"
-#include <iostream>
+/* Start Header ************************************************************************/
+/*!
+\file		Maze.cpp
+\author		Jordain
+\co-author  
+\email		
 
-void RenderMaze(int maze[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
+\brief
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+#include "Maze.h"
+
+int maze[ROW][COL] = {
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+    { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
+    { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+    { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+};
+
+void RenderMaze(int maze [ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
-    for (int y = 0; y < 10; ++y) {
-        for (int x = 0; x < 10; ++x) {
+    for (int y = 0; y < ROW; ++y) {
+        for (int x = 0; x < COL; ++x) {
             // Calculate the position of each tile
             f32 posX = startX + (x * tileSize);
             f32 posY = startY - ((y + 1) * tileSize); // Subtract to flip the direction

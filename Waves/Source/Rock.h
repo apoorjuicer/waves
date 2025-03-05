@@ -9,5 +9,10 @@ struct Rock {
 };
 
 namespace rock {
-	void drawRock(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, struct wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh);
+	void drawRock(Player& player, int 
+        
+        
+        [10][10], float tileSize, float 
+        
+        StartX, float mazeStartY, struct wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh);
 }

@@ -8,6 +8,7 @@
     <ClCompile Include="..\Source\Player.cpp" />
     <ClCompile Include="..\Source\Rock.cpp" />
     <ClCompile Include="..\Source\Maze.cpp" />
+    <ClCompile Include="..\Source\Enemy.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\sonar.hpp" />
@@ -16,5 +17,6 @@
     <ClInclude Include="..\Source\Player.h" />
     <ClInclude Include="..\Source\Maze.h" />
     <ClInclude Include="..\Source\Rock.h" />
+    <ClInclude Include="..\Source\Enemy.h" />
   </ItemGroup>
 </Project>

@@ -10,7 +10,7 @@
 #include "Player.h"
 #include "Maze.h"
 #include "Rock.h"
-
+#include "Enemy.h"
 #include "enemy_henrey.h"
 #include <iostream>
 #include "sonar.hpp"
@@ -38,6 +38,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// Using custom window procedure
 	AESysInit(hInstance, nCmdShow, 1600, 900, 1, 60, false, NULL);
 
+	//u32 white_colour = 0xFFFFFFFF;
+	u32 red_colour = 0xFFFF0000; // Full opacity, full red, no green, no blue
 
 	AEGfxVertexList* pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0x00000000);
 	AEGfxVertexList* PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
@@ -46,7 +48,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	AEGfxVertexList* wallMesh = CreateSquareMesh(tilesize, 0xFF000000); // Blue for walls
 	AEGfxVertexList* pathMesh = CreateSquareMesh(tilesize, 0x55555555); // White for paths
-	AEGfxVertexList* enemy1 = createEnemyMesh(0xFFFF0000); //draw enemy
+	AEGfxVertexList* enemyMesh = createEnemy_mesh(red_colour);
+	//AEGfxVertexList* enemy1 = createEnemyMesh(0xFFFF0000); //draw enemy
 
 	// Changing the window title
 	AESysSetWindowTitle("My New Demo!");
@@ -73,7 +76,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	line_s outlines[MAX_NUM_OUTLINES] = {};
 
 	//=============================================================================
+	//Enemy stuff
+	Enemy enemy;
+	enemy.x = 100.f;
+	enemy.y = 100.f;
+	enemy.w = 50.f;
+	enemy.h = enemy.w;
+	enemy.startPatrol = { 1,7 };
+	enemy.endPatrol = { 8,7 };
 
+	//=============================================================================
+	
 	
 	// Game Loop
 	while (gGameRunning)
@@ -88,6 +101,11 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			gGameRunning = 0;
 
 		// =============================================================================
+		float dt = (float)AEFrameRateControllerGetFrameTime();
+		static float accumulatedTime = 0.0f;
+		const float updateInterval = 0.1f;  // Move every 0.1 seconds
+		// get dt for this frame
+		accumulatedTime += dt;
 		// update size of main waves;
 		for (wave_s& i : wave) {
 			// skip wave if not alive;
@@ -114,7 +132,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
 		//player movement
 		float speed = 120.0f; // Speed in units per second
-		float dt = (float)AEFrameRateControllerGetFrameTime();
+
 
 		if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, dt, maze, tilesize); // Move up
 		if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, dt, maze, tilesize);  // Move down
@@ -126,12 +144,30 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			spawn_wave(wave, player.x, player.y, wavemesh);
 		}
 
+		Pair src = { 1, 1 }, dest = { 8, 8 };
+
+		if (!enemy.reachPath && enemy.state == PATROL) {  // Only calculate path once
+			astarsearch(maze, enemy.startPatrol, enemy.endPatrol, enemy.path);
+			enemy.reachPath = true;  //  Mark path as calculated
+			enemy.state == IDLE;
+		}
+
+		// Move enemy if enough time has passed
+		if (accumulatedTime >= updateInterval) {
+			if (enemy.pathIndex < enemy.path.size()) {
+				enemy.moveEnemy();
+				enemy.printPosition();
+			}
+			accumulatedTime = 0.0f;
+		}
+
+
 		// Your own rendering logic goes here
 		RenderPlayer(player, PlayerMesh);
 		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wavemesh);
 		RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-		RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
-		RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+		RenderMesh(enemyMesh,enemy.x, enemy.y, enemy.w, enemy.h, 0.0f);
+		//RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
 		draw_wave(wave);
 		draw_wave(reflection_waves);
@@ -141,7 +177,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				draw_outlines(l, wave_meshes);
 			}
 		}
-		RenderMaze(maze, tilesize, wallMesh, pathMesh); // 100.0f is the tile size
+		RenderMaze(maze, tilesize,wallMesh, pathMesh); // 100.0f is the tile size
 
 		// AEGfxSetCamPosition(MoveX, MoveY);
 		AEGfxSetCamPosition(player.x, player.y);
@@ -155,7 +191,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 		AEGfxMeshFree(i);
 	}
-
+	AEGfxMeshFree(enemyMesh);
 	// free the system
 	AESysExit();
 }
