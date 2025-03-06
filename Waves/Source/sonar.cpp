@@ -32,7 +32,157 @@ namespace {
 
 		return ((x >= left && x <= right) && (y <= top && y >= bot)) ? true : false;
 	}
+
+	int wave_binary_collision(f32 x, f32 y, f32 scale) {
+
+	}
 }
+
+//=============================================================================
+// WAVE CLASS
+//=============================================================================
+// constructor
+wave_c::wave_c() : x{}, y{}, curr_size{}, rotation{}, growth_rate{ 50.f }, mesh{}, max_size{ WAVES_SIZE }, is_active{ false } { /*empty by design*/ }
+// utility
+void wave_c::spawn(f32 x_in, f32 y_in, AEGfxVertexList* mesh_in, f32 rot) {
+	// make wave active;
+	is_active = true;
+	// set position to input;
+	x = x_in; y = y_in;
+	// set parameters;
+	curr_size = 0.f;
+	max_size = WAVES_SIZE;
+	growth_rate = 50.f;
+
+	rotation = rot;
+	mesh = mesh_in;
+
+	collision_flag = 0;
+
+	//std::cout << "wave spawn\n";
+
+	return;
+}
+
+void wave_c::update() {
+	// quick exit for non-active wave;
+	if (!is_active) {
+		return;
+	}
+	
+	if (curr_size >= max_size) {
+		is_active = false;
+
+		curr_size = 0.f;
+		growth_rate = 50.f;
+
+		reflected = { 0,0,0,0 };
+
+		return;
+	}
+
+	f32 dt = static_cast<f32>(AEFrameRateControllerGetFrameTime());
+
+	curr_size += growth_rate * dt;
+	growth_rate *= 1.05f;
+
+	////std::cout << "wave update: " << curr_size << "\n";
+	//for (bool& i : reflected) {
+	//	//std::cout << "reflected: " << i << '\n';
+	//}
+
+	return;
+}
+
+void wave_c::draw() {
+	// quick exit for non-active wave;
+	if (!is_active) {
+		return;
+	}
+	// set transforms;
+	AEMtx33 transform = { 0 }; AEMtx33 scale = { 0 };
+	AEMtx33 translate = { 0 }; AEMtx33 rotate = { 0 };
+
+	AEMtx33RotDeg(&rotate, rotation);
+	AEMtx33Scale(&scale, curr_size, curr_size);
+	AEMtx33Trans(&translate, x, y);
+
+	AEMtx33Concat(&transform, &rotate, &scale);
+	AEMtx33Concat(&transform, &translate, &transform);
+
+	AEGfxSetTransform(transform.m);
+	// draw wave;
+	AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
+
+	//std::cout << "wave draw" << '\n';
+
+	return;
+}
+
+void wave_c::check_collision(int wall_x, int wall_y, f32 tile_size) {
+	// quick exit for non-active waves;
+	if (!is_active) {
+		return;
+	}
+
+	// location of current tile;
+	f32 posX = 0.0f + (wall_x * tile_size);
+	f32 posY = tile_size - ((wall_y + 1) * tile_size);
+
+	// clamp nearest x and y from tile;
+	f32 near_x = clamp(x, posX - tile_size / 2.f, posX + tile_size / 2.f);
+	f32 near_y = clamp(y, posY - tile_size / 2.f, posY + tile_size / 2.f);
+
+	// calculate the distance from the circle center to this closest point
+	f32 dx = x - near_x;
+	f32 dy = y - near_y;
+
+	// if the distance is less than or equal to the circle's radius, they collide
+	f32 distanceSquared = (dx * dx) + (dy * dy);
+	f32 radiusSquared = (curr_size) * (curr_size);
+
+	int collsion_idx = 0;
+
+	if (distanceSquared <= radiusSquared) {
+		std::cout << "Wave collided with Wall[" << wall_y << "][" << wall_x << "]\n";
+
+		// update array of bools with reference to direction from tile;
+		if (posX >= (x - curr_size) && posX <= (x + curr_size)) {	// vertically aligned with current wave;
+			// collision top;
+			if (posY > y) {
+				std::cout << "Collision TOP ^^^\n";
+				collsion_idx = TOP;
+			}
+			// collision bot;
+			else {
+				std::cout << "Collision BOT vvv\n";
+				collsion_idx = BOT;
+			}
+		}
+		else {	// horizontally aligned with current wave;
+			// collision left;
+			if (posX < x) {
+				std::cout << "Collision LEFT <<<\n";
+				collsion_idx = LEFT;
+			}
+			// collision right;
+			else {
+				std::cout << "Collision RIGHT >>>\n";
+				collsion_idx = RIGHT;
+			}
+		}
+		// update collision array
+		reflected[collsion_idx]	= true;
+
+		return;
+	}
+
+	return;
+}
+
+
+
+
 //=============================================================================
 // general wave functions
 //=============================================================================
@@ -414,7 +564,7 @@ void draw_outlines(struct line_s& line, AEGfxVertexList* (&mesh)[NUM_WAVE_MESHES
 }
 
 void spawn_outlines(struct wave_s const& wave, f32 posX, f32 posY, f32 tilesize, struct line_s(&line)[MAX_NUM_OUTLINES], int origin) {
-
+	(void)tilesize;
 	for (line_s& l : line) {
 		if (!l.alive) {
 			// make line live;
@@ -459,7 +609,7 @@ void spawn_outlines(struct wave_s const& wave, f32 posX, f32 posY, f32 tilesize,
 //=============================================================================
 // create meshes for waves and outlines
 //=============================================================================
-AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int numSegments, int divisor) {
+AEGfxVertexList* Create_SemiCircle_Mesh1(f32 outerRadius, f32 innerRadius, int numSegments, int divisor) {
 	// Start creating the mesh
 	AEGfxMeshStart();
 
@@ -500,7 +650,7 @@ AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int nu
 	// End the mesh and return it
 	return AEGfxMeshEnd();
 }
-AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegments) {
+AEGfxVertexList* CreateWaveMesh1(f32 outerRadius, f32 innerRadius, int numSegments) {
 	// Start creating the mesh
 	AEGfxMeshStart();
 		
@@ -541,7 +691,7 @@ AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegment
 	// End the mesh and return it
 	return AEGfxMeshEnd();
 }
-AEGfxVertexList* Create_LineMesh(bool skew) {
+AEGfxVertexList* Create_LineMesh1(bool skew) {
 	if (!skew) {
 
 		AEGfxMeshStart();

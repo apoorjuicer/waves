@@ -1,21 +1,8 @@
-/* Start Header ************************************************************************/
-/*!
-\file		Maze.cpp
-\author		Jordain
-\co-author  
-\email		
-
-\brief
-
-Copyright (C) 2025 DigiPen Institute of Technology.
-Reproduction or disclosure of this file or its contents
-without the prior written consent of DigiPen Institute of
-Technology is prohibited.
-*/
-/* End Header **************************************************************************/
+#include "AEEngine.h"
+#include <iostream>
 #include "Maze.h"
 
-int maze[ROW][COL] = {
+int maze[10][10] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
     { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
@@ -28,7 +15,8 @@ int maze[ROW][COL] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 };
 
-void RenderMaze(int maze [ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
+void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
+    (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
@@ -40,7 +28,7 @@ void RenderMaze(int maze [ROW][COL], float tileSize, AEGfxVertexList* wallMesh, 
             f32 posY = startY - ((y + 1) * tileSize); // Subtract to flip the direction
 
             // Draw walls or paths
-            if (maze[y][x] == 1) {
+            if (maze1[y][x] == 1) {
                 AEMtx33 transform = { 0 };
                 AEMtx33Trans(&transform, posX, posY);
                 AEGfxSetTransform(transform.m);

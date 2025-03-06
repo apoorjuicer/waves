@@ -3,7 +3,7 @@
 #include "Player.h"
 #include <cmath>      // for std::floor
 #include <iostream>   // for std::cout
-#include "sonar.hpp"
+// #include "sonar.hpp"
 
 namespace rock {
 
@@ -51,7 +51,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh) {
+    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
@@ -66,16 +66,16 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             f32 screenHeight = static_cast<f32>(AEGfxGetWindowHeight());
 
             // Convert to world coordinates (taking camera/player position into account)
-            mouseWorld.x = (static_cast<f32>(mouseX) - screenWidth / 2) + player.x;
-            mouseWorld.y = (screenHeight / 2 - static_cast<f32>(mouseY)) + player.y;
+            mouseWorld.x = (static_cast<f32>(mouseX) - screenWidth / 2) + rplayer.x;
+            mouseWorld.y = (screenHeight / 2 - static_cast<f32>(mouseY)) + rplayer.y;
 
-            AEVec2 direction = { mouseWorld.x - player.x, mouseWorld.y - player.y };
+            AEVec2 direction = { mouseWorld.x - rplayer.x, mouseWorld.y - rplayer.y };
 
             if (AEVec2Length(&direction) > 0.1f) {
                 AEVec2Normalize(&normalisedVec, &direction);
 
-                rock.x = player.x;
-                rock.y = player.y;
+                rock.x = rplayer.x;
+                rock.y = rplayer.y;
 
                 // Set the rock velocity (adjust the multiplier as needed)
                 rock.dx = normalisedVec.x * 15.0f;
@@ -87,7 +87,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
 
         if (rockActive) {
             // Assume dt is the time elapsed this frame in seconds
-            float dt =AEFrameRateControllerGetFrameTime();
+            float dt = (float)AEFrameRateControllerGetFrameTime();
 
             // Base damping factor: 2% reduction per second.
             const float baseDamping = 0.40f;
@@ -101,10 +101,8 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
 
             // Optional: Stop the rock completely if the speed is very low.
             const float epsilon = 1.0f;
-            if (std::fabs(rock.dx) < epsilon) {
+            if (std::fabs(rock.dx) < epsilon || std::fabs(rock.dy) < epsilon) {
                 rock.dx = 0.0f;
-            }
-            if (std::fabs(rock.dy) < epsilon) {
                 rock.dy = 0.0f;
             }
             float prevX = rock.x;
@@ -114,9 +112,9 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             rock.x += rock.dx;
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on X axis, revert X and reverse the X velocity
-                spawn_wave(MainWaves, rock.x, rock.y, mesh);
+                spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.x = prevX;
-                rock.dx *= -0.4;
+                rock.dx *= static_cast<float>( - 0.4);
                 rock.currBounce++;
             }
 
@@ -124,14 +122,14 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
             rock.y += rock.dy;
             if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
                 // If collision on Y axis, revert Y and reverse the Y velocity
-                spawn_wave(MainWaves, rock.x, rock.y, mesh);
+                spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.y = prevY;
-                rock.dy *= -0.4;
+                rock.dy *= static_cast<float>( - 0.4);
                 rock.currBounce++;
             }
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
-                spawn_wave(MainWaves, rock.x, rock.y, mesh);
+                //spawn_wave(MainWaves, prevX, prevY, mesh);
                 rockActive = false;
             }
 
