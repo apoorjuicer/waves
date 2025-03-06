@@ -88,7 +88,7 @@ namespace {// Utility Functions
 		//if it's not its own parent keep looping
 		while (!(gridNodes[i][j].parent_i == -1
 			&& gridNodes[i][j].parent_j == -1)) {
-			path.push_back({ i,j });
+			path.push_back({i,j });
 			//update i and j to parent,if dont use temp bad diagonal movement occurs
 			int temp_i = gridNodes[i][j].parent_i;
 			int temp_j = gridNodes[i][j].parent_j;
@@ -217,19 +217,24 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dest, std::vector<Pair>& pat
 	return Path::NO_PATH;
 }
 
-void EnemyState(Enemy& e) {
+void EnemyState(Enemy& e,float dt) {
+	Pair currIndex = { e.gridRow,e.gridCol };
 	switch (e.state) {
 	case IDLE:
 		std::cout << "Enemy is idle.\n";
 		break;
 	case PATROL:
 		std::cout << "Enemy is patrolling.\n";
-		Pair currIndex = {e.gridRow,e.gridCol};
-		if(currIndex!=e.startPatrol) {
 
+		if(!e.reachPath && ( currIndex!=e.startPatrol || currIndex != e.endPatrol) ) {
+			astarsearch(maze, currIndex, e.startPatrol, e.path);
+			e.reachPath = true;
+		}
+		else {
+			astarsearch(maze, e.startPatrol, e.endPatrol, e.path);
 		}
 
-		//moveEnemy();
+		e.moveEnemy();
 		// Call function to move enemy
 		break;
 
@@ -245,39 +250,48 @@ void EnemyState(Enemy& e) {
 	}
 }
 
-void UpdateEnemystate(Enemy& e) {
+void UpdateEnemystate(Enemy& e,float dt) {
 	switch (e.state) {
-	case IDLE:break;
-		if (/*enemy see rock*/1) {
-			e.state = PURSUIT_ROCK;
-		}
-		else if (/*enemy see player*/1) {
-			e.state = PURSUIT_ROCK;
-		}
-		else {
-			/*probably need timer*/
-			e.state = PATROL;
-		}
+	case IDLE:
+		//if (/*enemy see rock*/1) {
+		//	e.state = PURSUIT_ROCK;
+		//}
+		//else if (/*enemy see player*/1) {
+		//	e.state = PURSUIT_ROCK;
+		//}
+		//else {
+		//	/*probably need timer*/
+		//	e.state = PATROL;
+		//}
+		break;
 	case PATROL:
-		if (/*enemy see rock*/1) {
-			e.state = PURSUIT_ROCK;
-		}
-		else if (/*enemy see player*/1) {
-			e.state = PURSUIT_ROCK;
-		}
+		//if (/*enemy see rock*/0) {
+		//	e.state = PURSUIT_ROCK;
+		//}
+		//else if (/*enemy see player*/0) {
+		//	e.state = PURSUIT_ROCK;
+		//}
 		break;
 	case PURSUIT_PLAYER:
-		if (/*enemy see rock*/1) {
-			e.state = PURSUIT_ROCK;
-		}
-		else if (/*!enemy see player*/1) {
-			//e.state = PATROL/IDLE;
-		}
+		//if (/*enemy see rock*/1) {
+		//	e.state = PURSUIT_ROCK;
+		//}
+		//else if (/*!enemy see player*/1) {
+		//	//e.state = PATROL/IDLE;
+		//}
+
+
+
 		break;
 	case PURSUIT_ROCK:
-		if (/*at rock pos*/1) {
-			//swap idle
-		}
+		//if (/*at rock pos*/1) {
+		//	//swap idle
+		//}
+
+
 		break;
 	}
+
+	//call enemystate after update
+	EnemyState(e, dt);
 }

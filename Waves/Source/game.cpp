@@ -29,12 +29,17 @@ void GameState::Load() {
 
 void GameState::Initialize() {
     exitGame = false;
+    player.x = 500.f;
+    player.y = -500.f;
+    //
+
     enemy1.x = 100.f;
     enemy1.y = -700.f;
  /*   enemy1.x = 100.f;
     enemy1.y = -100.f;*/
-    enemy1.startPatrol = { 1,7 };
-    enemy1.endPatrol = { 8,7 };
+    enemy1.startPatrol = { 7,1 };
+    enemy1.endPatrol = { 7,8 };
+    enemy1.state = IDLE;
 }
 
 void GameState::Update(float deltaTime) {
@@ -81,16 +86,20 @@ void GameState::Update(float deltaTime) {
     // get dt for this frame
     accumulatedTime += deltaTime;
 
-
+   
    // Pair src = enemy1.startPatrol, dst = enemy1.endPatrol;
-    enemy1.updateGridPosition();
-    Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 7, 8 };   //row col
-    if (!enemy1.reachPath) {  // Only calculate path once
+   // enemy1.updateGridPosition();
+   // UpdateEnemystate(enemy1,deltaTime);
+   //enemy1.printPosition();
+
+    //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
+   Pair src = {7, 1 }, dst = { 7, 8 };   //row col
+    if (!enemy1.reachPath ) {  // Only calculate path once
         astarsearch(maze, src, dst, enemy1.path);
         enemy1.reachPath = true;  //  Mark path as calculated
     }
 
-    // Move enemy if enough time has passed
+   //  Move enemy if enough time has passed
     if (accumulatedTime >= updateInterval) {
         if (enemy1.pathIndex < enemy1.path.size()) {
             enemy1.moveEnemy();

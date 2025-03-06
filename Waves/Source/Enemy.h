@@ -84,7 +84,7 @@ struct Enemy {
 	Enemy() : x{ 100.f }, y{ -100.f }, w{ 50.f }, h{ 50.f }, state{ IDLE } {}
 	// Moves enemy along the computed path
 	void moveEnemy() {
-		printf("moveToNextStep called\n");
+		printf("moving Enemy");
 		if (path.empty()) {
 			printf("path is empty\n");
 			return;
@@ -92,8 +92,12 @@ struct Enemy {
 		if (pathIndex < path.size()) {
 			Pair nextPos = path[pathIndex];  // Get next position
 			//grid to world
+			//f32 targetX = nextPos.second * TILE_SIZE;  // Update enemy's row
+			//f32 targetY = nextPos.first * -TILE_SIZE; // Update enemy's col
+			
 			f32 targetX = nextPos.second * TILE_SIZE;  // Update enemy's row
 			f32 targetY = nextPos.first * -TILE_SIZE; // Update enemy's col
+			// 
 			////movement dir vectpr
 			f32 dirX = targetX - x;
 			f32 dirY = targetY - y;
@@ -110,7 +114,6 @@ struct Enemy {
 				pathIndex++;  // Move to the next step in path
 			}
 
-
 			printf("Moving to: (%d, %d)\n", nextPos.second, nextPos.first);
 		}
 		else {
@@ -123,7 +126,8 @@ struct Enemy {
 	}
 	// Display enemy position, for debug
 	void printPosition() {
-		std::cout << "Enemy Position: (" << x << ", " << y << ")\n";
+		std::cout << "Enemy Position in World: (" << x << ", " << y << ")\n";
+		std::cout << "Enemy Position in Grid: (" << gridRow << ", " << gridCol << ")\n";
 	}
 };
 
@@ -133,8 +137,8 @@ struct Enemy {
 //void aStarSearch(int grid[][COL], Pair src, Pair dest);
 void RenderEnemy_Mesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
 AEGfxVertexList* createEnemyMesh(u32 enemy_color);
-void EnemyState(Enemy& e);
-void UpdateEnemystate(Enemy& e);
+void EnemyState(Enemy& e, float dt);
+void UpdateEnemystate(Enemy& e, float dt);
 Path astarsearch(int grid[ROW][COL], Pair src, Pair dest, std::vector<Pair>& path);
 
 //class Enemy {
