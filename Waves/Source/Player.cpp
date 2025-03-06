@@ -106,7 +106,7 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
     }
 
     // Check if the grid cell is walkable
-    if (maze[gridY][gridX] == 0) {
+    if (maze[gridY][gridX] == 0 || maze[gridY][gridX] == 3 || maze[gridY][gridX] == 2) {
         //std::cout << "Walkable\n";
         return true;
     }

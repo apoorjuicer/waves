@@ -18,6 +18,7 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
 //void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tilesize);
 struct Player {
     float x, y;  // Position in world space
+    int key=0;
 };
 
 extern Player player; // Start at (50, 50) in world space

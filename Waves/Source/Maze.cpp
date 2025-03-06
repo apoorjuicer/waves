@@ -4,9 +4,9 @@
 
 int maze[10][10] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-    { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
+    { 1, 0, 0, 0, 0, 0, 1, 0, 2, 1 },
     { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
-    { 1, 0, 0, 0, 1, 0, 0, 0, 0, 1 },
+    { 1, 3, 0, 0, 1, 0, 0, 0, 0, 1 },
     { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
     { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
@@ -15,7 +15,7 @@ int maze[10][10] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 };
 
-void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
+void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* rockMesh) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
@@ -27,12 +27,18 @@ void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AE
             f32 posX = startX + (x * tileSize);
             f32 posY = startY - ((y + 1) * tileSize); // Subtract to flip the direction
 
-            // Draw walls or paths
-            if (maze1[y][x] == 1) {
                 AEMtx33 transform = { 0 };
                 AEMtx33Trans(&transform, posX, posY);
                 AEGfxSetTransform(transform.m);
+            // Draw walls or paths
+            if (maze1[y][x] == 1) {
                 AEGfxMeshDraw(wallMesh, AE_GFX_MDM_TRIANGLES);
+            }
+            if (maze1[y][x] == 2) {
+                AEGfxMeshDraw(goalMesh, AE_GFX_MDM_TRIANGLES);
+            }
+            if (maze1[y][x] == 3) {
+                AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
             }
             //if (maze[y][x] == 0) {
             //    continue;
@@ -62,5 +68,4 @@ AEGfxVertexList* CreateSquareMesh(float size, u32 color)
 
     return AEGfxMeshEnd();
 }
-
 

@@ -3,7 +3,7 @@
 
 GameState::GameState() : exitGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemy1(nullptr) {
+goalMesh(nullptr), pathMesh(nullptr), enemy1(nullptr) {
 
 }
 
@@ -14,7 +14,9 @@ void GameState::Load() {
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
+    goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
     enemy1 = createEnemyMesh(0xFFFF0000);
+    RockMesh = rock::Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
@@ -55,7 +57,7 @@ void GameState::Update(float deltaTime) {
     }
 
     // Player movement
-    float speed = 120.0f;
+    float speed = 360.0f;
     if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
@@ -67,12 +69,11 @@ void GameState::Update(float deltaTime) {
 }
 
 void GameState::Draw() {
-    RenderPlayer(player, PlayerMesh);
-    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes[0]);
+    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes[0], RockMesh);
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     draw_wave(wave);
     draw_wave(reflection_waves);
@@ -83,7 +84,8 @@ void GameState::Draw() {
         }
     }
 
-    RenderMaze(maze, tilesize, wallMesh, pathMesh);
+    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh,RockMesh);
+    RenderPlayer(player, PlayerMesh);
     AEGfxSetCamPosition(player.x, player.y);
 }
 

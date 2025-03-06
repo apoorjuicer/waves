@@ -15,8 +15,10 @@ private:
     AEGfxVertexList* PlayerMesh = nullptr;
     AEGfxVertexList* wallMesh = nullptr;
     AEGfxVertexList* pathMesh = nullptr;
+    AEGfxVertexList* goalMesh = nullptr;
     AEGfxVertexList* enemy1 = nullptr;
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
+    AEGfxVertexList* RockMesh = nullptr;
     wave_s wave[MAX_NUM_WAVES] = {};
     wave_s reflection_waves[MAX_NUM_WAVES] = {};
     line_s outlines[MAX_NUM_OUTLINES] = {};

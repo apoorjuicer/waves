@@ -1,6 +1,7 @@
 #include "AEEngine.h"
 #include "Rock.h"
 #include "Player.h"
+#include <algorithm>
 #include <cmath>      // for std::floor
 #include <iostream>   // for std::cout
 #include "sonar.hpp"
@@ -23,39 +24,52 @@ namespace rock {
         return AEGfxMeshEnd();
     }
 
-bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
-    // Convert world-space coordinates to grid indices with half-tile offsets for centering
-    int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
-    int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
+    bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, float rockRadius) {
+        // Convert world-space coordinates to grid indices with half-tile offsets for centering
+        int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
+        int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
 
-    //std::cout << "World Position: (" << x << ", " << y << ")\n";
-    //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
+        // Check for out-of-bounds
+        if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+            return false;
+        }
 
-    // Check for out-of-bounds
-    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
-        //std::cout << "Out of Bounds\n";
-        return false;
-    }
+        // If the cell is walkable, no collision
+        if (maze[gridY][gridX] == 0 || maze[gridY][gridX] == 2 || maze[gridY][gridX] == 3) {
+            return true;
+        }
 
-    // Return true if cell is walkable, false if blocked
-    if (maze[gridY][gridX] == 0) {
-        //std::cout << "Walkable\n";
+        // Calculate the closest point on the grid cell to the rock's center
+        float cellCenterX = mazeStartX + gridX * tileSize;
+        float cellCenterY = mazeStartY - gridY * tileSize;
+
+        float closestX = std::max<float>(cellCenterX - tileSize / 2.0f, std::min<float>(x, cellCenterX + tileSize / 2.0f));
+        float closestY = std::max<float>(cellCenterY - tileSize / 2.0f, std::min<float>(y, cellCenterY + tileSize / 2.0f));
+
+        // Calculate the distance between the rock's center and the closest point
+        float dx = x - closestX;
+        float dy = y - closestY;
+        float distanceSquared = dx * dx + dy * dy;
+
+        // Check if the distance is less than or equal to the rock's radius
+        if (distanceSquared <= rockRadius * rockRadius) {
+            // Collision detected
+            return false;
+        }
+
+        // No collision
         return true;
-    } else {
-        //std::cout << "Blocked\n";
-        return false;
     }
-}
 
     // Global rock object
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh) {
+    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, wave_s(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList* mesh, AEGfxVertexList* RockMesh) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
-        static AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
+        //static AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
 
         // Launch the rock when the left mouse button is clicked (and if not already active)
         if (AEInputCheckCurr(AEVK_LBUTTON) && !rockActive) {
@@ -101,18 +115,24 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
 
             // Optional: Stop the rock completely if the speed is very low.
             const float epsilon = 1.0f;
-            if (std::fabs(rock.dx) < epsilon) {
+            if (std::fabs(rock.dx) < epsilon && std::fabs(rock.dy) < epsilon) {
                 rock.dx = 0.0f;
-            }
-            if (std::fabs(rock.dy) < epsilon) {
                 rock.dy = 0.0f;
             }
+            //if (std::fabs(rock.dx) < epsilon) {
+            //    rock.dx = 0.0f;
+            //    rock.dy = 0.0f;
+            //}
+            //if (std::fabs(rock.dy) < epsilon) {
+            //    rock.dy = 0.0f;
+            //    rock.dx = 0.0f;
+            //}
             float prevX = rock.x;
             float prevY = rock.y;
 
             // --- Process X Movement ---
             rock.x += rock.dx;
-            if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
+            if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY,10.0f)) {
                 // If collision on X axis, revert X and reverse the X velocity
                 spawn_wave(MainWaves, rock.x, rock.y, mesh);
                 rock.x = prevX;
@@ -122,7 +142,7 @@ bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float m
 
             // --- Process Y Movement ---
             rock.y += rock.dy;
-            if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY)) {
+            if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY,10.0f)) {
                 // If collision on Y axis, revert Y and reverse the Y velocity
                 spawn_wave(MainWaves, rock.x, rock.y, mesh);
                 rock.y = prevY;
