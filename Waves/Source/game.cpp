@@ -3,7 +3,7 @@
 
 GameState::GameState() : exitGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr) {
+pathMesh(nullptr), enemyMesh(nullptr), prevDestX(-1), prevDestY(-1){
 
 }
 
@@ -50,7 +50,7 @@ void GameState::Update(float deltaTime) {
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
-    float speed = 120.0f;
+    float speed = 300.0f;
     if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
@@ -91,13 +91,56 @@ void GameState::Update(float deltaTime) {
    // enemy1.updateGridPosition();
    // UpdateEnemystate(enemy1,deltaTime);
    enemy1.printPosition();
+   int destX = static_cast<int>((player.x + (TILE_SIZE / 2)) / TILE_SIZE);
+   int destY = static_cast<int>((player.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+   int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
+   int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
+
+   std::cout << "Player Position: (" << destX << "," << destY << ")\n";
+   std::cout << "Enemy Position: (" << srcX << "," << srcY << ")\n";
 
     //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
-   Pair src = {1, 7 }, dst = { 8, 7 };   //row col
-    if (!enemy1.reachPath ) {  // Only calculate path once
-        astarsearch(maze, src, dst, enemy1.path);
-        enemy1.reachPath = true;  //  Mark path as calculated
+    Pair src = {srcX, srcY }, dst = { destX, destY };   //row col
+
+    // If the destination has changed, stop movement & recalculate path
+    if (destX != prevDestX || destY != prevDestY) {
+        std::cout << "Destination changed! Stopping enemy & recalculating path...\n";
+
+        enemy1.path.clear();  // Clear old path
+        enemy1.pathIndex = 0;  // Reset path index
+        enemy1.x = srcX * TILE_SIZE;  // Stop enemy at current position
+        enemy1.y = -srcY * TILE_SIZE; // Stop enemy at current position
+
+        Pair src = { srcX, srcY };   // Ensure (row, col) order
+        Pair dest = { destX, destY };
+
+        astarsearch(maze, src, dest, enemy1.path);
+
+        // Update previous destination
+        prevDestX = destX;
+        prevDestY = destY;
     }
+
+    // Move enemy ONLY if it has a path
+    if (!enemy1.path.empty() && enemy1.pathIndex < enemy1.path.size()) {
+        enemy1.moveEnemy(); // Move enemy only if there is a valid path
+    }
+    else {
+        std::cout << "Enemy stopped. Waiting for new destination.\n";
+    }
+
+    // Move enemy if enough time has passed
+    if (accumulatedTime >= updateInterval) {
+        if (enemy1.pathIndex < enemy1.path.size()) {
+            enemy1.moveEnemy();
+            enemy1.printPosition();
+        }
+        accumulatedTime = 0.0f;
+    }
+    //if (!enemy1.reachPath ) {  // Only calculate path once
+    //    astarsearch(maze, src, dst, enemy1.path);
+    //    enemy1.reachPath = true;  //  Mark path as calculated
+    //}
 
    //  Move enemy if enough time has passed
     if (accumulatedTime >= updateInterval) {

@@ -18,6 +18,8 @@ private:
     AEGfxVertexList* pathMesh = nullptr;
     AEGfxVertexList* enemyMesh = nullptr;
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
+    int prevDestX = -1;
+    int prevDestY = -1;
     //wave_s wave[MAX_NUM_WAVES] = {};
     //wave_s reflection_waves[MAX_NUM_WAVES] = {};
     //line_s outlines[MAX_NUM_OUTLINES] = {};
