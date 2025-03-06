@@ -69,7 +69,7 @@ void GameState::Update(float deltaTime) {
 }
 
 void GameState::Draw() {
-    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes[0], RockMesh);
+    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, RockMesh);
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
