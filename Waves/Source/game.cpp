@@ -47,7 +47,6 @@ void GameState::Update(float deltaTime) {
         std::cout << "\n\n\n\n\n";
     }
 
-    // update echolocation waves and outlines;
     for (Wave& w : wave) {
         if (w.is_active) {
             // update wave size;
@@ -75,17 +74,16 @@ void GameState::Draw() {
     RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
-    // draw echolocation waves and outlines;
     for (Wave& w : wave) {
         if (w.is_active) {
             w.draw();
         }
     }
-    //for (Wave& r : reflections) {
-    //    if (r.is_active) {
-    //        r.draw();
-    //    }
-    //}
+    for (Wave& r : reflections) {
+        if (r.is_active) {
+            r.draw();
+        }
+    }
     for (Outline& l : outlines) {
         if (l.is_active) {
             l.draw();
