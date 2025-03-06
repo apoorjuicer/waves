@@ -221,7 +221,7 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 }
 
 void EnemyState(Enemy& e,float dt) {
-	Pair currIndex = { e.gridRow,e.gridCol };
+	Pair currIndex = { e.gridX,e.gridY};
 	switch (e.state) {
 	case IDLE:
 		std::cout << "Enemy is idle.\n";

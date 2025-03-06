@@ -90,7 +90,7 @@ void GameState::Update(float deltaTime) {
    // Pair src = enemy1.startPatrol, dst = enemy1.endPatrol;
    // enemy1.updateGridPosition();
    // UpdateEnemystate(enemy1,deltaTime);
-   //enemy1.printPosition();
+   enemy1.printPosition();
 
     //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
    Pair src = {1, 7 }, dst = { 8, 7 };   //row col

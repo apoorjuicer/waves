@@ -69,7 +69,7 @@ struct Node {
 
 struct Enemy {
 	f32 x, y; //x-y pos
-	int gridRow, gridCol;
+	int gridX, gridY;
 	f32 w = 50.f, h = 50.f; //scale
 	Pair startPatrol;
 	Pair endPatrol;
@@ -121,13 +121,13 @@ struct Enemy {
 		}
 	}
 	void updateGridPosition() {
-		gridRow = static_cast<int>(y / -TILE_SIZE);
-		gridCol = static_cast<int>(x / TILE_SIZE);
+		gridX = static_cast<int>(x / TILE_SIZE);
+		gridY = static_cast<int>(y / -TILE_SIZE);
 	}
 	// Display enemy position, for debug
 	void printPosition() {
 		std::cout << "Enemy Position in World: (" << x << ", " << y << ")\n";
-		std::cout << "Enemy Position in Grid: (" << gridRow << ", " << gridCol << ")\n";
+		std::cout << "Enemy Position in Grid: (" << gridX << ", " << gridY << ")\n";
 	}
 };
 
