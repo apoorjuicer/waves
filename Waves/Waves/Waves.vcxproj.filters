@@ -19,6 +19,9 @@
     <ClCompile Include="..\Source\Rock.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="..\Source\sonar.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
     <ClCompile Include="..\Source\GSM.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -28,7 +31,13 @@
     <ClCompile Include="..\Source\game.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="..\Source\Wave.cpp">
+    <ClCompile Include="..\Source\winState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\loseState.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Source\nextLevelState.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -48,6 +57,9 @@
     <ClInclude Include="..\Source\Rock.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Source\sonar.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
     <ClInclude Include="..\Source\baseStates.h">
       <Filter>Header Files</Filter>
     </ClInclude>
@@ -60,10 +72,15 @@
     <ClInclude Include="..\Source\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Wave.hpp">
+    <ClInclude Include="winState.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\sonar.hpp" />
+    <ClInclude Include="..\Source\loseState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Source\nextLevelState.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Filter Include="Header Files">
