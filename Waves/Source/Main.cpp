@@ -30,13 +30,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	int gGameRunning = 1;
 
 	GameStateManager gameStateManager;
-	gameStateManager.SetGameRunningPtr(&gGameRunning); // Provide the pointer to GSM
-
-	// Create main menu
-	MainMenuState* menu = new MainMenuState();
-	//menu->SetGameRunningPtr(&gGameRunning); // <-- Pass pointer here
-
-	gameStateManager.SetState(menu);
+	gameStateManager.SetState(new MainMenuState());
 
 	// reset the system modules
 	AESysReset();
@@ -49,12 +43,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
 
 		f32 dt = (f32)AEFrameRateControllerGetFrameTime();
-		gameStateManager.Update(dt);
+		gameStateManager.Update(dt, gGameRunning);
 		gameStateManager.Draw();
-
-		if (0 == AESysDoesWindowExist()) {
-			gGameRunning = 0;
-		}
 
 		// Informing the system about the loop's end
 		AESysFrameEnd();
