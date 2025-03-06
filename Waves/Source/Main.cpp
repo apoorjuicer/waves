@@ -3,14 +3,10 @@
 
 #include <crtdbg.h> // To check for memory leaks
 #include "AEEngine.h"
-#include "Player.h"
-#include "Maze.h"
-#include "Rock.h"
-#include "enemy_henrey.h"
-#include "sonar.hpp"
+
 #include "GSM.h"
 #include "mainMenu.h"
-#include <iostream>
+
 
 // ---------------------------------------------------------------------------
 // main
@@ -34,7 +30,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	int gGameRunning = 1;
 
 	GameStateManager gameStateManager;
-	gameStateManager.SetState(new MainMenuState());
+	gameStateManager.SetGameRunningPtr(&gGameRunning); // Provide the pointer to GSM
+
+	// Create main menu
+	MainMenuState* menu = new MainMenuState();
+	//menu->SetGameRunningPtr(&gGameRunning); // <-- Pass pointer here
+
+	gameStateManager.SetState(menu);
 
 	// reset the system modules
 	AESysReset();
@@ -47,8 +49,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
 
 		f32 dt = (f32)AEFrameRateControllerGetFrameTime();
-		gameStateManager.Update(dt, gGameRunning);
+		gameStateManager.Update(dt);
 		gameStateManager.Draw();
+
+		if (0 == AESysDoesWindowExist()) {
+			gGameRunning = 0;
+		}
 
 		// Informing the system about the loop's end
 		AESysFrameEnd();
