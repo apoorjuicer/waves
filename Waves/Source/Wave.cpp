@@ -66,7 +66,7 @@ namespace {
 		switch (dir) {
 		case DIR_LEFT:
 			for (int t{ wall_pos.first - 1}; t > 0; --t) {
-				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t] == 1) {
+				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t]) {
 					break;
 				}
 				line += tilesize;
@@ -74,7 +74,7 @@ namespace {
 			break;
 		case DIR_RIGHT:
 			for (int t{ wall_pos.first + 1 }; t < MAZE_WIDTH; ++t) {
-				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t] == 1) {
+				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t]) {
 					break;
 				}
 				line += tilesize;
@@ -82,7 +82,7 @@ namespace {
 			break;
 		case DIR_UP:
 			for (int t{ wall_pos.second - 1 }; t > 0; --t) {
-				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first] == 1) {
+				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first]) {
 					break;
 				}
 				line += tilesize;
@@ -90,7 +90,7 @@ namespace {
 			break;
 		case DIR_DOWN:
 			for (int t{ wall_pos.second + 1 }; t < MAZE_HEIGHT; ++t) {
-				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first] == 1) {
+				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first]) {
 					break;
 				}
 				line += tilesize;
