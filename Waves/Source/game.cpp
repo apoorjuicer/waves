@@ -79,11 +79,11 @@ void GameState::Draw() {
             w.draw();
         }
     }
-    for (Wave& r : reflections) {
-        if (r.is_active) {
-            r.draw();
-        }
-    }
+    //for (Wave& r : reflections) {
+    //    if (r.is_active) {
+    //        r.draw();
+    //    }
+    //}
     for (Outline& l : outlines) {
         if (l.is_active) {
             l.draw();

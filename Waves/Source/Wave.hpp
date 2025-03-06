@@ -10,7 +10,7 @@ constexpr int MAZE_WIDTH{ 10 };
 //==================================================================================================================
 // CONST EXPRESSIONS;
 //==================================================================================================================
-constexpr f32 WAVES_SIZE{ 60.f };
+constexpr f32 WAVES_SIZE{ 150.f };
 constexpr f32 REFLECTIONS_MAX_SIZE{ 80.f };
 constexpr f32 GROWTH_R{ 50.f };
 
@@ -85,7 +85,7 @@ protected:
 
 public:
 	f32	growth_rate;
-	short r_collision[4]{};	// left, right, up, down;
+	short r_collision[8]{};	// left, right, up, down;
 
 	Wave();
 
@@ -100,12 +100,12 @@ public:
 //==================================================================================================================
 // FUNCTION DECLARATIONS;
 //==================================================================================================================
+// find location of reflection waves;
 AEVec2 locate_reflection(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size);
-//AEVec2 locate_outline(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size);
-
-//void WM_collision_check(Wave& wave, int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize);
-
-void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in);
+// finds x and y index of wave with respect to maze and size of each tile;
+std::pair<int, int> find_wave_index(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], AEVec2 wpos, f32 tilesize);
+// interface for spawning wave;
+void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in, f32 max_size = WAVES_SIZE);
 
 void create_two_outlines(Outline(&outlines)[MAX_NUM_OUTLINES], AEVec2 pos_in, AEVec2 maxlen_in,
 	std::pair<DIRECTION, DIRECTION> dir_pair, AEGfxVertexList** mesh_in, f32 g_rate);

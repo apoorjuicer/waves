@@ -61,6 +61,44 @@ namespace {
 		// return result;
 		return (distanceSquared <= radiusSquared) ? true : false;
 	}
+
+	f32 outline_maxlen(int const (&maze)[MAZE_HEIGHT][MAZE_WIDTH], std::pair<int, int> wave_pos, std::pair<int, int> wall_pos, f32& line, f32 tilesize, DIRECTION dir) {
+		switch (dir) {
+		case DIR_LEFT:
+			for (int t{ wall_pos.first - 1 }; t > 0; --t) {
+				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t]) {
+					break;
+				}
+				line += tilesize;
+			}
+			break;
+		case DIR_RIGHT:
+			for (int t{ wall_pos.first + 1 }; t < MAZE_WIDTH; ++t) {
+				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t]) {
+					break;
+				}
+				line += tilesize;
+			}
+			break;
+		case DIR_UP:
+			for (int t{ wall_pos.second - 1 }; t > 0; --t) {
+				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first]) {
+					break;
+				}
+				line += tilesize;
+			}
+			break;
+		case DIR_DOWN:
+			for (int t{ wall_pos.second + 1 }; t < MAZE_HEIGHT; ++t) {
+				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first]) {
+					break;
+				}
+				line += tilesize;
+			}
+			break;
+		}
+		return line;
+	}
 }
 
 DIRECTION& operator++(DIRECTION& dir) {
@@ -226,17 +264,17 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 
 				// distance of wave position from wall position;
 				f32 dist_x{ abs(pos.x - wpos.x) }, dist_y{ abs(pos.y - wpos.y) };
-				
+				std::pair<int, int> wave_index = find_wave_index(maze, pos, tilesize);
+
 				// variables for creating reflections;
 				AEGfxVertexList** r_mesh{ nullptr };
-				bool r_change{ false };
-				f32 r_max{}, r_scale{};
 				AEVec2 rpos{};
-				
-				// variables for creating outlines;
+				f32 r_max{}, r_scale{};
+				bool r_change{ false };
+
+				// variables for creating pairs of outlines;
 				std::pair<DIRECTION, DIRECTION> l_dir{};
-				AEVec2 l_maxlen{};
-				AEVec2 l_pos{};
+				AEVec2 l_maxlen{}, l_temp{}, l_pos{};
 
 				// ================================================================================================
 				// CALCULATE REFLECTIONS & OUTLINES
@@ -244,50 +282,50 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 				// DIRECT COLLISIONS ------------------------------------------------------------------------------
 				if ((pos.x >= wall_left && pos.x <= wall_right)
 					|| (pos.y >= wall_bot && pos.y <= wall_top)) {
-					
+
 					// reflection init specific to direct collisions;
 					rpos = locate_reflection(pos, wpos, tilesize);
 					r_mesh = mesh + 1;
 					r_max = REFLECTIONS_MAX_SIZE; r_scale = scale.x * 0.8f;
 
 					if (dist_x > dist_y) {
-						
+
 						// directions for each line components;
 						l_dir = { DIR_UP, DIR_DOWN }; l_pos.y = pos.y;
 
-						// calculate max length of each line component;
-						l_maxlen.x = maze[clamp(y - 1, 0, MAZE_HEIGHT)][x] ? REFLECTIONS_MAX_SIZE : (wall_top - pos.y);
-						l_maxlen.y = maze[clamp(y + 1, 0, MAZE_HEIGHT)][x] ? REFLECTIONS_MAX_SIZE : (pos.y - wall_bot);
-						
+						// initialize max length of each line component;
+						l_maxlen.x = (wall_top - pos.y);
+						l_maxlen.y = (pos.y - wall_bot);
+
 						// wave left of wall;
 						if (pos.x < wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[0] < 2) {
 
 							// set outline to slightly left of wall;
 							l_pos.x = wall_left - 1;
 							// update wave collision check array;
-							r_collision[0] += 1;
+							r_collision[0] = 1;
 							r_change = true;
 
 						}
 						// wave right of wall;
-						else if (pos.x > wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[1] < 2) {
+						if (pos.x > wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[1] < 2) {
 
 							// set outline to slightly right of wall;
 							l_pos.x = wall_right + 1;
 							// update wave collision check array;
-							r_collision[1] += 1;
+							r_collision[1] = 1;
 							r_change = true;
 
 						}
 					}
-					else {
+					else if (dist_x < dist_y) {
 
 						// directions for each line components;
 						l_dir = { DIR_LEFT, DIR_RIGHT }; l_pos.x = pos.x;
 
-						// calculate max length of each line component;
-						l_maxlen.x = maze[y][clamp(x - 1, 0, MAZE_WIDTH)] ? REFLECTIONS_MAX_SIZE : (pos.x - wall_left);
-						l_maxlen.y = maze[y][clamp(x + 1, 0, MAZE_WIDTH)] ? REFLECTIONS_MAX_SIZE : (wall_right - pos.x);
+						// initialize max length of each line component;
+						l_maxlen.x = (pos.x - wall_left);
+						l_maxlen.y = (wall_right - pos.x);
 
 						// wave above wall;
 						if (pos.y > wall_top && !maze[clamp(y - 1, 0, MAZE_HEIGHT)][x] && r_collision[2] < 2) {
@@ -295,7 +333,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							// set outline to slightly above wall;
 							l_pos.y = wall_top + 1;
 							// update wave collision check array;
-							r_collision[2] += 1;
+							r_collision[2] = 1;
 							r_change = true;
 
 						}
@@ -305,79 +343,139 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							// set outline to slightly below wall;
 							l_pos.y = wall_bot - 1;
 							// update wave collision check array;
-							r_collision[3] += 1;
+							r_collision[3] = 1;
 							r_change = true;
 
 						}
 					}
+
+					// extending line until either: end of wall; wave path is blocked;
+					l_temp.x = outline_maxlen(maze, wave_index, std::pair<int, int>{x, y}, l_maxlen.x, tilesize, l_dir.first);
+					l_temp.y = outline_maxlen(maze, wave_index, std::pair<int, int>{x, y}, l_maxlen.y, tilesize, l_dir.second);
+					// limit the maximum length of outline to WAVES_SIZE;
+					l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
+					l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
+
 				}
 				// CORNER COLLISIONS -----------------------------------------------------------------------------
-				else {
+				if ((pos.x < wall_left || pos.x > wall_right)
+					&& (pos.y < wall_bot || pos.y > wall_top)) {
 
 					// reflection init specific to corner collisions;
 					r_mesh = mesh;
 					r_max = REFLECTIONS_MAX_SIZE / 2.f; r_scale = scale.x / 8.f;
 
-					if (pos.y >= wall_top && !maze[clamp(y - 1, 0, MAZE_HEIGHT)][x] && r_collision[2] < 2) {
+					l_maxlen.x = l_maxlen.y = tilesize;
+
+					if (pos.y >= wall_top && !maze[clamp(y - 1, 0, MAZE_HEIGHT)][x] && r_collision[6] < 2) {
 						// TOP LEFT CORNER ------------
-						if (pos.x <= wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[0] < 2) {
+						if (pos.x <= wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[4] < 2) {
 
 							// directions for each line components;
-							l_dir = { DIR_DOWN, DIR_RIGHT }; 
+							l_dir = { DIR_DOWN, DIR_RIGHT };
 							l_pos.x = wall_left - 1; l_pos.y = wall_top + 1;
 
 							// calculate max length of each line component; check tile below and tile to right;
-							l_maxlen.x = maze[clamp(y + 1, 0, MAZE_HEIGHT)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
-							l_maxlen.y = maze[y][clamp(x + 1, 0, MAZE_WIDTH)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
+							for (int t{ y + 1 }; t < MAZE_HEIGHT; ++t) {
+								if (!maze[t][x]) {
+									break;
+								}
+								l_maxlen.x += tilesize;
+							}
+							for (int t{ x + 1 }; t < MAZE_WIDTH; ++t) {
+								if (!maze[y][t]) {
+									break;
+								}
+								l_maxlen.y += tilesize;
+							}
+							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
+							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[0] += 1; r_collision[2] += 1;
+							r_collision[4] = 1; r_collision[6] = 1;
 							r_change = true;
 							rpos = { wall_left, wall_top };
 						}
 						// TOP RIGHT CORNER -----------
-						else if (pos.x >= wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[1] < 2) {
+						if (pos.x >= wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[5] < 2) {
 
 							// directions for each line components;
 							l_dir = { DIR_DOWN, DIR_LEFT };
 							l_pos.x = wall_right + 1; l_pos.y = wall_top + 1;
 
 							// calculate max length of each line component; check tile below and tile to left;
-							l_maxlen.x = maze[clamp(y + 1, 0, MAZE_HEIGHT)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
-							l_maxlen.y = maze[y][clamp(x - 1, 0, MAZE_WIDTH)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
+							for (int t{ y + 1 }; t < MAZE_HEIGHT; ++t) {
+								if (!maze[t][x]) {
+									break;
+								}
+								l_maxlen.x += tilesize;
+							}
+							for (int t{ x - 1 }; t > 0; --t) {
+								if (!maze[y][t]) {
+									break;
+								}
+								l_maxlen.y += tilesize;
+							}
+							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
+							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[1] += 1; r_collision[2] += 1;
+							r_collision[5] = 1; r_collision[6] = 1;
 							r_change = true;
 							rpos = { wall_right, wall_top };
 						}
+
 					}
-					else if (pos.y <= wall_bot && !maze[clamp(y + 1, 0, MAZE_HEIGHT)][x] && r_collision[3] < 2) {
+					if (pos.y <= wall_bot && !maze[clamp(y + 1, 0, MAZE_HEIGHT)][x] && r_collision[7] < 2) {
 						// BOT LEFT CORNER ------------
-						if (pos.x <= wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[0] < 2) {
+						if (pos.x <= wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[4] < 2) {
 
 							// directions for each line components;
 							l_dir = { DIR_UP, DIR_RIGHT };
 							l_pos.x = wall_left - 1; l_pos.y = wall_bot - 1;
 
 							// calculate max length of each line component; check tile above and tile to right;
-							l_maxlen.x = maze[clamp(y - 1, 0, MAZE_HEIGHT)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
-							l_maxlen.y = maze[y][clamp(x + 1, 0, MAZE_WIDTH)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
+							for (int t{ y - 1 }; t > 0; --t) {
+								if (!maze[t][x]) {
+									break;
+								}
+								l_maxlen.x += tilesize;
+							}
+							for (int t{ x + 1 }; t < MAZE_WIDTH; ++t) {
+								if (!maze[y][t]) {
+									break;
+								}
+								l_maxlen.y += tilesize;
+							}
+							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
+							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[0] += 1; r_collision[3] += 1;
+							r_collision[4] = 1; r_collision[7] = 1;
 							r_change = true;
 							rpos = { wall_left, wall_bot };
 						}
 						// BOT RIGHT CORNER -----------
-						else if (pos.x >= wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[1] < 2) {
+						if (pos.x >= wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[5] < 2) {
 
 							// directions for each line components;
 							l_dir = { DIR_UP, DIR_LEFT };
 							l_pos.x = wall_right + 1; l_pos.y = wall_bot - 1;
 
 							// calculate max length of each line component; check tile above and tile to left;
-							l_maxlen.x = maze[clamp(y - 1, 0, MAZE_HEIGHT)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
-							l_maxlen.y = maze[y][clamp(x - 1, 0, MAZE_WIDTH)] ? (REFLECTIONS_MAX_SIZE * 0.8f) : tilesize;
+							for (int t{ y - 1 }; t > 0; --t) {
+								if (!maze[t][x]) {
+									break;
+								}
+								l_maxlen.x += tilesize;
+							}
+							for (int t{ x - 1 }; t > 0; --t) {
+								if (!maze[y][t]) {
+									break;
+								}
+								l_maxlen.y += tilesize;
+							}
+							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
+							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[1] += 1; r_collision[3] += 1;
+							r_collision[5] = 1; r_collision[7] = 1;
 							r_change = true;
 							rpos = { wall_right, wall_bot };
 						}
@@ -393,22 +491,23 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 
 						DIRECTION dir{ DIR_LEFT };
 						// iterate through directions
-						for (int i{}; i < 4; ++i, ++dir) {
+						for (int i{}; i < 8; ++i, ++dir) {
 
 							// only spawn 1 time and if r_collision_check array has been updated;
 							if (1 == r_collision[i] && r_change) {
 
-								// create reflection
-								r.spawn(rpos, r_mesh, r_max, growth_rate * 0.7f, r_scale, dir);
-								r_collision[i] += 1;
+								if (i < 4) {
+									// create reflection
+									r.spawn(rpos, r_mesh, r_max, growth_rate * 0.7f, r_scale, dir);
+								}
 								// create outline;
 								create_two_outlines(outlines, l_pos, l_maxlen, l_dir, mesh + 2, growth_rate * 0.7f);
-		
-								break;
+
+								r_collision[i] += 1;
 							}
 						}
 					}
-				} 
+				}
 			}
 		}
 	}
@@ -532,11 +631,22 @@ AEVec2 locate_reflection(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size) {
 
 	return AEVec2{ pos_x, pos_y };
 }
+// finds x and y index of wave with respect to maze and size of each tile;
+std::pair<int, int> find_wave_index(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], AEVec2 wpos, f32 tilesize) {
+
+	int x_idx{}, y_idx{};
+
+	// maze begins at 0,0; x -> positive, y -> negative;
+	x_idx = static_cast<int>((wpos.x - tilesize / 2.f) / tilesize) + 1;
+	y_idx = abs(static_cast<int>((wpos.y - tilesize / 2.f) / tilesize));
+
+	return { x_idx, y_idx };
+}
 // spawn a wave from array of waves;
-void spawn_wave(Wave(&wave)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in) {
+void spawn_wave(Wave(&wave)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in, f32 max_size) {
 	for (Wave& i : wave) {
 		if (!i.is_active) {
-			i.spawn(AEVec2{ pos_x, pos_y }, mesh_in, WAVES_SIZE);
+			i.spawn(AEVec2{ pos_x, pos_y }, mesh_in, max_size);
 			return;
 		}
 	}
