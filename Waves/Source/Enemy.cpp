@@ -14,17 +14,24 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 #include "Enemy.h"
-AEGfxVertexList* createEnemy_mesh(u32 color) {
+// Function to create the enemy mesh(normalized)
+AEGfxVertexList* createEnemyMesh(u32 enemy_color) {
+	// Informing the library that we're about to start adding triangles
 	AEGfxMeshStart();
-	//normalized mesh
+
+	// This shape has 2 triangles that makes up a square
+	// Color parameters represent colours as ARGB
+	// UV coordinates to read from loaded textures
 	AEGfxTriAdd(
-		-0.5f, -0.5f, color, 0.0f, 1.0f,  // 
-		0.5f, -0.5f, color, 1.0f, 1.0f,   // 
-		-0.5f, 0.5f, color, 0.0f, 0.0f);  // 
+		-0.5f, -0.5f, enemy_color, 0.0f, 1.0f,
+		0.5f, -0.5f, enemy_color, 1.0f, 1.0f,
+		-0.5f, 0.5f, enemy_color, 0.0f, 0.0f);
+
 	AEGfxTriAdd(
-		0.5f, -0.5f, color, 1.0f, 1.0f,   // 
-		0.5f, 0.5f, color, 1.0f, 0.0f,    // 
-		-0.5f, 0.5f, color, 0.0f, 0.0f);  // 
+		0.5f, -0.5f, enemy_color, 1.0f, 1.0f,
+		0.5f, 0.5f, enemy_color, 1.0f, 0.0f,
+		-0.5f, 0.5f, enemy_color, 0.0f, 0.0f);
+
 	return AEGfxMeshEnd();
 }
 
@@ -217,6 +224,12 @@ void EnemyState(Enemy& e) {
 		break;
 	case PATROL:
 		std::cout << "Enemy is patrolling.\n";
+		Pair currIndex = {e.gridRow,e.gridCol};
+		if(currIndex!=e.startPatrol) {
+
+		}
+
+		//moveEnemy();
 		// Call function to move enemy
 		break;
 

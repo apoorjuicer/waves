@@ -4,8 +4,9 @@
 #include "Player.h"
 #include "Maze.h"
 #include "Rock.h"
-#include "enemy_henrey.h"
+//#include "enemy_henrey.h"
 #include "Wave.hpp"
+#include "Enemy.h"
 
 class GameState : public BaseState {
 private:
@@ -15,7 +16,7 @@ private:
     AEGfxVertexList* PlayerMesh = nullptr;
     AEGfxVertexList* wallMesh = nullptr;
     AEGfxVertexList* pathMesh = nullptr;
-    AEGfxVertexList* enemy1 = nullptr;
+    AEGfxVertexList* enemyMesh = nullptr;
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
     //wave_s wave[MAX_NUM_WAVES] = {};
     //wave_s reflection_waves[MAX_NUM_WAVES] = {};

@@ -2,10 +2,19 @@
 /*!
 \file		Enemy.h
 \author		Benjamin Ban
-\co-author  Jordain
 \email		k.ban@digipen.edu
+\co-author  Jordain
+\email
+\co-author  Henry
+\email
 
-\brief
+\brief	Benjamin:
+		-typedef alias and constexpr
+		-Structs and enums
+
+		
+		Henry:
+		-createEnemyMesh()
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -30,12 +39,13 @@ Technology is prohibited.
 //#define TILE_SIZE_X 100
 //#define TILE_SIZE_Y -100
 constexpr float ENEMY_SPEED = 8.0f;  // Pixels per frame (adjust as needed)
+constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
 
 // create shortcut for <int, int> pair
 typedef std::pair<int, int> Pair; //contains i and j
 // create shortcut for <double, pair<int, int>> pair
 typedef std::pair<double, std::pair<int, int> > pPair; //contains fcost,i,j
-constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
+
 
 enum class Path {
 	NO_PATH = 0,
@@ -59,7 +69,8 @@ struct Node {
 
 struct Enemy {
 	f32 x, y; //x-y pos
-	f32 w, h; //scale
+	int gridRow, gridCol;
+	f32 w = 50.f, h = 50.f; //scale
 	Pair startPatrol;
 	Pair endPatrol;
 	//float startPatrolx, startPatroly;
@@ -70,7 +81,7 @@ struct Enemy {
 	int pathIndex = 0; // Current target in path
 	bool reachPath = false;
 	// Constructor initializes all members
-	Enemy() : x{ 100.f }, y{ 100.f }, w{ 50.f }, h{ 50.f }, state{ IDLE } {}
+	Enemy() : x{ 100.f }, y{ -100.f }, w{ 50.f }, h{ 50.f }, state{ IDLE } {}
 	// Moves enemy along the computed path
 	void moveEnemy() {
 		printf("moveToNextStep called\n");
@@ -106,7 +117,10 @@ struct Enemy {
 			printf("Path finished, enemy has reached destination.\n");
 		}
 	}
-
+	void updateGridPosition() {
+		gridRow = static_cast<int>(y / -TILE_SIZE);
+		gridCol = static_cast<int>(x / TILE_SIZE);
+	}
 	// Display enemy position, for debug
 	void printPosition() {
 		std::cout << "Enemy Position: (" << x << ", " << y << ")\n";
@@ -118,7 +132,7 @@ struct Enemy {
 //void enemy_pathfinding_astar2();
 //void aStarSearch(int grid[][COL], Pair src, Pair dest);
 void RenderEnemy_Mesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
-AEGfxVertexList* createEnemy_mesh(u32 color);
+AEGfxVertexList* createEnemyMesh(u32 enemy_color);
 void EnemyState(Enemy& e);
 void UpdateEnemystate(Enemy& e);
 Path astarsearch(int grid[ROW][COL], Pair src, Pair dest, std::vector<Pair>& path);
