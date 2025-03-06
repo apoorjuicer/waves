@@ -93,10 +93,10 @@ struct Enemy {
 			Pair nextPos = path[pathIndex];  // Get next position
 			//grid to world
 			//f32 targetX = nextPos.second * TILE_SIZE;  // Update enemy's row
-			//f32 targetY = nextPos.first * -TILE_SIZE; // Update enemy's col
+			////f32 targetY = nextPos.first * -TILE_SIZE; // Update enemy's col
 			
-			f32 targetX = nextPos.second * TILE_SIZE;  // Update enemy's row
-			f32 targetY = nextPos.first * -TILE_SIZE; // Update enemy's col
+			f32 targetX = nextPos.first * TILE_SIZE;  // Update enemy's row
+			f32 targetY = nextPos.second * -TILE_SIZE; // Update enemy's col
 			// 
 			////movement dir vectpr
 			f32 dirX = targetX - x;

@@ -88,14 +88,14 @@ namespace {// Utility Functions
 		//if it's not its own parent keep looping
 		while (!(gridNodes[i][j].parent_i == -1
 			&& gridNodes[i][j].parent_j == -1)) {
-			path.push_back({i,j });
+			path.push_back({j,i });
 			//update i and j to parent,if dont use temp bad diagonal movement occurs
 			int temp_i = gridNodes[i][j].parent_i;
 			int temp_j = gridNodes[i][j].parent_j;
 			i = temp_i;
 			j = temp_j;
 		}
-		path.push_back({ i,j });
+		path.push_back({ j,i });
 		std::reverse(path.begin(), path.end());
 		// print path
 		for (const Pair& p : path) {
@@ -131,15 +131,18 @@ namespace {// Utility Functions
 
 }// end of anon namespace
 
-Path astarsearch(int grid[ROW][COL], Pair src, Pair dest, std::vector<Pair>& path) {
+Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path) {
+
+	src = { src.second,src.first };
+	dst = { dst.second,dst.first };
 
 	path.clear(); //reset path
-	if (!isValid(dest.first, dest.second, grid) || !isValid(src.first, src.second, grid)) {
+	if (!isValid(dst.first, dst.second, grid) || !isValid(src.first, src.second, grid)) {
 		printf("Source or Destination is invalid\n");
 		return Path::NO_PATH;
 	}
 	// If the destination cell is the same as source cell
-	if (isDestination(src.first, src.second, dest)) {
+	if (isDestination(src.first, src.second, dst)) {
 		printf("Already at the destination\n");
 		return Path::NO_PATH;
 	}
@@ -198,16 +201,16 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dest, std::vector<Pair>& pat
 			int new_j = j + directions[d][1];  // Update column
 
 			if (!isValid(new_i, new_j, grid)) { continue; }
-			if (isDestination(new_i, new_j, dest)) {
+			if (isDestination(new_i, new_j, dst)) {
 				gridNodes[new_i][new_j].parent_i = i;
 				gridNodes[new_i][new_j].parent_j = j;
 				printf("The destination cell is found\n");
 				//printPath(gridNodes, dest);
-				reconstructPath(gridNodes, dest, path);
+				reconstructPath(gridNodes, dst, path);
 				return Path::PATH_FOUND;
 			}
 
-			processNeighbor(new_i, new_j, i, j, dest, gridNodes, closedList, grid, openList, path);
+			processNeighbor(new_i, new_j, i, j, dst, gridNodes, closedList, grid, openList, path);
 
 		}
 	}//end of openlist check

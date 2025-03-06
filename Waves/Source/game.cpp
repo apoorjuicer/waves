@@ -93,7 +93,7 @@ void GameState::Update(float deltaTime) {
    //enemy1.printPosition();
 
     //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
-   Pair src = {7, 1 }, dst = { 7, 8 };   //row col
+   Pair src = {1, 7 }, dst = { 8, 7 };   //row col
     if (!enemy1.reachPath ) {  // Only calculate path once
         astarsearch(maze, src, dst, enemy1.path);
         enemy1.reachPath = true;  //  Mark path as calculated
