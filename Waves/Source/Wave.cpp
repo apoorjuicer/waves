@@ -66,7 +66,7 @@ namespace {
 		switch (dir) {
 		case DIR_LEFT:
 			for (int t{ wall_pos.first - 1 }; t > 0; --t) {
-				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t]) {
+				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t] == 1) {
 					break;
 				}
 				line += tilesize;
@@ -74,7 +74,7 @@ namespace {
 			break;
 		case DIR_RIGHT:
 			for (int t{ wall_pos.first + 1 }; t < MAZE_WIDTH; ++t) {
-				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t]) {
+				if (!maze[wall_pos.second][t] || maze[wave_pos.second][t] == 1) {
 					break;
 				}
 				line += tilesize;
@@ -82,7 +82,7 @@ namespace {
 			break;
 		case DIR_UP:
 			for (int t{ wall_pos.second - 1 }; t > 0; --t) {
-				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first]) {
+				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first] == 1) {
 					break;
 				}
 				line += tilesize;
@@ -90,7 +90,7 @@ namespace {
 			break;
 		case DIR_DOWN:
 			for (int t{ wall_pos.second + 1 }; t < MAZE_HEIGHT; ++t) {
-				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first]) {
+				if (!maze[t][wall_pos.first] || maze[t][wave_pos.first] == 1) {
 					break;
 				}
 				line += tilesize;
@@ -254,7 +254,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 			// location of current tile;
 			AEVec2 wpos{ (x * tilesize), tilesize - ((y + 1) * tilesize) };
 			// if wall is active && wave is colliding with current wall;
-			if (maze[y][x] && circle_square_collision(pos, scale.x, wpos, tilesize)) {
+			if (maze[y][x] == 1 && circle_square_collision(pos, scale.x, wpos, tilesize)) {
 
 				// boundary of wall;
 				f32 wall_left = wpos.x - (tilesize / 2.f);
@@ -303,7 +303,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							// set outline to slightly left of wall;
 							l_pos.x = wall_left - 1;
 							// update wave collision check array;
-							r_collision[0] = 1;
+							r_collision[0] += 1;
 							r_change = true;
 
 						}
@@ -313,7 +313,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							// set outline to slightly right of wall;
 							l_pos.x = wall_right + 1;
 							// update wave collision check array;
-							r_collision[1] = 1;
+							r_collision[1] += 1;
 							r_change = true;
 
 						}
@@ -333,7 +333,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							// set outline to slightly above wall;
 							l_pos.y = wall_top + 1;
 							// update wave collision check array;
-							r_collision[2] = 1;
+							r_collision[2] += 1;
 							r_change = true;
 
 						}
@@ -343,7 +343,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							// set outline to slightly below wall;
 							l_pos.y = wall_bot - 1;
 							// update wave collision check array;
-							r_collision[3] = 1;
+							r_collision[3] += 1;
 							r_change = true;
 
 						}
@@ -367,7 +367,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 
 					l_maxlen.x = l_maxlen.y = tilesize;
 
-					if (pos.y >= wall_top && !maze[clamp(y - 1, 0, MAZE_HEIGHT)][x] && r_collision[6] < 2) {
+					if (pos.y >= wall_top && !maze[clamp(y - 1, 0, MAZE_HEIGHT)][x]) {
 						// TOP LEFT CORNER ------------
 						if (pos.x <= wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[4] < 2) {
 
@@ -391,7 +391,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
 							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[4] = 1; r_collision[6] = 1;
+							r_collision[4] += 1;
 							r_change = true;
 							rpos = { wall_left, wall_top };
 						}
@@ -418,15 +418,15 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
 							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[5] = 1; r_collision[6] = 1;
+							r_collision[5] += 1;
 							r_change = true;
 							rpos = { wall_right, wall_top };
 						}
 
 					}
-					if (pos.y <= wall_bot && !maze[clamp(y + 1, 0, MAZE_HEIGHT)][x] && r_collision[7] < 2) {
+					if (pos.y <= wall_bot && !maze[clamp(y + 1, 0, MAZE_HEIGHT)][x]) {
 						// BOT LEFT CORNER ------------
-						if (pos.x <= wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[4] < 2) {
+						if (pos.x <= wall_left && !maze[y][clamp(x - 1, 0, MAZE_WIDTH)] && r_collision[6] < 2) {
 
 							// directions for each line components;
 							l_dir = { DIR_UP, DIR_RIGHT };
@@ -448,12 +448,12 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
 							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[4] = 1; r_collision[7] = 1;
+							r_collision[6] += 1;
 							r_change = true;
 							rpos = { wall_left, wall_bot };
 						}
 						// BOT RIGHT CORNER -----------
-						if (pos.x >= wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[5] < 2) {
+						if (pos.x >= wall_right && !maze[y][clamp(x + 1, 0, MAZE_WIDTH)] && r_collision[7] < 2) {
 
 							// directions for each line components;
 							l_dir = { DIR_UP, DIR_LEFT };
@@ -475,7 +475,7 @@ void Wave::echolocation(int const(&maze)[MAZE_HEIGHT][MAZE_WIDTH], f32 tilesize,
 							l_maxlen.x = (l_maxlen.x > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.x;
 							l_maxlen.y = (l_maxlen.y > WAVES_SIZE) ? WAVES_SIZE : l_maxlen.y;
 
-							r_collision[5] = 1; r_collision[7] = 1;
+							r_collision[7] += 1;
 							r_change = true;
 							rpos = { wall_right, wall_bot };
 						}
