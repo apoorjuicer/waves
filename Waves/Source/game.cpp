@@ -72,7 +72,7 @@ void GameState::Draw() {
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {

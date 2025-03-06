@@ -15,7 +15,7 @@ int maze[10][10] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 };
 
-void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
+void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
