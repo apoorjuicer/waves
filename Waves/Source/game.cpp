@@ -84,20 +84,13 @@ void GameState::Update(float deltaTime) {
         }
     }
 
-    //static float accumulatedTime = 0.0f;
-    //const float updateInterval = 0.1f;  // Move every 0.1 seconds
-    //// get dt for this frame
-    //accumulatedTime += deltaTime;
+   // static float accumulatedTime = 0.0f;
+   // const float updateInterval = 0.1f;  // Move every 0.1 seconds
+   // // get dt for this frame
+   // accumulatedTime += deltaTime;   
 
-   
-   // Pair src = enemy1.startPatrol, dst = enemy1.endPatrol;
-   //
-  
-   //enemy1.updateGridPosition();
-  // enemy1.printPosition();
-
-   //int destX = static_cast<int>((player.x + (TILE_SIZE / 2)) / TILE_SIZE);
-   //int destY = static_cast<int>((player.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+   //int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
+   //int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
    //int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
    //int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
 
@@ -135,19 +128,6 @@ void GameState::Update(float deltaTime) {
    // }
 
    // // Move enemy if enough time has passed
-   // if (accumulatedTime >= updateInterval) {
-   //     if (enemy1.pathIndex < enemy1.path.size()) {
-   //         enemy1.moveEnemy();
-   //         enemy1.printPosition();
-   //     }
-   //     accumulatedTime = 0.0f;
-   // }
-   // //if (!enemy1.reachPath ) {  // Only calculate path once
-   // //    astarsearch(maze, src, dst, enemy1.path);
-   // //    enemy1.reachPath = true;  //  Mark path as calculated
-   // //}
-
-   ////  Move enemy if enough time has passed
    // if (accumulatedTime >= updateInterval) {
    //     if (enemy1.pathIndex < enemy1.path.size()) {
    //         enemy1.moveEnemy();

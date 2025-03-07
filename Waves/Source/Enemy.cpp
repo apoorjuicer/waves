@@ -226,6 +226,16 @@ void EnemyState(Enemy& e,float dt) {
 	accumulatedTime += dt;
 	Pair currIndex = { e.gridX,e.gridY};
 	bool inPatrolPath = std::find(e.patrolPath.begin(), e.patrolPath.end(), currIndex) != e.patrolPath.end();
+	
+	//pursuit rock
+	int prevDestX = -1;
+	int prevDestY = -1;
+	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
+	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+	// Enemy position conversion
+	int srcX = static_cast<int>(e.x / TILE_SIZE);
+	int srcY = static_cast<int>(e.y / TILE_SIZE) * -1;
+
 	switch (e.state) {
 	case IDLE:
 		std::cout << "Enemy is idle.\n";
@@ -269,11 +279,46 @@ void EnemyState(Enemy& e,float dt) {
 		std::cout << "Enemy is chasing player!\n";
 		// Implement chase behavior
 		break;
-
 	case PURSUIT_ROCK:
 		std::cout << "Enemy is chasing rock!\n";
-		// Implement rock pursuit behavior
+
+		// If the destination (rock's position) has changed, recalculate the path
+		if (destX != prevDestX || destY != prevDestY) {
+			std::cout << "Rock moved! Stopping enemy & recalculating path...\n";
+
+			e.path.clear();   // Clear old path
+			e.pathIndex = 0;  // Reset path index
+			e.x = srcX * TILE_SIZE;  // Stop enemy at current position
+			e.y = -srcY * TILE_SIZE; // Stop enemy at current position
+
+			Pair src = { srcX, srcY };
+			Pair dest = { destX, destY };
+
+			astarsearch(maze, src, dest, e.path);
+
+			// Update previous destination
+			prevDestX = destX;
+			prevDestY = destY;
+		}
+
+		// Move enemy if it has a valid path
+		if (!e.path.empty() && e.pathIndex < e.path.size()) {
+			e.moveEnemy();
+		}
+		else {
+			std::cout << "Enemy stopped. Waiting for rock movement.\n";
+		}
+
+		// Move enemy if enough time has passed
+		if (accumulatedTime >= updateInterval) {
+			if (e.pathIndex < e.path.size()) {
+				e.moveEnemy();
+				e.printPosition();
+			}
+			accumulatedTime = 0.0f;
+		}
 		break;
+
 	}
 }
 
