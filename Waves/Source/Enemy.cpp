@@ -221,26 +221,50 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 }
 
 void EnemyState(Enemy& e,float dt) {
+	static float accumulatedTime = 0.0f;
+	const float updateInterval = 0.1f;  // Move every 0.1 seconds
+	accumulatedTime += dt;
 	Pair currIndex = { e.gridX,e.gridY};
+	bool inPatrolPath = std::find(e.patrolPath.begin(), e.patrolPath.end(), currIndex) != e.patrolPath.end();
 	switch (e.state) {
 	case IDLE:
 		std::cout << "Enemy is idle.\n";
 		break;
 	case PATROL:
 		std::cout << "Enemy is patrolling.\n";
-
-		if(!e.reachPath && ( currIndex!=e.startPatrol || currIndex != e.endPatrol) ) {
+		std::cout << "current index :"<<currIndex.first <<","<< currIndex.second << "\n";
+		std::cout << "start patrol index :" << e.startPatrol.first << "," << e.startPatrol.second << "\n";
+		std::cout << "start patrol index :" << e.endPatrol.first << "," << e.endPatrol.second << "\n";
+		std::cout << "Enemy path index: " << e.pathIndex << "\n";
+		std::cout << "Enemy path size: " << e.path.size() << "\n";		
+		// If the enemy is NOT at startPatrol, force it to go to startPatrol
+		if (!inPatrolPath) {
+			std::cout << "going to start patrol";
 			astarsearch(maze, currIndex, e.startPatrol, e.path);
-			e.reachPath = true;
+			e.pathIndex = 0; // Reset path index
+		}	
+		// Check if we reached the last target in the path
+		if (e.path.empty() || e.pathIndex >= e.path.size()) {
+			// If the enemy has reached the patrol point, switch to the other patrol target
+			if (currIndex == e.startPatrol) {
+				std::cout << "Reached start patrol, switching to end patrol.\n";
+				astarsearch(maze, currIndex, e.endPatrol, e.path);
+				e.pathIndex = 0; // Reset path index
+			}
+			else if (currIndex == e.endPatrol) {
+				std::cout << "Reached end patrol, switching to start patrol.\n";
+				astarsearch(maze, currIndex, e.startPatrol, e.path);
+				e.pathIndex = 0; // Reset path index
+			}
 		}
-		else {
-			astarsearch(maze, e.startPatrol, e.endPatrol, e.path);
-		}
-
-		e.moveEnemy();
 		// Call function to move enemy
+		if (accumulatedTime >= updateInterval) {
+			if (!e.path.empty() && e.pathIndex < e.path.size()) {
+				e.moveEnemy();
+			}
+			accumulatedTime = 0.0f;
+		}	
 		break;
-
 	case PURSUIT_PLAYER:
 		std::cout << "Enemy is chasing player!\n";
 		// Implement chase behavior

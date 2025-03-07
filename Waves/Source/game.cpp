@@ -34,12 +34,13 @@ void GameState::Initialize() {
     //
 
     enemy1.x = 100.f;
-    enemy1.y = -700.f;
+    enemy1.y = -100.f;
  /*   enemy1.x = 100.f;
     enemy1.y = -100.f;*/
-    enemy1.startPatrol = { 7,1 };
-    enemy1.endPatrol = { 7,8 };
-    enemy1.state = IDLE;
+    enemy1.startPatrol = { 1,7 };
+    enemy1.endPatrol = { 8,7 };
+    enemy1.state = PATROL;
+    enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
 }
 
 void GameState::Update(float deltaTime) {
@@ -63,6 +64,8 @@ void GameState::Update(float deltaTime) {
         std::cout << "\n\n\n\n\n";
     }
 
+    UpdateEnemystate(enemy1, deltaTime);
+
     for (Wave& w : wave) {
         if (w.is_active) {
             // update wave size;
@@ -81,72 +84,77 @@ void GameState::Update(float deltaTime) {
         }
     }
 
-    static float accumulatedTime = 0.0f;
-    const float updateInterval = 0.1f;  // Move every 0.1 seconds
-    // get dt for this frame
-    accumulatedTime += deltaTime;
+    //static float accumulatedTime = 0.0f;
+    //const float updateInterval = 0.1f;  // Move every 0.1 seconds
+    //// get dt for this frame
+    //accumulatedTime += deltaTime;
 
    
    // Pair src = enemy1.startPatrol, dst = enemy1.endPatrol;
-   // enemy1.updateGridPosition();
-   // UpdateEnemystate(enemy1,deltaTime);
-   enemy1.printPosition();
-   int destX = static_cast<int>((lastRock.x + (TILE_SIZE/2)) / TILE_SIZE);
-   int destY = static_cast<int>((lastRock.y - (TILE_SIZE/2)) / TILE_SIZE) * -1;
-   int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
-   int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
+   //
+  
+   //enemy1.updateGridPosition();
+  // enemy1.printPosition();
 
-   std::cout << "Player Position: (" << destX << "," << destY << ")\n";
-   std::cout << "Enemy Position: (" << srcX << "," << srcY << ")\n";
-   std::cout << "last rock posiition: x: " << lastRock.x << ", y:" << lastRock.y << std::endl;
-   std::cout << "prev Position: (" << prevDestX << "," << prevDestY << ")\n";
+   //int destX = static_cast<int>((player.x + (TILE_SIZE / 2)) / TILE_SIZE);
+   //int destY = static_cast<int>((player.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+   //int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
+   //int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
 
+   //std::cout << "Player Position: (" << destX << "," << destY << ")\n";
+   //std::cout << "Enemy Position: (" << srcX << "," << srcY << ")\n";
 
+   // //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
+   // Pair src = {srcX, srcY }, dst = { destX, destY };   //row col
 
-    //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
-    Pair src = {srcX, srcY }, dst = { destX, destY };   //row col
+   // // If the destination has changed, stop movement & recalculate path
+   // if (destX != prevDestX || destY != prevDestY) {
+   //     std::cout << "Destination changed! Stopping enemy & recalculating path...\n";
 
-    // If the destination has changed, stop movement & recalculate path
-    if (destX != prevDestX || destY != prevDestY) {
-        std::cout << "Destination changed! Stopping enemy & recalculating path...\n";
+   //     enemy1.path.clear();  // Clear old path
+   //     enemy1.pathIndex = 0;  // Reset path index
+   //     enemy1.x = srcX * TILE_SIZE;  // Stop enemy at current position
+   //     enemy1.y = -srcY * TILE_SIZE; // Stop enemy at current position
 
-        enemy1.path.clear();  // Clear old path
-        enemy1.pathIndex = 0;  // Reset path index
-        enemy1.x = srcX * TILE_SIZE;  // Stop enemy at current position
-        enemy1.y = -srcY * TILE_SIZE; // Stop enemy at current position
+   //     Pair src = { srcX, srcY };   // Ensure (row, col) order
+   //     Pair dest = { destX, destY };
 
-        Pair src = { srcX, srcY };   // Ensure (row, col) order
-        Pair dest = { destX, destY };
+   //     astarsearch(maze, src, dest, enemy1.path);
 
-        astarsearch(maze, src, dest, enemy1.path);
+   //     // Update previous destination
+   //     prevDestX = destX;
+   //     prevDestY = destY;
+   // }
 
-        // Update previous destination
-        prevDestX = destX;
-        prevDestY = destY;
-    }
+   // // Move enemy ONLY if it has a path
+   // if (!enemy1.path.empty() && enemy1.pathIndex < enemy1.path.size()) {
+   //     enemy1.moveEnemy(); // Move enemy only if there is a valid path
+   // }
+   // else {
+   //     std::cout << "Enemy stopped. Waiting for new destination.\n";
+   // }
 
-    // Move enemy ONLY if it has a path
-    if (!enemy1.path.empty() && enemy1.pathIndex < enemy1.path.size()) {
-        enemy1.moveEnemy(); // Move enemy only if there is a valid path
-    }
-    else {
-        std::cout << "Enemy stopped. Waiting for new destination.\n";
-    }
+   // // Move enemy if enough time has passed
+   // if (accumulatedTime >= updateInterval) {
+   //     if (enemy1.pathIndex < enemy1.path.size()) {
+   //         enemy1.moveEnemy();
+   //         enemy1.printPosition();
+   //     }
+   //     accumulatedTime = 0.0f;
+   // }
+   // //if (!enemy1.reachPath ) {  // Only calculate path once
+   // //    astarsearch(maze, src, dst, enemy1.path);
+   // //    enemy1.reachPath = true;  //  Mark path as calculated
+   // //}
 
-    // Move enemy if enough time has passed
-    if (accumulatedTime >= updateInterval) {
-        if (enemy1.pathIndex < enemy1.path.size()) {
-            enemy1.moveEnemy();
-            enemy1.printPosition();
-        }
-        accumulatedTime = 0.0f;
-    }
-    //if (!enemy1.reachPath ) {  // Only calculate path once
-    //    astarsearch(maze, src, dst, enemy1.path);
-    //    enemy1.reachPath = true;  //  Mark path as calculated
-    //}
-
-   //  Move enemy if enough time has passed
+   ////  Move enemy if enough time has passed
+   // if (accumulatedTime >= updateInterval) {
+   //     if (enemy1.pathIndex < enemy1.path.size()) {
+   //         enemy1.moveEnemy();
+   //         enemy1.printPosition();
+   //     }
+   //     accumulatedTime = 0.0f;
+   // }
 
 
 }
