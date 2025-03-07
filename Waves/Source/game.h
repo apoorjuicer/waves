@@ -11,6 +11,7 @@
 class GameState : public BaseState {
 private:
     bool exitGame = false;
+    bool winGame = false;
     f32 tilesize = 100.0f;
     AEGfxVertexList* pDonutMesh = nullptr;
     AEGfxVertexList* PlayerMesh = nullptr;
@@ -32,7 +33,7 @@ public:
     GameState();
     void Load() override;
     void Initialize() override;
-    void Update(float deltaTime) override;
+    void Update(f32 deltaTime) override;
     void Draw() override;
     void Free() override;
     void Unload() override;
