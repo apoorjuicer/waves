@@ -29,8 +29,8 @@ void GameState::Load() {
 
 void GameState::Initialize() {
     exitGame = false;
-    player.x = 500.f;
-    player.y = -500.f;
+    player.x = 100.f;
+    player.y = -100.f;
     //
 
     enemy1.x = 100.f;
@@ -160,7 +160,7 @@ void GameState::Draw() {
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
-   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {
