@@ -34,8 +34,8 @@ void GameState::Initialize() {
     player.y = -700.f;
     //
 
-    enemy1.x = 100.f;
-    enemy1.y = -100.f;
+    //enemy1.x = 100.f;
+    //enemy1.y = -100.f;
  /*   enemy1.x = 100.f;
     enemy1.y = -100.f;*/
     enemy1.startPatrol = { 1,7 };

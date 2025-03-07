@@ -14,6 +14,10 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 #include "Enemy.h"
+
+int prevDestX = -1;
+int prevDestY = -1;
+
 // Function to create the enemy mesh(normalized)
 AEGfxVertexList* createEnemyMesh(u32 enemy_color) {
 	// Informing the library that we're about to start adding triangles
@@ -228,8 +232,6 @@ void EnemyState(Enemy& e,float dt) {
 	bool inPatrolPath = std::find(e.patrolPath.begin(), e.patrolPath.end(), currIndex) != e.patrolPath.end();
 	
 	//pursuit rock
-	int prevDestX = -1;
-	int prevDestY = -1;
 	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 	// Enemy position conversion
@@ -300,15 +302,6 @@ void EnemyState(Enemy& e,float dt) {
 			prevDestX = destX;
 			prevDestY = destY;
 		}
-
-		// Move enemy if it has a valid path
-		if (!e.path.empty() && e.pathIndex < e.path.size()) {
-			e.moveEnemy();
-		}
-		else {
-			std::cout << "Enemy stopped. Waiting for rock movement.\n";
-		}
-
 		// Move enemy if enough time has passed
 		if (accumulatedTime >= updateInterval) {
 			if (e.pathIndex < e.path.size()) {
