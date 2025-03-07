@@ -21,6 +21,7 @@ struct Player {
 };
 
 extern Player player; // Start at (50, 50) in world space
+extern Player lastRock;
 
 bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY);
 void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize);

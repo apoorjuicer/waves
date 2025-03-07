@@ -3,6 +3,7 @@
 #include<iostream>
 
 extern Player player = { 100.0f, -100.0f };
+extern Player lastRock = { 0.0f, 0.0f };
 
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)

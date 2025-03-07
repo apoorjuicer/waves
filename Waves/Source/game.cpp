@@ -91,8 +91,8 @@ void GameState::Update(float deltaTime) {
    // enemy1.updateGridPosition();
    // UpdateEnemystate(enemy1,deltaTime);
    enemy1.printPosition();
-   int destX = static_cast<int>((player.x + (TILE_SIZE / 2)) / TILE_SIZE);
-   int destY = static_cast<int>((player.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+   int destX = static_cast<int>(lastRock.x / TILE_SIZE);
+   int destY = static_cast<int>(lastRock.y / TILE_SIZE) * -1;
    int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
    int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
 
@@ -156,9 +156,8 @@ void GameState::Update(float deltaTime) {
 
 void GameState::Draw() {
     RenderPlayer(player, PlayerMesh);
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-
-    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes);
+    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
+    std::cout << "last rock posiition: x: " << lastRock.x << ", y:" << lastRock.y << std::endl;
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
