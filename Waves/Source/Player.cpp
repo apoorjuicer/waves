@@ -119,7 +119,7 @@ bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, 
 }
 
 
-void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[10][10], f32 tileSize) {
+void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[ROW][COL], f32 tileSize) {
     //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position

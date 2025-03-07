@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Maze.h"
 
-int maze[10][10] = {
+int maze[ROW][COL] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     { 1, 0, 0, 0, 0, 0, 1, 0, 0, 1 },
     { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
@@ -34,13 +34,13 @@ void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, 
                 AEGfxSetTransform(transform.m);
                 AEGfxMeshDraw(wallMesh, AE_GFX_MDM_TRIANGLES);
             }
-            //if (maze[y][x] == 0) {
-            //    continue;
-            //    AEMtx33 transform = { 0 };
-            //    AEMtx33Trans(&transform, posX, posY);
-            //    AEGfxSetTransform(transform.m);
-            //    AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
-            //}
+            if (maze[y][x] == 0) {
+                continue;
+                AEMtx33 transform = { 0 };
+                AEMtx33Trans(&transform, posX, posY);
+                AEGfxSetTransform(transform.m);
+                AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
+            }
         }
     }
 }
