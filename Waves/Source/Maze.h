@@ -27,5 +27,5 @@ extern int maze[10][10];
 
 extern int maze[ROW][COL];
 
-void RenderMaze(int maze[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh);
+void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* rockMesh);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);

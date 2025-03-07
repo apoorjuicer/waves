@@ -11,6 +11,7 @@
 class GameState : public BaseState {
 private:
     bool exitGame = false;
+    bool dead = false;
     bool winGame = false;
     f32 tilesize = 100.0f;
     AEGfxVertexList* pDonutMesh = nullptr;
@@ -18,6 +19,8 @@ private:
     AEGfxVertexList* wallMesh = nullptr;
     AEGfxVertexList* pathMesh = nullptr;
     AEGfxVertexList* enemyMesh = nullptr;
+    AEGfxVertexList* RockMesh = nullptr;
+    AEGfxVertexList* GoalMesh = nullptr;
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
     int prevDestX = -1;
     int prevDestY = -1;

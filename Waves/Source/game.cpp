@@ -1,10 +1,11 @@
 #include "game.h"
 #include "mainMenu.h"
 #include "winState.h"
+#include "loseState.h"
 
 GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), prevDestX(-1), prevDestY(-1){
+pathMesh(nullptr), enemyMesh(nullptr), RockMesh(nullptr), GoalMesh(nullptr), prevDestX(-1), prevDestY(-1) {
 
 }
 
@@ -21,6 +22,8 @@ void GameState::Load() {
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     enemyMesh = createEnemyMesh(0xFFFF0000);
+    GoalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
+    RockMesh = rock::Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
@@ -91,10 +94,18 @@ void GameState::Update(f32 deltaTime) {
         }
     }
 
+    CheckKey(player, maze, tilesize, 0.0f, 0);
+    dead = PlayerEnemyCollision(player, enemy1);
+    if (dead) {
+        std::cout << "\nTOUCHEDDDD!!!!!";
+    }
+    else {
+        std::cout << "\nNOT TOUCHEDDDD!!!!!";
+    }
+
 }
 
 void GameState::Draw() {
-    RenderPlayer(player, PlayerMesh);
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
@@ -116,7 +127,8 @@ void GameState::Draw() {
         }
     }
 
-    RenderMaze(maze, tilesize, wallMesh, pathMesh);
+    RenderMaze(maze, tilesize, wallMesh, pathMesh, GoalMesh, RockMesh);
+    RenderPlayer(player, PlayerMesh);
     AEGfxSetCamPosition(player.x, player.y);
 }
 
@@ -138,6 +150,6 @@ void GameState::Unload() {}
 
 BaseState* GameState::GetNextState() {
     return exitGame ? new MainMenuState() : nullptr;
-    
+    return dead ? new LoseState() : nullptr;
     //return winGame ? new WinState() : nullptr;
 }

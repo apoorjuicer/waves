@@ -95,8 +95,8 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 
 bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Convert world-space coordinates to grid indices
-    int gridX = static_cast<int>((x - mazeStartX + (tileSize/2)) / tileSize);
-    int gridY = static_cast<int>(((tileSize/2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
+    int gridX = static_cast<int>((x - mazeStartX + (tileSize / 2)) / tileSize);
+    int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
 
     //std::cout << "World Position: (" << x << ", " << y << ")\n";
     //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
@@ -108,13 +108,30 @@ bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, 
     }
 
     // Check if the grid cell is walkable
-    if (maze[gridY][gridX] == 0) {
+    if (maze[gridY][gridX] == 0 || maze[gridY][gridX] == 3 || maze[gridY][gridX] == 2) {
         //std::cout << "Walkable\n";
+        //if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
+        //    std::cout << maze[gridY][gridX];
+        //    maze[gridY][gridX] = 0;
+        //    key = 1;
+        //}
         return true;
     }
     else {
         //std::cout << "Blocked\n";
         return false;
+    }
+
+}
+
+void CheckKey(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+    int gridX = static_cast<int>((player.x - mazeStartX + (tileSize / 2)) / tileSize);
+    int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - player.y) / tileSize);
+
+    if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
+        std::cout << maze[gridY][gridX];
+        maze[gridY][gridX] = 0;
+        player.key = 1;
     }
 }
 
@@ -134,6 +151,30 @@ void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[ROW
         pplayer.y = newY;
     }
 }
+
+bool PlayerEnemyCollision(Player& player, Enemy& enemy) {
+    // Assuming enemy.x, enemy.y is the center of the enemy rectangle.
+    float halfWidth = enemy.w * 0.5f;
+    float halfHeight = enemy.h * 0.5f;
+
+    // Calculate the bounds of the enemy rectangle.
+    float left = enemy.x - halfWidth;
+    float right = enemy.x + halfWidth;
+    float top = enemy.y - halfHeight;
+    float bottom = enemy.y + halfHeight;
+
+    // Clamp the player's center to the enemy's bounds.
+    float closestX = (player.x < left) ? left : (player.x > right ? right : player.x);
+    float closestY = (player.y < top) ? top : (player.y > bottom ? bottom : player.y);
+
+    // Compute the distance between the player's center and the closest point.
+    float dx = player.x - closestX;
+    float dy = player.y - closestY;
+    float distanceSquared = dx * dx + dy * dy;
+
+    // A collision occurs if the distance is less than or equal to the player's radius.
+    return distanceSquared <= (player.rad * player.rad);
+};
 
 
 void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh) {
