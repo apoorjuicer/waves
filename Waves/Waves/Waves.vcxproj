@@ -106,9 +106,11 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     <ClCompile Include="..\Source\game.cpp" />
     <ClCompile Include="..\Source\gamePreview.cpp" />
     <ClCompile Include="..\Source\GSM.cpp" />
+    <ClCompile Include="..\Source\loseState.cpp" />
     <ClCompile Include="..\Source\Main.cpp" />
     <ClCompile Include="..\Source\mainMenu.cpp" />
     <ClCompile Include="..\Source\Wave.cpp" />
+    <ClCompile Include="..\Source\winState.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\baseStates.h" />
@@ -116,11 +118,13 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     <ClInclude Include="..\Source\game.h" />
     <ClInclude Include="..\Source\gamePreview.h" />
     <ClInclude Include="..\Source\GSM.h" />
+    <ClInclude Include="..\Source\loseState.h" />
     <ClInclude Include="..\Source\mainMenu.h" />
     <ClInclude Include="..\Source\sonar.hpp" />
     <ClCompile Include="..\Source\Player.cpp" />
     <ClCompile Include="..\Source\Rock.cpp" />
     <ClInclude Include="..\Source\Wave.hpp" />
+    <ClInclude Include="..\Source\winState.h" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Source\draw_map.h" />
