@@ -30,7 +30,7 @@ void GameState::Load() {
 void GameState::Initialize() {
     exitGame = false;
     player.x = 100.f;
-    player.y = -100.f;
+    player.y = -700.f;
     //
 
     enemy1.x = 100.f;
@@ -91,13 +91,17 @@ void GameState::Update(float deltaTime) {
    // enemy1.updateGridPosition();
    // UpdateEnemystate(enemy1,deltaTime);
    enemy1.printPosition();
-   int destX = static_cast<int>(lastRock.x / TILE_SIZE);
-   int destY = static_cast<int>(lastRock.y / TILE_SIZE) * -1;
+   int destX = static_cast<int>((lastRock.x + 10.0f) / TILE_SIZE);
+   int destY = static_cast<int>((lastRock.y + 10.0f)/ TILE_SIZE) * -1;
    int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
    int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
 
    std::cout << "Player Position: (" << destX << "," << destY << ")\n";
    std::cout << "Enemy Position: (" << srcX << "," << srcY << ")\n";
+   std::cout << "last rock posiition: x: " << lastRock.x << ", y:" << lastRock.y << std::endl;
+   std::cout << "prev Position: (" << prevDestX << "," << prevDestY << ")\n";
+
+
 
     //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
     Pair src = {srcX, srcY }, dst = { destX, destY };   //row col
@@ -143,13 +147,6 @@ void GameState::Update(float deltaTime) {
     //}
 
    //  Move enemy if enough time has passed
-    if (accumulatedTime >= updateInterval) {
-        if (enemy1.pathIndex < enemy1.path.size()) {
-            enemy1.moveEnemy();
-            enemy1.printPosition();
-        }
-        accumulatedTime = 0.0f;
-    }
 
 
 }
@@ -157,7 +154,6 @@ void GameState::Update(float deltaTime) {
 void GameState::Draw() {
     RenderPlayer(player, PlayerMesh);
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
-    std::cout << "last rock posiition: x: " << lastRock.x << ", y:" << lastRock.y << std::endl;
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
