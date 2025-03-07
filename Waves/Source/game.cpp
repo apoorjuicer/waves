@@ -103,10 +103,10 @@ void GameState::Update(f32 deltaTime) {
 }
 
 void GameState::Draw() {
-    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, RockMesh);
+    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, RockMesh, lastRock);
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-    RenderMesh(enemy1, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
+    RenderMesh(enemyMesh, 350.0f, -100.0f, 50.0f, 50.0f, 0.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {
