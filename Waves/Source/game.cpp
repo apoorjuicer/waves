@@ -1,7 +1,8 @@
 #include "game.h"
 #include "mainMenu.h"
+#include "winState.h"
 
-GameState::GameState() : exitGame(false), tilesize(100.0f),
+GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), prevDestX(-1), prevDestY(-1){
 
@@ -43,7 +44,13 @@ void GameState::Initialize() {
     enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
 }
 
-void GameState::Update(float deltaTime) {
+void GameState::Update(f32 deltaTime) {
+
+    //===========================================================
+    // Use bool var winGame when player won to trigger go winState in GetNextState()
+    // After keycard interacted with 'exit' then winGame = 1;
+    //=========================================================== 
+    
     // Exit GameState when ESC is pressed
     if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         exitGame = true;
@@ -204,4 +211,6 @@ void GameState::Unload() {}
 
 BaseState* GameState::GetNextState() {
     return exitGame ? new MainMenuState() : nullptr;
+    
+    //return winGame ? new WinState() : nullptr;
 }
