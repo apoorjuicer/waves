@@ -16,6 +16,8 @@ private:
     AEGfxVertexList* wallMesh = nullptr;
     AEGfxVertexList* pathMesh = nullptr;
     AEGfxVertexList* goalMesh = nullptr;
+    AEGfxVertexList* heartMesh = nullptr;
+    AEGfxTexture* heartTexture = nullptr;
     AEGfxVertexList* enemy1 = nullptr;
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
     AEGfxVertexList* RockMesh = nullptr;

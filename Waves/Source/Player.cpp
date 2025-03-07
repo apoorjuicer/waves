@@ -108,11 +108,28 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
     // Check if the grid cell is walkable
     if (maze[gridY][gridX] == 0 || maze[gridY][gridX] == 3 || maze[gridY][gridX] == 2) {
         //std::cout << "Walkable\n";
+        //if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
+        //    std::cout << maze[gridY][gridX];
+        //    maze[gridY][gridX] = 0;
+        //    key = 1;
+        //}
         return true;
     }
     else {
         //std::cout << "Blocked\n";
         return false;
+    }
+
+}
+
+void CheckKey(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+    int gridX = static_cast<int>((player.x - mazeStartX + (tileSize / 2)) / tileSize);
+    int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - player.y) / tileSize);
+
+    if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
+        std::cout << maze[gridY][gridX];
+        maze[gridY][gridX] = 0;
+        player.key = 1;
     }
 }
 
@@ -131,6 +148,7 @@ void MovePlayer(Player& pplayer, float dx, float dy, float speed, float dt, int 
     if (IsWalkable(pplayer.x, newY, maze, tileSize, 0.0f, 0)) {
         pplayer.y = newY;
     }
+    //CheckKey(newX, pplayer.y, maze, tileSize, 0.0f, 0, pplayer.key);
 }
 
 
@@ -140,3 +158,31 @@ void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh) {
     AEGfxSetTransform(transform.m);
     AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
 }
+
+//void DrawLives(int Lives, AEGfxVertexList* heartMesh, AEGfxTexture* heartTexture) {
+//    float startX = 50.0f;  // X position for the first heart
+//    float startY = 700.0f; // Y position for hearts
+//    float heartSize = 50.0f; // Size of hearts
+//    float spacing = 60.0f; // Space between hearts
+//
+//    for (int i = 0; i < Lives; i++) {
+//        float x = startX + i * spacing;
+//
+//        // Set texture before drawing
+//        AEGfxTextureSet(heartTexture, 0, 0);
+//        AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+//        //AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+//        AEGfxSetBlendMode(AE_GFX_BM_BLEND);
+//        AEGfxSetTransparency(1.0f);
+//
+//        // Transform for positioning
+//        AEMtx33 transform;
+//        AEMtx33Identity(&transform);
+//        AEMtx33Scale(&transform, heartSize, heartSize);
+//        AEMtx33TransApply(&transform, &transform, x, startY);
+//
+//        // Apply the transform and draw
+//        AEGfxSetTransform(transform.m);
+//        AEGfxMeshDraw(heartMesh, AE_GFX_MDM_TRIANGLES);
+//    }
+//}

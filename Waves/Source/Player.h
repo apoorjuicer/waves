@@ -19,10 +19,13 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
 struct Player {
     float x, y;  // Position in world space
     int key=0;
+    int lives = 0;
 };
 
 extern Player player; // Start at (50, 50) in world space
 
 bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY);
+void CheckKey(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY);
 void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh);
+void DrawLives(int Lives, AEGfxVertexList* heartMesh, AEGfxTexture* heartTexture);

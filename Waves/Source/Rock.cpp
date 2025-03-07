@@ -65,7 +65,7 @@ namespace rock {
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, AEGfxVertexList* RockMesh) {
+    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, AEGfxVertexList* RockMesh, Player& lastRock) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
@@ -153,6 +153,9 @@ namespace rock {
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
                 //spawn_wave(MainWaves, prevX, prevY, mesh);
                 rockActive = false;
+                lastRock.x = rock.x;
+                lastRock.y = rock.y;
+
             }
 
             // Draw the rock at its current position
