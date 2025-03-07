@@ -176,6 +176,21 @@ bool PlayerEnemyCollision(Player& player, Enemy& enemy) {
     return distanceSquared <= (player.rad * player.rad);
 };
 
+bool checkGoal(Player& player, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+    // Convert player position to grid indices
+    int gridX = static_cast<int>((player.x - mazeStartX + (tileSize / 2)) / tileSize);
+    int gridY = static_cast<int>((mazeStartY + (tileSize / 2) - player.y) / tileSize);
+
+    // Ensure indices are within bounds before accessing the maze array
+    if (gridX < 0 || gridX >= COL || gridY < 0 || gridY >= ROW) {
+        return false; // Out of bounds = Not on a goal tile
+    }
+
+    // Check if the player has the key and is standing on the goal tile (maze value == 2)
+    return (player.key && maze[gridY][gridX] == 2 && AEInputCheckCurr(AEVK_E));
+}
+
+
 
 void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh) {
     AEMtx33 transform = { 0 };

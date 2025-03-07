@@ -33,6 +33,8 @@ void GameState::Load() {
 
 void GameState::Initialize() {
     exitGame = false;
+    dead = false;
+    winGame = false;
     player.x = 100.f;
     player.y = -700.f;
     //
@@ -96,11 +98,12 @@ void GameState::Update(f32 deltaTime) {
 
     CheckKey(player, maze, tilesize, 0.0f, 0);
     dead = PlayerEnemyCollision(player, enemy1);
-    if (dead) {
-        std::cout << "\nTOUCHEDDDD!!!!!";
+    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
+    if (winGame) {
+        std::cout << "\WINNNNNNNNNNNNNN!!!!!\n";
     }
     else {
-        std::cout << "\nNOT TOUCHEDDDD!!!!!";
+        std::cout << "\nNOT WINNNNNNNNNNNNNN!!!!!\n";
     }
 
 }
@@ -149,7 +152,22 @@ void GameState::Free() {
 void GameState::Unload() {}
 
 BaseState* GameState::GetNextState() {
-    return exitGame ? new MainMenuState() : nullptr;
-    return dead ? new LoseState() : nullptr;
+    //return exitGame ? new MainMenuState() : nullptr;
+    //return dead ? new LoseState() : nullptr;
     //return winGame ? new WinState() : nullptr;
+
+    if (exitGame) {
+        return new MainMenuState();
+    }
+    if (dead) {
+        return new LoseState();
+    }
+    if (winGame) {
+        return new WinState();
+    }
+    //if (winGame) {
+    //    return new WinState();
+    //}
+    return nullptr;  // Stay in the current state if nothing changes
+
 }
