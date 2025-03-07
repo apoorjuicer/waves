@@ -1,12 +1,17 @@
 #include "game.h"
 #include "mainMenu.h"
+#include "winState.h"
 
-
-GameState::GameState() : exitGame(false), tilesize(100.0f),
+GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-goalMesh(nullptr), pathMesh(nullptr), enemy1(nullptr) {
+pathMesh(nullptr), enemyMesh(nullptr), prevDestX(-1), prevDestY(-1){
 
 }
+
+namespace {
+    Enemy enemy1;
+}
+
 
 void GameState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
@@ -22,8 +27,8 @@ void GameState::Load() {
     //    std::cerr << "Error: Failed to load heart texture!" << std::endl;
     //    exit(1);
     //}
-    enemy1 = createEnemyMesh(0xFFFF0000);
     RockMesh = rock::Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
+    enemyMesh = createEnemyMesh(0xFFFF0000);
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
@@ -33,9 +38,27 @@ void GameState::Load() {
 
 void GameState::Initialize() {
     exitGame = false;
+    player.x = 100.f;
+    player.y = -700.f;
+    //
+
+    //enemy1.x = 100.f;
+    //enemy1.y = -100.f;
+ /*   enemy1.x = 100.f;
+    enemy1.y = -100.f;*/
+    enemy1.startPatrol = { 1,7 };
+    enemy1.endPatrol = { 8,7 };
+    enemy1.state = PATROL;
+    enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
 }
 
-void GameState::Update(float deltaTime) {
+void GameState::Update(f32 deltaTime) {
+
+    //===========================================================
+    // Use bool var winGame when player won to trigger go winState in GetNextState()
+    // After keycard interacted with 'exit' then winGame = 1;
+    //=========================================================== 
+    
     // Exit GameState when ESC is pressed
     if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         exitGame = true;
@@ -43,7 +66,7 @@ void GameState::Update(float deltaTime) {
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
-    float speed = 360.0f;
+    float speed = 500.0f;
     if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
@@ -55,6 +78,8 @@ void GameState::Update(float deltaTime) {
     if (AEInputCheckTriggered(AEVK_E)) {
         std::cout << "\n\n\n\n\n";
     }
+
+    UpdateEnemystate(enemy1, deltaTime);
 
     for (Wave& w : wave) {
         if (w.is_active) {
@@ -122,10 +147,18 @@ void GameState::Free() {
     //    AEGfxMeshFree(heartMesh);
     //    heartMesh = nullptr;
     //}
+    AEGfxMeshFree(pDonutMesh);
+    AEGfxMeshFree(PlayerMesh);
+    AEGfxMeshFree(wallMesh);
+    AEGfxMeshFree(pathMesh);
+    AEGfxMeshFree(enemyMesh);
+    AEGfxMeshFree(RockMesh);
 }
 
 void GameState::Unload() {}
 
 BaseState* GameState::GetNextState() {
     return exitGame ? new MainMenuState() : nullptr;
+    
+    //return winGame ? new WinState() : nullptr;
 }

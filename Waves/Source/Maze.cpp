@@ -2,7 +2,7 @@
 #include <iostream>
 #include "Maze.h"
 
-int maze[10][10] = {
+int maze[ROW][COL] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     { 1, 0, 0, 0, 0, 0, 1, 0, 2, 1 },
     { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
@@ -15,14 +15,14 @@ int maze[10][10] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 };
 
-void RenderMaze(int maze1[10][10], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* rockMesh) {
+void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* rockMesh) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
-    for (int y = 0; y < 10; ++y) {
-        for (int x = 0; x < 10; ++x) {
+    for (int y = 0; y < ROW; ++y) {
+        for (int x = 0; x < COL; ++x) {
             // Calculate the position of each tile
             f32 posX = startX + (x * tileSize);
             f32 posY = startY - ((y + 1) * tileSize); // Subtract to flip the direction

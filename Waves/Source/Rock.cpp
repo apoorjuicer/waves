@@ -1,5 +1,6 @@
 #include "AEEngine.h"
 #include "Rock.h"
+#include "Maze.h"
 #include "Player.h"
 #include <algorithm>
 #include <cmath>      // for std::floor
@@ -24,13 +25,14 @@ namespace rock {
         return AEGfxMeshEnd();
     }
 
-    bool BounceCollision(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, float rockRadius) {
+    bool BounceCollision(float x, float y, int maze[ROW][COL], float tileSize, float mazeStartX, float mazeStartY, float rockRadius) {
         // Convert world-space coordinates to grid indices with half-tile offsets for centering
         int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
         int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
 
         // Check for out-of-bounds
-        if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+        if (gridX < 0 || gridX >= ROW || gridY < 0 || gridY >= COL) {
+            //std::cout << "Out of Bounds\n";
             return false;
         }
 
@@ -38,6 +40,7 @@ namespace rock {
         if (maze[gridY][gridX] == 0 || maze[gridY][gridX] == 2 || maze[gridY][gridX] == 3) {
             return true;
         }
+
 
         // Calculate the closest point on the grid cell to the rock's center
         float cellCenterX = mazeStartX + gridX * tileSize;
@@ -65,7 +68,7 @@ namespace rock {
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, AEGfxVertexList* RockMesh) {
+    void drawRock(Player& rplayer, int maze[ROW][COL], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, AEGfxVertexList* RockMesh, Player& lastRock) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
@@ -151,9 +154,10 @@ namespace rock {
             }
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
-                //spawn_wave(MainWaves, prevX, prevY, mesh);
+                spawn_wave(MainWaves, prevX, prevY, mesh);
                 rockActive = false;
-
+                lastRock.x = rock.x;
+                lastRock.y = rock.y;
             }
 
             // Draw the rock at its current position
