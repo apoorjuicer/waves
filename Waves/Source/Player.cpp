@@ -1,5 +1,6 @@
 #include "AEEngine.h"
 #include "Player.h"
+#include "Maze.h"
 #include<iostream>
 
 extern Player player = { 100.0f, -100.0f };
