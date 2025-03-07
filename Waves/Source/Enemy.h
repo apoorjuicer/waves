@@ -12,7 +12,6 @@
 		-typedef alias and constexpr
 		-Structs and enums
 
-		
 		Henry:
 		-createEnemyMesh()
 
@@ -38,7 +37,7 @@ Technology is prohibited.
 
 //#define TILE_SIZE_X 100
 //#define TILE_SIZE_Y -100
-constexpr float ENEMY_SPEED = 8.0f;  // Pixels per frame (adjust as needed)
+constexpr float ENEMY_SPEED = 12.0f;  // Pixels per frame (adjust as needed)
 constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
 
 // create shortcut for <int, int> pair
@@ -78,17 +77,25 @@ struct Enemy {
 	enum Enemy_State state = PATROL;
 	//vector<pair<int, int>> path; // Stores A* path
 	std::vector<Pair> path = {};
+	std::vector<Pair> patrolPath = {};
 	int pathIndex = 0; // Current target in path
 	bool reachPath = false;
 	// Constructor initializes all members
-	Enemy() : x{ 100.f }, y{ -100.f }, w{ 50.f }, h{ 50.f }, state{ IDLE } {}
+	Enemy() : x{ 100.f }, y{ -100.f }, gridX{1}, gridY{1}, w{50.f}, h{50.f}, state{IDLE} {}
 	// Moves enemy along the computed path
 	void moveEnemy() {
-		printf("moving Enemy");
+		printf("moving Enemy\n");
 		if (path.empty()) {
 			printf("path is empty\n");
 			return;
 		}
+
+		// Skip the first step if it's the same as the current position
+		if (pathIndex == 0 && path[0] == Pair(gridX, gridY)) {
+			std::cout << "skip start pos: (" << path[0].first << ", " << path[0].second << ")\n";
+			pathIndex++; // Move to the next valid step
+		}
+
 		if (pathIndex < path.size()) {
 			Pair nextPos = path[pathIndex];  // Get next position
 			//grid to world
@@ -114,11 +121,13 @@ struct Enemy {
 				pathIndex++;  // Move to the next step in path
 			}
 
-			printf("Moving to: (%d, %d)\n", nextPos.second, nextPos.first);
+			printf("Moving to: (%d, %d)\n", nextPos.first, nextPos.second);
 		}
 		else {
 			printf("Path finished, enemy has reached destination.\n");
 		}
+		updateGridPosition();
+		printPosition();
 	}
 	void updateGridPosition() {
 		gridX = static_cast<int>(x / TILE_SIZE);
