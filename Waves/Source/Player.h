@@ -19,7 +19,7 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
 struct Player {
     float x, y;  // Position in world space
     int key=0;
-    int lives = 0;
+    int lives = 3;
 };
 
 extern Player player; // Start at (50, 50) in world space

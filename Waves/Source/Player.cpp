@@ -160,28 +160,40 @@ void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh) {
 }
 
 //void DrawLives(int Lives, AEGfxVertexList* heartMesh, AEGfxTexture* heartTexture) {
-//    float startX = 50.0f;  // X position for the first heart
-//    float startY = 700.0f; // Y position for hearts
-//    float heartSize = 50.0f; // Size of hearts
-//    float spacing = 60.0f; // Space between hearts
+//    std::cout << "DrawLives called with Lives = " << Lives << std::endl;
+//    // Get camera position to adjust UI rendering
+//    float camX, camY;
+//    AEGfxGetCamPosition(&camX, &camY);
+//
+//    // Positions relative to screen (e.g., top-left corner)
+//    float startX = 50.0f;
+//    float startY = 50.0f; // Top-left instead of 700.0f
+//    float heartSize = 50.0f;
+//    float spacing = 60.0f;
 //
 //    for (int i = 0; i < Lives; i++) {
-//        float x = startX + i * spacing;
+//        std::cout << "Drawing heart " << i << std::endl;
+//        // Convert screen position to world space using camera offset
+//        float x = startX + i * spacing + camX - AEGfxGetWindowWidth() / 2.0f;
+//        float y = startY + camY + AEGfxGetWindowHeight() / 2.0f;
 //
-//        // Set texture before drawing
 //        AEGfxTextureSet(heartTexture, 0, 0);
 //        AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-//        //AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+//        /*AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);*/
 //        AEGfxSetBlendMode(AE_GFX_BM_BLEND);
 //        AEGfxSetTransparency(1.0f);
 //
-//        // Transform for positioning
 //        AEMtx33 transform;
 //        AEMtx33Identity(&transform);
 //        AEMtx33Scale(&transform, heartSize, heartSize);
-//        AEMtx33TransApply(&transform, &transform, x, startY);
+//        AEMtx33TransApply(&transform, &transform, x, y); // Use adjusted x, y
 //
-//        // Apply the transform and draw
+//        // Debug output
+//        std::cout << "Transform Matrix:\n";
+//        std::cout << transform.m[0][0] << " " << transform.m[0][1] << " " << transform.m[0][2] << "\n";
+//        std::cout << transform.m[1][0] << " " << transform.m[1][1] << " " << transform.m[1][2] << "\n";
+//        std::cout << transform.m[2][0] << " " << transform.m[2][1] << " " << transform.m[2][2] << "\n";
+//
 //        AEGfxSetTransform(transform.m);
 //        AEGfxMeshDraw(heartMesh, AE_GFX_MDM_TRIANGLES);
 //    }

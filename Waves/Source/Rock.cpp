@@ -65,7 +65,7 @@ namespace rock {
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, AEGfxVertexList* RockMesh, Player& lastRock) {
+    void drawRock(Player& rplayer, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, AEGfxVertexList* RockMesh) {
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
@@ -114,7 +114,7 @@ namespace rock {
             rock.dy *= dampingFactor;
 
             // Optional: Stop the rock completely if the speed is very low.
-            const float epsilon = 1.0f;
+            const float epsilon = 3.0f;
             if (std::fabs(rock.dx) < epsilon && std::fabs(rock.dy) < epsilon) {
                 rock.dx = 0.0f;
                 rock.dy = 0.0f;
@@ -153,8 +153,6 @@ namespace rock {
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
                 //spawn_wave(MainWaves, prevX, prevY, mesh);
                 rockActive = false;
-                lastRock.x = rock.x;
-                lastRock.y = rock.y;
 
             }
 

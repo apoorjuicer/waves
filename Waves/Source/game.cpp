@@ -16,13 +16,12 @@ void GameState::Load() {
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
-    heartMesh = CreateSquareMesh(0.5f, 0x5500FF00);
-    heartTexture = AEGfxTextureLoad("..\\Assets\\heart.png");
-    //heartTexture = AEGfxTextureLoad("C:\\Users\\shaoj\\Documents\\GitHub\\csd1451s25_team_taurine\\Waves\\Assets\\heart.png");
-    if (!heartTexture) {
-        std::cerr << "Error: Failed to load heart texture!" << std::endl;
-        exit(1);
-    }
+    //heartMesh = CreateSquareMesh(1.0f, 0xFFFFFFFF);
+    //heartTexture = AEGfxTextureLoad("..\\..\\Assets\\heart.png");
+    //if (!heartTexture) {
+    //    std::cerr << "Error: Failed to load heart texture!" << std::endl;
+    //    exit(1);
+    //}
     enemy1 = createEnemyMesh(0xFFFF0000);
     RockMesh = rock::Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
 
@@ -103,8 +102,8 @@ void GameState::Draw() {
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh,RockMesh);
     //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderPlayer(player, PlayerMesh);
-    //DrawLives(player.lives, heartMesh, heartTexture);
     AEGfxSetCamPosition(player.x, player.y);
+    //DrawLives(player.lives, heartMesh, heartTexture);
 }
 
 void GameState::Free() {
