@@ -91,8 +91,8 @@ void GameState::Update(float deltaTime) {
    // enemy1.updateGridPosition();
    // UpdateEnemystate(enemy1,deltaTime);
    enemy1.printPosition();
-   int destX = static_cast<int>((lastRock.x + 10.0f) / TILE_SIZE);
-   int destY = static_cast<int>((lastRock.y + 10.0f)/ TILE_SIZE) * -1;
+   int destX = static_cast<int>((lastRock.x + (TILE_SIZE/2)) / TILE_SIZE);
+   int destY = static_cast<int>((lastRock.y - (TILE_SIZE/2)) / TILE_SIZE) * -1;
    int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
    int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
 
