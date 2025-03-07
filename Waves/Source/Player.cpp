@@ -76,8 +76,8 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 {
     int slices = NumOfSlices;
     f32 anglestep = 2.0f * PI / slices;
-    float centerX = 0.0f;
-    float centerY = 0.0f;
+    f32 centerX = 0.0f;
+    f32 centerY = 0.0f;
 
     for (int i = 0; i < slices; ++i)
     {
@@ -93,7 +93,7 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 }
 
 
-bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Convert world-space coordinates to grid indices
     int gridX = static_cast<int>((x - mazeStartX + (tileSize/2)) / tileSize);
     int gridY = static_cast<int>(((tileSize/2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
@@ -102,7 +102,7 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
     //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
     // Check for out-of-bounds
-    if (gridX < 0 || gridX >= 10 || gridY < 0 || gridY >= 10) {
+    if (gridX < 0 || gridX >= ROW || gridY < 0 || gridY >= COL) {
         //std::cout << "Out of Bounds\n";
         return false;
     }
@@ -119,12 +119,12 @@ bool IsWalkable(float x, float y, int maze[10][10], float tileSize, float mazeSt
 }
 
 
-void MovePlayer(Player& pplayer, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize) {
-    //float mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
+void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[10][10], f32 tileSize) {
+    //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position
-    float newX = pplayer.x + dx * speed * dt;
-    float newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
+    f32 newX = pplayer.x + dx * speed * dt;
+    f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
 
     // Check if the new position is walkable
     if (IsWalkable(newX, pplayer.y, maze, tileSize, 0.0f, 0)) {

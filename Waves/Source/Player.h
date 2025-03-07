@@ -17,12 +17,12 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
 //
 //void PlayerMovement(playermovement& playmove, f32 x, f32 y, f32 dt, int maze[10][10], f32 tilesize);
 struct Player {
-    float x, y;  // Position in world space
+    f32 x, y;  // Position in world space
 };
 
 extern Player player; // Start at (50, 50) in world space
 extern Player lastRock;
 
-bool IsWalkable(float x, float y, int maze[ROW][COL], float tileSize, float mazeStartX, float mazeStartY);
-void MovePlayer(Player& player, float dx, float dy, float speed, float dt, int maze[10][10], float tileSize);
+bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
+void MovePlayer(Player& player, f32 dx, f32 dy, f32 speed, f32 dt, int maze[10][10], f32 tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh);
