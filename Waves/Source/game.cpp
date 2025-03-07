@@ -91,59 +91,6 @@ void GameState::Update(f32 deltaTime) {
         }
     }
 
-   // static float accumulatedTime = 0.0f;
-   // const float updateInterval = 0.1f;  // Move every 0.1 seconds
-   // // get dt for this frame
-   // accumulatedTime += deltaTime;   
-
-   //int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
-   //int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
-   //int srcX = static_cast<int>(enemy1.x / TILE_SIZE);
-   //int srcY = static_cast<int>(enemy1.y / TILE_SIZE) * -1;
-
-   //std::cout << "Player Position: (" << destX << "," << destY << ")\n";
-   //std::cout << "Enemy Position: (" << srcX << "," << srcY << ")\n";
-
-   // //Pair src = {enemy1.gridRow, enemy1.gridCol }, dst = { 8, 8 };   //row col
-   // Pair src = {srcX, srcY }, dst = { destX, destY };   //row col
-
-   // // If the destination has changed, stop movement & recalculate path
-   // if (destX != prevDestX || destY != prevDestY) {
-   //     std::cout << "Destination changed! Stopping enemy & recalculating path...\n";
-
-   //     enemy1.path.clear();  // Clear old path
-   //     enemy1.pathIndex = 0;  // Reset path index
-   //     enemy1.x = srcX * TILE_SIZE;  // Stop enemy at current position
-   //     enemy1.y = -srcY * TILE_SIZE; // Stop enemy at current position
-
-   //     Pair src = { srcX, srcY };   // Ensure (row, col) order
-   //     Pair dest = { destX, destY };
-
-   //     astarsearch(maze, src, dest, enemy1.path);
-
-   //     // Update previous destination
-   //     prevDestX = destX;
-   //     prevDestY = destY;
-   // }
-
-   // // Move enemy ONLY if it has a path
-   // if (!enemy1.path.empty() && enemy1.pathIndex < enemy1.path.size()) {
-   //     enemy1.moveEnemy(); // Move enemy only if there is a valid path
-   // }
-   // else {
-   //     std::cout << "Enemy stopped. Waiting for new destination.\n";
-   // }
-
-   // // Move enemy if enough time has passed
-   // if (accumulatedTime >= updateInterval) {
-   //     if (enemy1.pathIndex < enemy1.path.size()) {
-   //         enemy1.moveEnemy();
-   //         enemy1.printPosition();
-   //     }
-   //     accumulatedTime = 0.0f;
-   // }
-
-
 }
 
 void GameState::Draw() {
