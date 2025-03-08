@@ -63,7 +63,7 @@ namespace {// Utility Functions
 	bool isValid(int row, int col, int grid[][COL])
 	{
 		return ((row >= 0) && (row < ROW) && (col >= 0)
-			&& (col < COL)) && grid[row][col] == 0;
+			&& (col < COL)) && grid[row][col] != 1;
 	}
 
 	// check dest reached
@@ -224,13 +224,68 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 	return Path::NO_PATH;
 }
 
+void MovetoPatrolpoint(Enemy& e) {
+	// If the enemy is NOT at startPatrol, force it to go to startPatrol
+	e.path.clear();
+	e.pathIndex = 0;
+	Pair enemyIndex = { e.gridX, e.gridY };
+	astarsearch(maze, enemyIndex, e.startPatrol, e.path);
+	if (e.path.empty()) {
+		std::cout << "Failed to find path to start patrol point.\n";
+	}
+	else {
+		std::cout << "Path to start patrol point calculated successfully.\n";
+	}
+}
+
+void chasePlayer(Enemy& e) {
+	// Convert player's world position to grid coordinates
+	/*int playerGridX = static_cast<int>(round(player.x / TILE_SIZE));
+	int playerGridY = static_cast<int>(round(player.y / -TILE_SIZE));*/
+	int playerGridX = static_cast<int>((player.x + TILE_SIZE / 2) / TILE_SIZE);
+	int playerGridY = static_cast<int>((player.y - TILE_SIZE / 2) / TILE_SIZE) * -1;
+
+	// Convert enemy's current position to grid coordinates
+	int enemyGridX = e.gridX;
+	int enemyGridY = e.gridY;
+
+	// Always recalculate the path to the player's position
+	e.path.clear();   // Clear old path
+	e.pathIndex = 0;  // Reset path index
+
+	Pair enemyPos = { enemyGridX, enemyGridY };
+	Pair playerPos = { playerGridX, playerGridY };
+
+	astarsearch(maze, enemyPos, playerPos, e.path);  // Find path to player
+
+	if (e.path.empty()) {
+		std::cout << "Failed to find a path to the player!\n";
+	}
+	else {
+		std::cout << "Path to player calculated successfully.\n";
+	}
+}
+
+bool seePlayer(Enemy& e, float sightRange) {
+	float dist_x = player.x - e.x;
+	float dist_y = player.y - e.y;
+	return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+}
+
+bool seeRock(Enemy& e, float sightRange) {
+	float dist_x = lastRock.x - e.x;
+	float dist_y = lastRock.y - e.y;
+	return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+}
+
 void EnemyState(Enemy& e,float dt) {
 	static float accumulatedTime = 0.0f;
 	const float updateInterval = 0.1f;  // Move every 0.1 seconds
 	accumulatedTime += dt;
-	Pair currIndex = { e.gridX,e.gridY};
+	Pair currIndex = { e.gridX,e.gridY };
+
 	bool inPatrolPath = std::find(e.patrolPath.begin(), e.patrolPath.end(), currIndex) != e.patrolPath.end();
-	
+	//std::cout << "current enemy index :" << currIndex.first << "," << currIndex.second << "\n";
 	//pursuit rock
 	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
@@ -239,22 +294,20 @@ void EnemyState(Enemy& e,float dt) {
 	int srcY = static_cast<int>(e.y / TILE_SIZE) * -1;
 
 	switch (e.state) {
+	
 	case IDLE:
 		std::cout << "Enemy is idle.\n";
 		break;
 	case PATROL:
-		std::cout << "Enemy is patrolling.\n";
-		std::cout << "current index :"<<currIndex.first <<","<< currIndex.second << "\n";
-		std::cout << "start patrol index :" << e.startPatrol.first << "," << e.startPatrol.second << "\n";
-		std::cout << "start patrol index :" << e.endPatrol.first << "," << e.endPatrol.second << "\n";
-		std::cout << "Enemy path index: " << e.pathIndex << "\n";
-		std::cout << "Enemy path size: " << e.path.size() << "\n";		
-		// If the enemy is NOT at startPatrol, force it to go to startPatrol
-		if (!inPatrolPath) {
-			std::cout << "going to start patrol";
-			astarsearch(maze, currIndex, e.startPatrol, e.path);
-			e.pathIndex = 0; // Reset path index
-		}	
+		//std::cout << "Enemy is patrolling.\n";
+		//std::cout << "current index :"<<currIndex.first <<","<< currIndex.second << "\n";
+		//std::cout << "start patrol index :" << e.startPatrol.first << "," << e.startPatrol.second << "\n";
+		//std::cout << "end patrol index :" << e.endPatrol.first << "," << e.endPatrol.second << "\n";
+		//std::cout << "Enemy path index: " << e.pathIndex << "\n";
+		//std::cout << "Enemy path size: " << e.path.size() << "\n";		
+		if (!inPatrolPath && e.path.empty()) {
+			MovetoPatrolpoint(e);
+		}
 		// Check if we reached the last target in the path
 		if (e.path.empty() || e.pathIndex >= e.path.size()) {
 			// If the enemy has reached the patrol point, switch to the other patrol target
@@ -280,6 +333,15 @@ void EnemyState(Enemy& e,float dt) {
 	case PURSUIT_PLAYER:
 		std::cout << "Enemy is chasing player!\n";
 		// Implement chase behavior
+		chasePlayer(e);
+
+		// Move enemy if enough time has passed
+		if (accumulatedTime >= updateInterval) {
+			if (!e.path.empty() && e.pathIndex < e.path.size()) {
+				e.moveEnemy();
+			}
+			accumulatedTime = 0.0f;
+		}
 		break;
 	case PURSUIT_ROCK:
 		std::cout << "Enemy is chasing rock!\n";
@@ -316,44 +378,58 @@ void EnemyState(Enemy& e,float dt) {
 }
 
 void UpdateEnemystate(Enemy& e,float dt) {
+	float sightRangeRock = 3.0f * TILE_SIZE;  // Enemy detection range for rock
+	float sightRangePlayer = 1.0f * TILE_SIZE;  // Enemy detection range for player
+	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
+	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+
 	switch (e.state) {
 	case IDLE:
-		//if (/*enemy see rock*/1) {
-		//	e.state = PURSUIT_ROCK;
-		//}
-		//else if (/*enemy see player*/1) {
-		//	e.state = PURSUIT_ROCK;
-		//}
-		//else {
-		//	/*probably need timer*/
-		//	e.state = PATROL;
-		//}
+		if (seeRock(e, sightRangeRock)) {
+			e.state = PURSUIT_ROCK;
+		}
+		else if (seePlayer(e, sightRangePlayer)) {
+			e.state = PURSUIT_PLAYER;
+		}
+		else {
+			e.state = PATROL;
+		}
 		break;
 	case PATROL:
-		//if (/*enemy see rock*/0) {
-		//	e.state = PURSUIT_ROCK;
-		//}
-		//else if (/*enemy see player*/0) {
-		//	e.state = PURSUIT_ROCK;
-		//}
+		if (seeRock(e, sightRangeRock)) {
+			e.state = PURSUIT_ROCK;
+		}
+		else if (seePlayer(e, sightRangePlayer)) {
+			e.state = PURSUIT_PLAYER;
+		}
 		break;
 	case PURSUIT_PLAYER:
-		//if (/*enemy see rock*/1) {
-		//	e.state = PURSUIT_ROCK;
-		//}
-		//else if (/*!enemy see player*/1) {
-		//	//e.state = PATROL/IDLE;
-		//}
-
-
+		if (seeRock(e, sightRangeRock)) {
+			e.state = PURSUIT_ROCK;
+		}
+		else if (!seePlayer(e, sightRangePlayer)) { //player zao alr
+			e.state = PATROL;
+		}
 
 		break;
 	case PURSUIT_ROCK:
-		//if (/*at rock pos*/1) {
-		//	//swap idle
-		//}
-
-
+		if (e.gridX == destX &&
+			e.gridY == destY ){
+			std::cout << "Enemy reached the rock!\n";
+			if (seePlayer(e, sightRangePlayer)) {
+				e.state = PURSUIT_PLAYER;
+				std::cout << "Switching to PURSUIT_PLAYER.\n";
+			}
+			else {
+				e.state = IDLE;  // Reached the rock
+			}	
+		}
+		else if (seePlayer(e, sightRangePlayer)) { 
+			e.state = PURSUIT_PLAYER;
+		}
+		else if (!seePlayer(e, sightRangePlayer)) { //player zao alr
+			e.state = PATROL;
+		}
 		break;
 	}
 

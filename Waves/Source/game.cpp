@@ -36,17 +36,20 @@ void GameState::Initialize() {
     dead = false;
     winGame = false;
     player.x = 100.f;
-    player.y = -700.f;
+    player.y = -100.f;
     //
 
-    //enemy1.x = 100.f;
-    //enemy1.y = -100.f;
- /*   enemy1.x = 100.f;
-    enemy1.y = -100.f;*/
+    enemy1.x = 100.f;
+    enemy1.y = -700.f;
     enemy1.startPatrol = { 1,7 };
     enemy1.endPatrol = { 8,7 };
-    enemy1.state = PATROL;
+   // enemy1.state = PATROL;
+    enemy1.state = IDLE;
+    //enemy1.state = IDLE;
+   // enemy1.state = PURSUIT_ROCK;
+    
     enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
+    enemy1.updateGridPosition(); // need to call to init conversion
 }
 
 void GameState::Update(f32 deltaTime) {
@@ -96,15 +99,15 @@ void GameState::Update(f32 deltaTime) {
         }
     }
 
-    CheckKey(player, maze, tilesize, 0.0f, 0);
-    dead = PlayerEnemyCollision(player, enemy1);
-    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
-    if (winGame) {
+   // CheckKey(player, maze, tilesize, 0.0f, 0);
+    //dead = PlayerEnemyCollision(player, enemy1);
+   // winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
+ /*   if (winGame) {
         std::cout << "\WINNNNNNNNNNNNNN!!!!!\n";
     }
     else {
         std::cout << "\nNOT WINNNNNNNNNNNNNN!!!!!\n";
-    }
+    }*/
 
 }
 
@@ -131,7 +134,7 @@ void GameState::Draw() {
     }
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh, GoalMesh, RockMesh);
-    RenderPlayer(player, PlayerMesh);
+   // RenderPlayer(player, PlayerMesh);
     AEGfxSetCamPosition(player.x, player.y);
 }
 
