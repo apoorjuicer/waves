@@ -286,7 +286,7 @@ void EnemyState(Enemy& e,float dt) {
 
 		// If the destination (rock's position) has changed, recalculate the path
 		if (destX != prevDestX || destY != prevDestY) {
-			std::cout << "Rock moved! Stopping enemy & recalculating path...\n";
+			//std::cout << "Rock moved! Stopping enemy & recalculating path...\n";
 
 			e.path.clear();   // Clear old path
 			e.pathIndex = 0;  // Reset path index
