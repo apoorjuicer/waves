@@ -6,6 +6,7 @@
 class MainMenuState : public BaseState {
 private:
     bool startGame = false;
+    bool menu = false;
     int* pGameRunning; // <-- Pointer to gGameRunning
     s8 menuFont;
     s8 buttonFont;
@@ -26,3 +27,6 @@ public:
     void Unload() override;
     BaseState* GetNextState() override;
 };
+
+bool IsMouseInsideButton(float buttonX, float buttonY, float buttonWidth, float buttonHeight);
+AEGfxVertexList* CreateButtonMesh(float width, float height, u32 color);

@@ -4,7 +4,11 @@
 
 class gamePreview : public BaseState {
 private:
-    bool goGame;   // Flag for returning to the main menu
+    bool goGame = false;   // Flag for returning to the main menu
+    s8 previewFont;
+    AEGfxTexture* maze1 = nullptr;
+    AEGfxVertexList* maze1_mesh = nullptr;
+    AEGfxVertexList* okButtonMesh = nullptr;
 public:
     gamePreview();
     void Load() override;

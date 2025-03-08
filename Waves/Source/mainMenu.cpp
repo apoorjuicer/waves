@@ -1,5 +1,7 @@
 #include "AEEngine.h"
 #include "mainMenu.h"
+#include "gamePreview.h"
+#include "instructions.h"
 #include "Player.h"
 
 
@@ -34,7 +36,7 @@ AEGfxVertexList* CreateButtonMesh(float width, float height, u32 color) {
 }
 
 MainMenuState::MainMenuState()
-    : startGame(false), pGameRunning(nullptr), menuFont(-1), buttonFont(-1),
+    : startGame(false), menu(false), pGameRunning(nullptr), menuFont(-1), buttonFont(-1),
     playButtonMesh(nullptr), guideButtonMesh(nullptr), exitButtonMesh(nullptr) {}
 
 void MainMenuState::Load() {
@@ -59,20 +61,22 @@ void MainMenuState::Load() {
 void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
+    menu = false;
     AEGfxSetCamPosition(0.0f, 0.0f);
 }
 
 void MainMenuState::Update(f32 deltaTime) {
     (f32)deltaTime;
-    if (AEInputCheckTriggered(AEVK_RETURN)) {
-        startGame = true;
-    }
 
     // If user clicks the left mouse button, check if within the "Play" or "Exit"
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
         // Play button
         if (IsMouseInsideButton(0.0f, 100.0f, 200.0f, 100.0f)) {
             startGame = true;
+        }
+        // Guide button
+        if (IsMouseInsideButton(0.0f, -50.0f, 200.0f, 100.0f)) {
+            menu = true;
         }
         // Exit button
         if (IsMouseInsideButton(0.0f, -200.0f, 200.0f, 100.0f)) {
@@ -135,5 +139,11 @@ void MainMenuState::Unload() {
 }
 
 BaseState* MainMenuState::GetNextState() {
-    return startGame ? new GameState() : nullptr;
+    if (startGame) {
+        return new gamePreview();
+    }
+    if (menu) {
+        return new instructionState();
+    }
+    return nullptr;
 }
