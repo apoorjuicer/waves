@@ -110,11 +110,11 @@ void GameState::Draw() {
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-    RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
     for (Wave& w : wave) {
         if (w.is_active) {
             w.draw();
@@ -147,6 +147,10 @@ void GameState::Free() {
     AEGfxMeshFree(wallMesh);
     AEGfxMeshFree(pathMesh);
     AEGfxMeshFree(enemyMesh);
+    AEGfxMeshFree(goalMesh);
+    AEGfxMeshFree(keyMesh);
+    AEGfxMeshFree(rockMesh);
+    AEGfxMeshFree(boxMesh);
 }
 
 void GameState::Unload() {}
