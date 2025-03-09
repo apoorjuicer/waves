@@ -22,7 +22,7 @@ constexpr int ROW = 10;
 constexpr int COL = 10;
 constexpr float TILE_SIZE = 100.f;
 
-extern int maze[10][10];
+extern int maze[ROW][COL];
 
 //int maze[ROW][COL] = {
 //    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
