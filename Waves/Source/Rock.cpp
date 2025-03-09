@@ -24,7 +24,7 @@ namespace rock {
         return AEGfxMeshEnd();
     }
 
-    bool BounceCollision(float x, float y, int maze[ROW][COL], float tileSize, float mazeStartX, float mazeStartY, float rockRadius) {
+    bool BounceCollision(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, f32 rockRadius) {
         // Convert world-space coordinates to grid indices with half-tile offsets for centering
         int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
         int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
@@ -42,16 +42,16 @@ namespace rock {
 
 
         // Calculate the closest point on the grid cell to the rock's center
-        float cellCenterX = mazeStartX + gridX * tileSize;
-        float cellCenterY = mazeStartY - gridY * tileSize;
+        f32 cellCenterX = mazeStartX + gridX * tileSize;
+        f32 cellCenterY = mazeStartY - gridY * tileSize;
 
-        float closestX = std::max<float>(cellCenterX - tileSize / 2.0f, std::min<float>(x, cellCenterX + tileSize / 2.0f));
-        float closestY = std::max<float>(cellCenterY - tileSize / 2.0f, std::min<float>(y, cellCenterY + tileSize / 2.0f));
+        f32 closestX = std::max<f32>(cellCenterX - tileSize / 2.0f, std::min<f32>(x, cellCenterX + tileSize / 2.0f));
+        f32 closestY = std::max<f32>(cellCenterY - tileSize / 2.0f, std::min<f32>(y, cellCenterY + tileSize / 2.0f));
 
         // Calculate the distance between the rock's center and the closest point
-        float dx = x - closestX;
-        float dy = y - closestY;
-        float distanceSquared = dx * dx + dy * dy;
+        f32 dx = x - closestX;
+        f32 dy = y - closestY;
+        f32 distanceSquared = dx * dx + dy * dy;
 
         // Check if the distance is less than or equal to the rock's radius
         if (distanceSquared <= rockRadius * rockRadius) {
@@ -67,7 +67,7 @@ namespace rock {
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[ROW][COL], float tileSize, float mazeStartX, float mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock) {
+    void drawRock(Player& rplayer, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock) {
         f32 rockRad = 10.0f;
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
@@ -118,26 +118,26 @@ namespace rock {
 
         if (rockActive) {
             // Assume dt is the time elapsed this frame in seconds
-            float dt = (float)AEFrameRateControllerGetFrameTime();
+            f32 dt = (f32)AEFrameRateControllerGetFrameTime();
 
             // Base damping factor: 2% reduction per second.
-            const float baseDamping = 0.40f;
+            const f32 baseDamping = 0.40f;
 
             // Calculate the frame damping factor.
-            float dampingFactor = std::pow(baseDamping, dt);
+            f32 dampingFactor = std::pow(baseDamping, dt);
 
             // Apply damping to the rock's velocity.
             rock.dx *= dampingFactor;
             rock.dy *= dampingFactor;
 
             // Optional: Stop the rock completely if the speed is very low.
-            const float epsilon = 1.0f;
+            const f32 epsilon = 1.0f;
             if (std::fabs(rock.dx) < epsilon && std::fabs(rock.dy) < epsilon) {
                 rock.dx = 0.0f;
                 rock.dy = 0.0f;
             }
-            float prevX = rock.x;
-            float prevY = rock.y;
+            f32 prevX = rock.x;
+            f32 prevY = rock.y;
 
             // --- Process X Movement ---
             rock.x += rock.dx;
@@ -145,7 +145,7 @@ namespace rock {
                 // If collision on X axis, revert X and reverse the X velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.x = prevX;
-                rock.dx *= static_cast<float>( - 0.4);
+                rock.dx *= static_cast<f32>( - 0.4);
                 rock.currBounce++;
             }
 
@@ -155,7 +155,7 @@ namespace rock {
                 // If collision on Y axis, revert Y and reverse the Y velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.y = prevY;
-                rock.dy *= static_cast<float>( - 0.4);
+                rock.dy *= static_cast<f32>( - 0.4);
                 rock.currBounce++;
             }
 

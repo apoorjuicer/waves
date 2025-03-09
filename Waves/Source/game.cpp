@@ -66,7 +66,7 @@ void GameState::Update(f32 deltaTime) {
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
-    float speed = 500.0f;
+    f32 speed = 500.0f;
     if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
@@ -132,6 +132,7 @@ void GameState::Draw() {
     RenderPlayer(player, PlayerMesh);
 
     DrawInventory(player, boxMesh, Font, keyMesh, rockMesh);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 }
 
 void GameState::Free() {
