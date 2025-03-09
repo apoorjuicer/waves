@@ -6,6 +6,21 @@
 \email		shaojun.g@digipen.edu
 
 \brief
+Handles the rock mechanics in the game, including rendering, movement, collision detection,
+and interaction with the maze.
+
+This module allows the player to throw a rock, checks for collisions with the maze,
+applies velocity damping, and updates the rock’s position. It also tracks the rock’s
+final resting position and modifies the maze accordingly.
+
+\details
+- `drawRock()`: Manages the rock's lifecycle, from launch to collision and final placement.
+- `BounceCollision()`: Checks if the rock collides with walls and handles bounce behavior.
+- `Rock_Mesh()`: Generates the graphical representation of the rock.
+- The rock's last resting position is stored in the maze (`maze[ROW][COL] = 4`).
+
+The rock is only launched if the player has one in their inventory, and upon collision,
+it bounces off walls until stopping. The last position is recorded in the maze grid.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -40,7 +55,7 @@ namespace rock {
         return AEGfxMeshEnd();
     }
 
-    bool BounceCollision(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, f32 rockRadius) {
+    bool BounceCollision(f32 x, f32 y, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, f32 rockRadius) {
         // Convert world-space coordinates to grid indices with half-tile offsets for centering
         int gridX = static_cast<int>(std::floor((x - mazeStartX + (tileSize / 2)) / tileSize));
         int gridY = static_cast<int>(std::floor((mazeStartY - y + (tileSize / 2)) / tileSize));
@@ -52,7 +67,7 @@ namespace rock {
         }
 
         // If the cell is walkable, no collision
-        if (maze[gridY][gridX] != 1) {
+        if (maze1[gridY][gridX] != 1) {
             return true;
         }
 
@@ -83,7 +98,7 @@ namespace rock {
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
 
-    void drawRock(Player& rplayer, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock) {
+    void drawRock(Player& rplayer, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock1) {
         f32 rockRad = 10.0f;
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
@@ -159,7 +174,7 @@ namespace rock {
 
             // --- Process X Movement ---
             rock.x += rock.dx;
-            if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY, rockRad)) {
+            if (!BounceCollision(rock.x, rock.y, maze1, tileSize, mazeStartX, mazeStartY, rockRad)) {
                 // If collision on X axis, revert X and reverse the X velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.x = prevX;
@@ -169,7 +184,7 @@ namespace rock {
 
             // --- Process Y Movement ---
             rock.y += rock.dy;
-            if (!BounceCollision(rock.x, rock.y, maze, tileSize, mazeStartX, mazeStartY, rockRad)) {
+            if (!BounceCollision(rock.x, rock.y, maze1, tileSize, mazeStartX, mazeStartY, rockRad)) {
                 // If collision on Y axis, revert Y and reverse the Y velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.y = prevY;
@@ -180,16 +195,16 @@ namespace rock {
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rockActive = false;
-                lastRock.x = rock.x;
-                lastRock.y = rock.y;
+                lastRock1.x = rock.x;
+                lastRock1.y = rock.y;
 
                 // Convert world coordinates to grid indices
-                int gridX = static_cast<int>((lastRock.x - mazeStartX + (tileSize / 2)) / tileSize);
-                int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - lastRock.y) / tileSize);
+                int gridX = static_cast<int>((lastRock1.x - mazeStartX + (tileSize / 2)) / tileSize);
+                int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - lastRock1.y) / tileSize);
 
                 // Ensure the grid position is valid before updating the maze
                 if (gridX >= 0 && gridX < COL && gridY >= 0 && gridY < ROW) {
-                    maze[gridY][gridX] = 4;  // Mark the rock's last location in the maze
+                    maze1[gridY][gridX] = 4;  // Mark the rock's last location in the maze
                 }
             }
 

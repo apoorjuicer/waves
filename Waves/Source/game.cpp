@@ -5,7 +5,10 @@
 \co-author  Jordain Ng, Benjamin Ban, Chewn Thing Kwan, Guan Shao Jun
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief      This file defines the GameState class, which manages the core gameplay logic and rendering. 
+            It handles game state transitions, updates, 
+            and rendering of various game elements such as the player, enemies, maze, and interactive objects. 
+            The class integrates multiple components to create a cohesive gameplay experience.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -22,7 +25,7 @@ Technology is prohibited.
 
 GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), Font(-1), prevDestX(-1), prevDestY(-1) {
+pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {
 
 }
 
@@ -34,7 +37,6 @@ namespace {
 void GameState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
-    Font = AEGfxCreateFont("Assets\\liberation-mono.ttf", 50);
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
@@ -152,7 +154,7 @@ void GameState::Draw() {
     }
     RenderPlayer(player, PlayerMesh);
 
-    DrawInventory(player, boxMesh, Font, keyMesh, rockMesh);
+    DrawInventory(player, boxMesh, keyMesh, rockMesh);
 }
 
 void GameState::Free() {

@@ -5,7 +5,8 @@
 \co-author  Guan Shao Jun
 \email		jordainyingzhe.ng@digipen.edu
 
-\brief
+\brief      this file includes functions, to for player movement and collision checking, to 
+            prevent the player from going into the wall
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -209,7 +210,7 @@ AEGfxVertexList* CreateBoxMesh(u32 color) {
     return AEGfxMeshEnd();
 }
 
-void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, s8 Font, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
 
     f32 worldScreenLeft = player.x - (AEGfxGetWindowWidth() / 2);
     f32 worldScreenBottom = player.y - (AEGfxGetWindowHeight() / 2);

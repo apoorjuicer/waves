@@ -4,7 +4,9 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief      This file defines the WinState class, which manages the game's victory screen. 
+            It handles rendering the win message, providing options to 
+            proceed to the next phase or return to the main menu, and managing state transitions.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

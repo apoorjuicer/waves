@@ -4,7 +4,9 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief		This file defines functions and structures for managing and rendering walls and boundaries in the game world. 
+			It provides functionality to create meshes, 
+			add wall and boundary blocks, and render them using Alpha Engine's graphics system.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
