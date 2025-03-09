@@ -78,10 +78,13 @@ struct Enemy {
 	//vector<pair<int, int>> path; // Stores A* path
 	std::vector<Pair> path = {};
 	std::vector<Pair> patrolPath = {};
+	Pair prevPlayerPos;
 	int pathIndex = 0; // Current target in path
 	bool reachPath = false;
 	// Constructor initializes all members
-	Enemy() : x{ 100.f }, y{ -100.f }, gridX{1}, gridY{1}, w{50.f}, h{50.f}, state{IDLE} {}
+	Enemy() : x{ 100.f }, y{ -200.f }, gridX{1}, gridY{2}, w{50.f}, h{50.f}, state{IDLE} {
+		
+	}
 	// Moves enemy along the computed path
 	void moveEnemy() {
 		//printf("moving Enemy\n");
@@ -123,15 +126,16 @@ struct Enemy {
 
 			//printf("Moving to: (%d, %d)\n", nextPos.first, nextPos.second);
 		}
-		else {
-			//printf("Path finished, enemy has reached destination.\n");
-		}
+		
 		updateGridPosition();
 		printPosition();
 	}
 	void updateGridPosition() {
-		gridX = static_cast<int>(x / TILE_SIZE);
-		gridY = static_cast<int>(y / -TILE_SIZE);
+		/*gridX = static_cast<int>(round(x / TILE_SIZE));
+		gridY = static_cast<int>(round(y / -TILE_SIZE));*/
+		//manual offset superior
+		gridX = static_cast<int>((x + TILE_SIZE / 2) / TILE_SIZE);
+		gridY = static_cast<int>((y - TILE_SIZE / 2) / TILE_SIZE) * -1;
 	}
 	// Display enemy position, for debug
 	void printPosition() {
