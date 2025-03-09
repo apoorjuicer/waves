@@ -1,11 +1,10 @@
-//------------------------------
-/* Start Header** /
+/* Start Header ************************************************************************/
 /*!
-\file        Wave.h
-\author        Chewn Thing Kwan
-\email        kwan.c@digipen.edu
+\file       Wave.h
+\author     Chewn Thing Kwan
+\email      kwan.c@digipen.edu
 
-\brief        This header file declares functions that are necessary for dealing with
+\brief      This header file declares functions that are necessary for dealing with
 			echolocation waves.
 
 			Functionality includes spawning and destroying waves, reflection waves and
@@ -15,14 +14,15 @@ Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
 without the prior written consent of DigiPen Institute of
 Technology is prohibited.
-/
-/ End Header **/
+*/
+/* End Header **************************************************************************/
 
 #ifndef WAV_HPP
 #define WAV_HPP
 
 #include "AEEngine.h"
 #include <utility>
+#include "Maze.h"
 
 constexpr int MAZE_HEIGHT{ 10 };
 constexpr int MAZE_WIDTH{ 10 };

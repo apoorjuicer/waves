@@ -1,11 +1,10 @@
-//------------------------------
-/* Start Header** /
+/* Start Header ************************************************************************/
 /*!
-\file        Wave.cpp
-\author        Chewn Thing Kwan
-\email        kwan.c@digipen.edu
+\file       Wave.cpp
+\author     Chewn Thing Kwan
+\email      kwan.c@digipen.edu
 
-\brief        This header file declares functions that are necessary for dealing with
+\brief      This header file declares functions that are necessary for dealing with
 			echolocation waves.
 
 			Functionality includes spawning and destroying waves, reflection waves and
@@ -15,10 +14,10 @@ Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
 without the prior written consent of DigiPen Institute of
 Technology is prohibited.
-/
-/ End Header **/
+*/
+/* End Header **************************************************************************/
 
-#include "Wave.hpp"
+#include "Wave.h"
 #include <iostream>
 
 namespace {
