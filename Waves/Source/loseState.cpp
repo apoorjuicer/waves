@@ -4,7 +4,9 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief      This file defines the LoseState class, which manages the game-over screen. 
+            It handles rendering the loss message, providing options to return to the main menu, 
+            and managing transitions to other game states.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

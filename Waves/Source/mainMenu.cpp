@@ -4,7 +4,9 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief      This file defines the MainMenuState class, which manages the game's main menu. 
+            It handles user interactions, such as starting the game, accessing the guide, or exiting. 
+            The file also includes utility functions for detecting mouse interactions with buttons and creating button meshes.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
