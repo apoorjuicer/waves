@@ -15,6 +15,8 @@ void LoseState::Initialize() {
 }
 
 void LoseState::Update(f32 deltaTime) {
+    (f32)deltaTime;
+
     // Example: Press ENTER to return to main menu
     if (AEInputCheckTriggered(AEVK_RETURN)) {
         goMenu = true;
