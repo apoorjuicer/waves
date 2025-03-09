@@ -5,7 +5,7 @@
 \co-author  Guan Shao Jun
 \email		jordainyingzhe.ng@digipen.edu
 
-\brief
+\brief      This folder includes functions, to help with drawing of the maze, with a 2d array
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
