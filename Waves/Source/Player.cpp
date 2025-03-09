@@ -209,7 +209,7 @@ AEGfxVertexList* CreateBoxMesh(u32 color) {
     return AEGfxMeshEnd();
 }
 
-void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, s8 Font, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
 
     f32 worldScreenLeft = player.x - (AEGfxGetWindowWidth() / 2);
     f32 worldScreenBottom = player.y - (AEGfxGetWindowHeight() / 2);

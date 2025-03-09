@@ -22,7 +22,7 @@ Technology is prohibited.
 
 GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), Font(-1), prevDestX(-1), prevDestY(-1) {
+pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {
 
 }
 
@@ -34,7 +34,6 @@ namespace {
 void GameState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
-    Font = AEGfxCreateFont("Assets\\liberation-mono.ttf", 50);
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
@@ -152,7 +151,7 @@ void GameState::Draw() {
     }
     RenderPlayer(player, PlayerMesh);
 
-    DrawInventory(player, boxMesh, Font, keyMesh, rockMesh);
+    DrawInventory(player, boxMesh, keyMesh, rockMesh);
 }
 
 void GameState::Free() {

@@ -46,5 +46,5 @@ void CheckItem(Player& player, int maze[10][10], f32 tileSize, f32 mazeStartX, f
 bool PlayerEnemyCollision(Player &player, Enemy &enemy);
 bool checkGoal(Player& player, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
 AEGfxVertexList* CreateBoxMesh(u32 color);
-void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, s8 Font, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
+void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
 //bool PlayerEnemyCollision(Player &player, Enemy &enemy);

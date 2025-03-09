@@ -29,7 +29,6 @@ private:
     bool exitGame = false;
     bool dead = false;
     bool winGame = false;
-    s8 Font;
     f32 tilesize = 100.0f;
     AEGfxVertexList* pDonutMesh = nullptr;
     AEGfxVertexList* PlayerMesh = nullptr;
