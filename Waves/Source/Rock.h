@@ -1,3 +1,18 @@
+/* Start Header ************************************************************************/
+/*!
+\file		Rock.h
+\author		Guan Shao Jun
+\email		shaojun.g@digipen.edu
+
+\brief
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #pragma once
 #include "AEEngine.h"
 #include "Player.h"

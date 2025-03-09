@@ -1,3 +1,23 @@
+//------------------------------
+/* Start Header** /
+/*!
+\file        Wave.h
+\author        Chewn Thing Kwan
+\email        kwan.c@digipen.edu
+
+\brief        This header file declares functions that are necessary for dealing with
+			echolocation waves.
+
+			Functionality includes spawning and destroying waves, reflection waves and
+			outlines logic, and drawing echolocation elements.
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+/
+/ End Header **/
+
 #ifndef WAV_HPP
 #define WAV_HPP
 

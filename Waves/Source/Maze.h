@@ -2,8 +2,8 @@
 /*!
 \file		Maze.h
 \author		Jordain
-\co-author
-\email
+\co-author	Guan Shao Jun
+\email		jordainyingzhe.ng@digipen.edu
 
 \brief
 

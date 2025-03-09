@@ -1,3 +1,19 @@
+/* Start Header ************************************************************************/
+/*!
+\file		Rock.cpp
+\author		Guan Shao Jun
+\co-author  Chewn Thing Kwan
+\email		shaojun.g@digipen.edu
+
+\brief
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "AEEngine.h"
 #include "Rock.h"
 #include "Maze.h"
