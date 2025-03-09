@@ -48,9 +48,6 @@
     <ClInclude Include="..\Source\draw_map.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\enemy_henrey.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="..\Source\Maze.h">
       <Filter>Header Files</Filter>
     </ClInclude>

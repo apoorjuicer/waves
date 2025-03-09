@@ -107,7 +107,7 @@ void GameState::Update(f32 deltaTime) {
         if (w.is_active) {
             // update wave size;
             w.update();
-            w.echolocation(maze, tilesize, reflections, outlines);
+            w.echolocation(tilesize, reflections, outlines);
         }
     }
     for (Wave& r : reflections) {
