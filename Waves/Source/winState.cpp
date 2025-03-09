@@ -16,6 +16,8 @@ void WinState::Initialize() {
 }
 
 void WinState::Update(f32 deltaTime) {
+    (f32)deltaTime;
+
     // Example: Press ENTER to proceed to next level
     if (AEInputCheckTriggered(AEVK_RETURN)) {
         goNext = true;

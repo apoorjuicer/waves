@@ -50,6 +50,8 @@ void gamePreview::Initialize() {
 }
 
 void gamePreview::Update(f32 deltaTime) {
+    (f32)deltaTime;
+
     // Example: Press ENTER to return to main menu
     if (AEInputCheckTriggered(AEVK_RETURN)) {
         goGame = true;
