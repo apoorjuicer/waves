@@ -2,10 +2,17 @@
 /*!
 \file		Enemy.cpp
 \author		Benjamin Ban
-\co-author  Jordain
 \email		k.ban@digipen.edu
+\co-author  Jordain
+\email
+\co-author  Henry
+\email
 
-\brief		
+\brief		This header file declares functions that are necessary for dealing with
+			enemy movement and ai path finding
+
+			Functionality includes pathfinding,enemystates, rendering enemy and
+			moving enemy
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -59,6 +66,8 @@ void RenderEnemy_Mesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scale
 }
 
 namespace {// Utility Functions
+		//pathfinding functions
+		
 	//check cell (row, col) and grid[index] is valid
 	bool isValid(int row, int col, int grid[][COL])
 	{
@@ -102,15 +111,15 @@ namespace {// Utility Functions
 		path.push_back({ j,i });
 		std::reverse(path.begin(), path.end());
 		// print path
-		for (const Pair& p : path) {
-			//printf(":[%d,%d] ", p.first, p.second);
-		}
+		//for (const Pair& p : path) {
+		//	//printf(":[%d,%d] ", p.first, p.second);
+		//}
 
 	}//end of reconstructPath
 
 	void processNeighbor(int new_i, int new_j, int i, int j, Pair dest,
 		Node gridNodes[][COL], bool closedList[][COL],
-		int grid[][COL], std::vector<pPair>& openList, std::vector<Pair>& path) {
+		/*int grid[][COL],*/ std::vector<pPair>& openList/*, std::vector<Pair>& path*/) {
 
 		//if (!isValid(new_i, new_j, grid)) { return ; }
 
@@ -132,6 +141,62 @@ namespace {// Utility Functions
 			}
 		}
 	}//end of processNeighbor
+
+	//state functions
+	void MovetoPatrolpoint(Enemy& e) {
+		// If the enemy is NOT at startPatrol, force it to go to startPatrol
+		e.path.clear();
+		e.pathIndex = 0;
+		Pair enemyIndex = { e.gridX, e.gridY };
+		astarsearch(maze, enemyIndex, e.startPatrol, e.path);
+	/*	if (e.path.empty()) {
+			std::cout << "Failed to find path to start patrol point.\n";
+		}
+		else {
+			std::cout << "Path to start patrol point calculated successfully.\n";
+		}*/
+	}
+
+	void chasePlayer(Enemy& e) {
+		// Convert player's world position to grid coordinates
+		/*int playerGridX = static_cast<int>(round(player.x / TILE_SIZE));
+		int playerGridY = static_cast<int>(round(player.y / -TILE_SIZE));*/
+		int playerGridX = static_cast<int>((player.x + TILE_SIZE / 2) / TILE_SIZE);
+		int playerGridY = static_cast<int>((player.y - TILE_SIZE / 2) / TILE_SIZE) * -1;
+
+		// Convert enemy's current position to grid coordinates
+		int enemyGridX = e.gridX;
+		int enemyGridY = e.gridY;
+
+		// Always recalculate the path to the player's position
+		e.path.clear();   // Clear old path
+		e.pathIndex = 0;  // Reset path index
+
+		Pair enemyPos = { enemyGridX, enemyGridY };
+		Pair playerPos = { playerGridX, playerGridY };
+
+		astarsearch(maze, enemyPos, playerPos, e.path);  // Find path to player
+
+		/*if (e.path.empty()) {
+			std::cout << "Failed to find a path to the player!\n";
+		}
+		else {
+			std::cout << "Path to player calculated successfully.\n";
+		}*/
+	}
+
+	bool seePlayer(Enemy& e, float sightRange) {
+		float dist_x = player.x - e.x;
+		float dist_y = player.y - e.y;
+		return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+	}
+
+	bool seeRock(Enemy& e, float sightRange) {
+		float dist_x = lastRock.x - e.x;
+		float dist_y = lastRock.y - e.y;
+		return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+	}
+
 
 }// end of anon namespace
 
@@ -214,8 +279,8 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 				return Path::PATH_FOUND;
 			}
 
-			processNeighbor(new_i, new_j, i, j, dst, gridNodes, closedList, grid, openList, path);
-
+			//processNeighbor(new_i, new_j, i, j, dst, gridNodes, closedList, grid, openList/*, path*/);
+			processNeighbor(new_i, new_j, i, j, dst, gridNodes, closedList, openList);
 		}
 	}//end of openlist check
 
@@ -224,59 +289,7 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 	return Path::NO_PATH;
 }
 
-void MovetoPatrolpoint(Enemy& e) {
-	// If the enemy is NOT at startPatrol, force it to go to startPatrol
-	e.path.clear();
-	e.pathIndex = 0;
-	Pair enemyIndex = { e.gridX, e.gridY };
-	astarsearch(maze, enemyIndex, e.startPatrol, e.path);
-	if (e.path.empty()) {
-		std::cout << "Failed to find path to start patrol point.\n";
-	}
-	else {
-		std::cout << "Path to start patrol point calculated successfully.\n";
-	}
-}
 
-void chasePlayer(Enemy& e) {
-	// Convert player's world position to grid coordinates
-	/*int playerGridX = static_cast<int>(round(player.x / TILE_SIZE));
-	int playerGridY = static_cast<int>(round(player.y / -TILE_SIZE));*/
-	int playerGridX = static_cast<int>((player.x + TILE_SIZE / 2) / TILE_SIZE);
-	int playerGridY = static_cast<int>((player.y - TILE_SIZE / 2) / TILE_SIZE) * -1;
-
-	// Convert enemy's current position to grid coordinates
-	int enemyGridX = e.gridX;
-	int enemyGridY = e.gridY;
-
-	// Always recalculate the path to the player's position
-	e.path.clear();   // Clear old path
-	e.pathIndex = 0;  // Reset path index
-
-	Pair enemyPos = { enemyGridX, enemyGridY };
-	Pair playerPos = { playerGridX, playerGridY };
-
-	astarsearch(maze, enemyPos, playerPos, e.path);  // Find path to player
-
-	if (e.path.empty()) {
-		std::cout << "Failed to find a path to the player!\n";
-	}
-	else {
-		std::cout << "Path to player calculated successfully.\n";
-	}
-}
-
-bool seePlayer(Enemy& e, float sightRange) {
-	float dist_x = player.x - e.x;
-	float dist_y = player.y - e.y;
-	return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
-}
-
-bool seeRock(Enemy& e, float sightRange) {
-	float dist_x = lastRock.x - e.x;
-	float dist_y = lastRock.y - e.y;
-	return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
-}
 
 void EnemyState(Enemy& e,float dt) {
 	static float accumulatedTime = 0.0f;
@@ -415,10 +428,10 @@ void UpdateEnemystate(Enemy& e,float dt) {
 	case PURSUIT_ROCK:
 		if (e.gridX == destX &&
 			e.gridY == destY ){
-			std::cout << "Enemy reached the rock!\n";
+			//std::cout << "Enemy reached the rock!\n";
 			if (seePlayer(e, sightRangePlayer)) {
 				e.state = PURSUIT_PLAYER;
-				std::cout << "Switching to PURSUIT_PLAYER.\n";
+				//std::cout << "Switching to PURSUIT_PLAYER.\n";
 			}
 			else {
 				e.state = IDLE;  // Reached the rock

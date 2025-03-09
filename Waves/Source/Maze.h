@@ -24,8 +24,18 @@ constexpr float TILE_SIZE = 100.f;
 
 extern int maze[10][10];
 
-
-extern int maze[ROW][COL];
+//int maze[ROW][COL] = {
+//    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
+//    { 1, 0, 0, 0, 0, 0, 1, 0, 2, 1 },
+//    { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
+//    { 1, 3, 4, 0, 1, 0, 0, 0, 0, 1 },
+//    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
+//    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
+//    { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
+//    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
+//    { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
+//    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
+//};
 
 void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);

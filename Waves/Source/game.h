@@ -47,6 +47,7 @@ private:
     int prevDestY = -1;
 
     Wave wave[MAX_NUM_WAVES];
+    Wave enemy_wave[MAX_NUM_WAVES];
     Wave reflections[MAX_NUM_REFLECTIONS];
     Outline outlines[MAX_NUM_OUTLINES];
 

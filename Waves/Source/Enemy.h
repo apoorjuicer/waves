@@ -8,9 +8,19 @@
 \co-author  Henry
 \email
 
-\brief	Benjamin:
+\brief	This header file declares functions that are necessary for dealing with
+		enemy movement and ai path finding
+
+		Functionality includes pathfinding,enemystates, rendering enemy and
+		moving enemy
+
+		Benjamin:
 		-typedef alias and constexpr
 		-Structs and enums
+
+		Jordain:
+		-chase rock state
+		-RenderEnemy_Mesh
 
 		Henry:
 		-createEnemyMesh()
@@ -25,6 +35,8 @@ Technology is prohibited.
 #include "AEEngine.h"
 #include "Player.h"
 #include "Maze.h"
+//#include "Wave.h"
+//#include "game.h"
 
 #include <utility> // pair
 #include <vector> //vector
@@ -44,6 +56,7 @@ constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity f
 typedef std::pair<int, int> Pair; //contains i and j
 // create shortcut for <double, pair<int, int>> pair
 typedef std::pair<double, std::pair<int, int> > pPair; //contains fcost,i,j
+
 
 
 enum class Path {
@@ -81,6 +94,8 @@ struct Enemy {
 	Pair prevPlayerPos;
 	int pathIndex = 0; // Current target in path
 	bool reachPath = false;
+	//Wave enemy_waves[MAX_NUM_WAVES];
+
 	// Constructor initializes all members
 	Enemy() : x{ 100.f }, y{ -200.f }, gridX{1}, gridY{2}, w{50.f}, h{50.f}, state{IDLE} {
 		
@@ -119,6 +134,8 @@ struct Enemy {
 			}
 			else {
 				// Snap to the exact target when close enough
+				//void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in, f32 max_size = WAVES_SIZE);
+				//spawn_wave(enemy_waves,x,y,);
 				x = targetX;
 				y = targetY;
 				pathIndex++;  // Move to the next step in path
