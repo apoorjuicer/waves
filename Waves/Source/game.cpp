@@ -18,7 +18,7 @@ void GameState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
     Font = AEGfxCreateFont("Assets\\liberation-mono.ttf", 50);
-    pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0x000000FF);
+    pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
