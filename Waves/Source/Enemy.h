@@ -84,15 +84,15 @@ struct Enemy {
 	Enemy() : x{ 100.f }, y{ -100.f }, gridX{1}, gridY{1}, w{50.f}, h{50.f}, state{IDLE} {}
 	// Moves enemy along the computed path
 	void moveEnemy() {
-		printf("moving Enemy\n");
+		//printf("moving Enemy\n");
 		if (path.empty()) {
-			printf("path is empty\n");
+			//printf("path is empty\n");
 			return;
 		}
 
 		// Skip the first step if it's the same as the current position
 		if (pathIndex == 0 && path[0] == Pair(gridX, gridY)) {
-			std::cout << "skip start pos: (" << path[0].first << ", " << path[0].second << ")\n";
+			//std::cout << "skip start pos: (" << path[0].first << ", " << path[0].second << ")\n";
 			pathIndex++; // Move to the next valid step
 		}
 
@@ -121,10 +121,10 @@ struct Enemy {
 				pathIndex++;  // Move to the next step in path
 			}
 
-			printf("Moving to: (%d, %d)\n", nextPos.first, nextPos.second);
+			//printf("Moving to: (%d, %d)\n", nextPos.first, nextPos.second);
 		}
 		else {
-			printf("Path finished, enemy has reached destination.\n");
+			//printf("Path finished, enemy has reached destination.\n");
 		}
 		updateGridPosition();
 		printPosition();
@@ -135,8 +135,8 @@ struct Enemy {
 	}
 	// Display enemy position, for debug
 	void printPosition() {
-		std::cout << "Enemy Position in World: (" << x << ", " << y << ")\n";
-		std::cout << "Enemy Position in Grid: (" << gridX << ", " << gridY << ")\n";
+		//std::cout << "Enemy Position in World: (" << x << ", " << y << ")\n";
+		//std::cout << "Enemy Position in Grid: (" << gridX << ", " << gridY << ")\n";
 	}
 };
 

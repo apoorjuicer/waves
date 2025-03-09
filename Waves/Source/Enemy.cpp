@@ -103,7 +103,7 @@ namespace {// Utility Functions
 		std::reverse(path.begin(), path.end());
 		// print path
 		for (const Pair& p : path) {
-			printf(":[%d,%d] ", p.first, p.second);
+			//printf(":[%d,%d] ", p.first, p.second);
 		}
 
 	}//end of reconstructPath
@@ -142,12 +142,12 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 
 	path.clear(); //reset path
 	if (!isValid(dst.first, dst.second, grid) || !isValid(src.first, src.second, grid)) {
-		printf("Source or Destination is invalid\n");
+		//printf("Source or Destination is invalid\n");
 		return Path::NO_PATH;
 	}
 	// If the destination cell is the same as source cell
 	if (isDestination(src.first, src.second, dst)) {
-		printf("Already at the destination\n");
+		//printf("Already at the destination\n");
 		return Path::NO_PATH;
 	}
 
@@ -208,7 +208,7 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 			if (isDestination(new_i, new_j, dst)) {
 				gridNodes[new_i][new_j].parent_i = i;
 				gridNodes[new_i][new_j].parent_j = j;
-				printf("The destination cell is found\n");
+				//printf("The destination cell is found\n");
 				//printPath(gridNodes, dest);
 				reconstructPath(gridNodes, dst, path);
 				return Path::PATH_FOUND;
@@ -220,7 +220,7 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 	}//end of openlist check
 
 
-	printf("Pathfinding failed");
+	//printf("Pathfinding failed");
 	return Path::NO_PATH;
 }
 
@@ -240,18 +240,18 @@ void EnemyState(Enemy& e,float dt) {
 
 	switch (e.state) {
 	case IDLE:
-		std::cout << "Enemy is idle.\n";
+		/*std::cout << "Enemy is idle.\n";*/
 		break;
 	case PATROL:
-		std::cout << "Enemy is patrolling.\n";
+/*		std::cout << "Enemy is patrolling.\n";
 		std::cout << "current index :"<<currIndex.first <<","<< currIndex.second << "\n";
 		std::cout << "start patrol index :" << e.startPatrol.first << "," << e.startPatrol.second << "\n";
 		std::cout << "start patrol index :" << e.endPatrol.first << "," << e.endPatrol.second << "\n";
 		std::cout << "Enemy path index: " << e.pathIndex << "\n";
-		std::cout << "Enemy path size: " << e.path.size() << "\n";		
+		std::cout << "Enemy path size: " << e.path.size() << "\n";*/		
 		// If the enemy is NOT at startPatrol, force it to go to startPatrol
 		if (!inPatrolPath) {
-			std::cout << "going to start patrol";
+			//std::cout << "going to start patrol";
 			astarsearch(maze, currIndex, e.startPatrol, e.path);
 			e.pathIndex = 0; // Reset path index
 		}	
@@ -259,12 +259,12 @@ void EnemyState(Enemy& e,float dt) {
 		if (e.path.empty() || e.pathIndex >= e.path.size()) {
 			// If the enemy has reached the patrol point, switch to the other patrol target
 			if (currIndex == e.startPatrol) {
-				std::cout << "Reached start patrol, switching to end patrol.\n";
+				//std::cout << "Reached start patrol, switching to end patrol.\n";
 				astarsearch(maze, currIndex, e.endPatrol, e.path);
 				e.pathIndex = 0; // Reset path index
 			}
 			else if (currIndex == e.endPatrol) {
-				std::cout << "Reached end patrol, switching to start patrol.\n";
+				//std::cout << "Reached end patrol, switching to start patrol.\n";
 				astarsearch(maze, currIndex, e.startPatrol, e.path);
 				e.pathIndex = 0; // Reset path index
 			}
@@ -278,11 +278,11 @@ void EnemyState(Enemy& e,float dt) {
 		}	
 		break;
 	case PURSUIT_PLAYER:
-		std::cout << "Enemy is chasing player!\n";
+		//std::cout << "Enemy is chasing player!\n";
 		// Implement chase behavior
 		break;
 	case PURSUIT_ROCK:
-		std::cout << "Enemy is chasing rock!\n";
+		//std::cout << "Enemy is chasing rock!\n";
 
 		// If the destination (rock's position) has changed, recalculate the path
 		if (destX != prevDestX || destY != prevDestY) {

@@ -148,12 +148,12 @@ void CheckItem(Player& player, int maze[10][10], f32 tileSize, f32 mazeStartX, f
 
     if (!isInventoryFull(player)) {
         if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
-            std::cout << maze[gridY][gridX];
+            //std::cout << maze[gridY][gridX];
             maze[gridY][gridX] = 0;
             addItemToInventory(player, KEY);
         }
         if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 4) {
-            std::cout << maze[gridY][gridX];
+            //std::cout << maze[gridY][gridX];
             maze[gridY][gridX] = 0;
             addItemToInventory(player, ROCK);
         }
@@ -204,7 +204,7 @@ void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, s8 Font, AEGf
     f32 spacing = 20.0f;
 
     for (int i = 0;i < INVENTORY_SIZE;++i) {
-        std::cout << "Item in :" << i << " is " << player.inventory[i] << std::endl;
+        //std::cout << "Item in :" << i << " is " << player.inventory[i] << std::endl;
         f32 x = worldScreenLeft + offsetX + i * (boxSize + spacing);
         f32 y = worldScreenBottom + offsetY;
 

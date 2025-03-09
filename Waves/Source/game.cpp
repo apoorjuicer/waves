@@ -18,7 +18,7 @@ void GameState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
     Font = AEGfxCreateFont("Assets\\liberation-mono.ttf", 50);
-    pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0x00000000);
+    pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0x000000FF);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
@@ -75,9 +75,9 @@ void GameState::Update(f32 deltaTime) {
     if (AEInputCheckTriggered(AEVK_SPACE)) {
         spawn_wave(wave, player.x, player.y, wave_meshes);
     }
-    if (AEInputCheckTriggered(AEVK_E)) {
-        std::cout << "\n\n\n\n\n";
-    }
+    //if (AEInputCheckTriggered(AEVK_E)) {
+    //    std::cout << "\n\n\n\n\n";
+    //}
 
     UpdateEnemystate(enemy1, deltaTime);
 
@@ -112,6 +112,9 @@ void GameState::Draw() {
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
+
+    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     for (Wave& w : wave) {
         if (w.is_active) {
             w.draw();
@@ -127,12 +130,9 @@ void GameState::Draw() {
             l.draw();
         }
     }
-
-    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderPlayer(player, PlayerMesh);
 
     DrawInventory(player, boxMesh, Font, keyMesh, rockMesh);
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 }
 
 void GameState::Free() {
