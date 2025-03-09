@@ -36,7 +36,7 @@ namespace rock {
         }
 
         // If the cell is walkable, no collision
-        if (maze[gridY][gridX] == 0 || maze[gridY][gridX] == 2 || maze[gridY][gridX] == 3) {
+        if (maze[gridY][gridX] != 1) {
             return true;
         }
 
@@ -74,9 +74,23 @@ namespace rock {
         AEVec2 mouseWorld{ 0.0f, 0.0f };
         static AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
 
+        // Check if the player has a rock in their inventory
+        bool hasRock = false;
+        int rockIndex = -1;
+
+        for (int i = 0; i < INVENTORY_SIZE; ++i) {
+            if (rplayer.inventory[i] == ROCK) {
+                hasRock = true;
+                rockIndex = i;  // Store the index of the first found rock
+                break;
+            }
+        }
+
         // Launch the rock when the left mouse button is clicked (and if not already active)
-        if (AEInputCheckCurr(AEVK_LBUTTON) && !rockActive) {
+        if (AEInputCheckCurr(AEVK_LBUTTON) && !rockActive && hasRock) {
             AEInputGetCursorPosition(&mouseX, &mouseY);
+
+            rplayer.inventory[rockIndex] = NOTHING;
 
             // Get screen dimensions
             f32 screenWidth = static_cast<f32>(AEGfxGetWindowWidth());
@@ -150,6 +164,15 @@ namespace rock {
                 rockActive = false;
                 lastRock.x = rock.x;
                 lastRock.y = rock.y;
+
+                // Convert world coordinates to grid indices
+                int gridX = static_cast<int>((lastRock.x - mazeStartX + (tileSize / 2)) / tileSize);
+                int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - lastRock.y) / tileSize);
+
+                // Ensure the grid position is valid before updating the maze
+                if (gridX >= 0 && gridX < COL && gridY >= 0 && gridY < ROW) {
+                    maze[gridY][gridX] = 4;  // Mark the rock's last location in the maze
+                }
             }
 
             // Draw the rock at its current position

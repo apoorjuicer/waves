@@ -108,7 +108,7 @@ bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, 
     }
 
     // Check if the grid cell is walkable
-    if (maze[gridY][gridX] == 0 || maze[gridY][gridX] == 3 || maze[gridY][gridX] == 2) {
+    if (maze[gridY][gridX] != 1) {
         //std::cout << "Walkable\n";
         //if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
         //    std::cout << maze[gridY][gridX];
@@ -124,15 +124,41 @@ bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, 
 
 }
 
-void CheckKey(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY) {
+void addItemToInventory(Player& player, InventoryItem item) {
+    for (int i{}; i < INVENTORY_SIZE; ++i) {
+        if (player.inventory[i] == NOTHING) {
+            player.inventory[i] = item;
+            return;
+         }
+    }
+}
+
+bool isInventoryFull(const Player& player) {
+    for (int i = 0; i < INVENTORY_SIZE; ++i) {
+        if (player.inventory[i] == NOTHING) {
+            return false;  // Found an empty slot
+        }
+    }
+    return true;  // No empty slots, inventory is full
+}
+
+void CheckItem(Player& player, int maze[10][10], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     int gridX = static_cast<int>((player.x - mazeStartX + (tileSize / 2)) / tileSize);
     int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - player.y) / tileSize);
 
-    if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
-        std::cout << maze[gridY][gridX];
-        maze[gridY][gridX] = 0;
-        player.key = 1;
+    if (!isInventoryFull(player)) {
+        if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
+            std::cout << maze[gridY][gridX];
+            maze[gridY][gridX] = 0;
+            addItemToInventory(player, KEY);
+        }
+        if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 4) {
+            std::cout << maze[gridY][gridX];
+            maze[gridY][gridX] = 0;
+            addItemToInventory(player, ROCK);
+        }
     }
+
 }
 
 
@@ -152,25 +178,82 @@ void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[ROW
     }
 }
 
+AEGfxVertexList* CreateBoxMesh(u32 color) {
+    AEGfxMeshStart();
+    AEGfxTriAdd(
+        -0.5f, -0.5f, color, 0.0f, 1.0f,  // bottom-left
+        0.5f, -0.5f, color, 1.0f, 1.0f,  // bottom-right
+        -0.5f, 0.5f, color, 0.0f, 0.0f   // top-left
+    );
+    AEGfxTriAdd(
+        0.5f, -0.5f, color, 1.0f, 1.0f,  // bottom-right
+        0.5f, 0.5f, color, 1.0f, 0.0f,  // top-right
+        -0.5f, 0.5f, color, 0.0f, 0.0f   // top-left
+    );
+    return AEGfxMeshEnd();
+}
+
+void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, s8 Font, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+
+    f32 worldScreenLeft = player.x - (AEGfxGetWindowWidth() / 2);
+    f32 worldScreenBottom = player.y - (AEGfxGetWindowHeight() / 2);
+
+    f32 offsetX = 100.0f;
+    f32 offsetY = 100.0f;
+    f32 boxSize = 80.0f;
+    f32 spacing = 20.0f;
+
+    for (int i = 0;i < INVENTORY_SIZE;++i) {
+        std::cout << "Item in :" << i << " is " << player.inventory[i] << std::endl;
+        f32 x = worldScreenLeft + offsetX + i * (boxSize + spacing);
+        f32 y = worldScreenBottom + offsetY;
+
+        AEMtx33 transform;
+        AEMtx33Identity(&transform);
+        AEMtx33Scale(&transform, boxSize, boxSize);
+        AEMtx33TransApply(&transform, &transform, x, y);
+        AEGfxSetTransform(transform.m);
+
+        AEGfxMeshDraw(boxMesh, AE_GFX_MDM_TRIANGLES);
+
+        if (player.inventory[i] == KEY) {
+            AEMtx33 rockTransform;
+            AEMtx33Identity(&rockTransform);
+            AEMtx33TransApply(&rockTransform, &rockTransform, x, y);
+            AEGfxSetTransform(rockTransform.m);
+            AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
+        }
+        if (player.inventory[i] == ROCK) {
+            AEMtx33 rockTransform;
+            AEMtx33Identity(&rockTransform);
+            AEMtx33TransApply(&rockTransform, &rockTransform, x, y);
+            AEGfxSetTransform(rockTransform.m);
+            AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
+        }
+    }
+
+
+}
+ 
 bool PlayerEnemyCollision(Player& player, Enemy& enemy) {
     // Assuming enemy.x, enemy.y is the center of the enemy rectangle.
-    float halfWidth = enemy.w * 0.5f;
-    float halfHeight = enemy.h * 0.5f;
+    f32 halfWidth = enemy.w * 0.5f;
+    f32 halfHeight = enemy.h * 0.5f;
 
     // Calculate the bounds of the enemy rectangle.
-    float left = enemy.x - halfWidth;
-    float right = enemy.x + halfWidth;
-    float top = enemy.y - halfHeight;
-    float bottom = enemy.y + halfHeight;
+    f32 left = enemy.x - halfWidth;
+    f32 right = enemy.x + halfWidth;
+    f32 top = enemy.y - halfHeight;
+    f32 bottom = enemy.y + halfHeight;
 
     // Clamp the player's center to the enemy's bounds.
-    float closestX = (player.x < left) ? left : (player.x > right ? right : player.x);
-    float closestY = (player.y < top) ? top : (player.y > bottom ? bottom : player.y);
+    f32 closestX = (player.x < left) ? left : (player.x > right ? right : player.x);
+    f32 closestY = (player.y < top) ? top : (player.y > bottom ? bottom : player.y);
 
     // Compute the distance between the player's center and the closest point.
-    float dx = player.x - closestX;
-    float dy = player.y - closestY;
-    float distanceSquared = dx * dx + dy * dy;
+    f32 dx = player.x - closestX;
+    f32 dy = player.y - closestY;
+    f32 distanceSquared = dx * dx + dy * dy;
 
     // A collision occurs if the distance is less than or equal to the player's radius.
     return distanceSquared <= (player.rad * player.rad);
@@ -186,8 +269,16 @@ bool checkGoal(Player& player, int maze[ROW][COL], f32 tileSize, f32 mazeStartX,
         return false; // Out of bounds = Not on a goal tile
     }
 
+    bool hasKey = false;
+    for (int i{}; i < INVENTORY_SIZE; ++i) {
+        if (player.inventory[i] == KEY) {
+            hasKey = true;
+            break;
+        }
+    }
+
     // Check if the player has the key and is standing on the goal tile (maze value == 2)
-    return (player.key && maze[gridY][gridX] == 2 && AEInputCheckCurr(AEVK_E));
+    return (hasKey && maze[gridY][gridX] == 2 && AEInputCheckCurr(AEVK_E));
 }
 
 

@@ -6,7 +6,7 @@ int maze[ROW][COL] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
     { 1, 0, 0, 0, 0, 0, 1, 0, 2, 1 },
     { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
-    { 1, 3, 0, 0, 1, 0, 0, 0, 0, 1 },
+    { 1, 3, 4, 0, 1, 0, 0, 0, 0, 1 },
     { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
     { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
     { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
@@ -15,7 +15,7 @@ int maze[ROW][COL] = {
     { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 };
 
-void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* rockMesh) {
+void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
@@ -38,6 +38,9 @@ void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, 
                 AEGfxMeshDraw(goalMesh, AE_GFX_MDM_TRIANGLES);
             }
             if (maze1[y][x] == 3) {
+                AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
+            }
+            if (maze1[y][x] == 4) {
                 AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
             }
             //if (maze[y][x] == 0) {

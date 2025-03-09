@@ -5,7 +5,7 @@
 
 GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), RockMesh(nullptr), GoalMesh(nullptr), prevDestX(-1), prevDestY(-1) {
+pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), Font(-1), prevDestX(-1), prevDestY(-1) {
 
 }
 
@@ -17,13 +17,16 @@ namespace {
 void GameState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
+    Font = AEGfxCreateFont("Assets\\liberation-mono.ttf", 50);
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0x00000000);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     enemyMesh = createEnemyMesh(0xFFFF0000);
-    GoalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
-    RockMesh = rock::Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
+    goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
+    keyMesh = rock::Rock_Mesh(48, 0xFFFFD700, 10.0f);
+    rockMesh = rock::Rock_Mesh(48, 0x8B4513FF, 10.0f);
+    boxMesh = CreateBoxMesh(0xFFFFFFFF);
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
@@ -96,19 +99,14 @@ void GameState::Update(f32 deltaTime) {
         }
     }
 
-    CheckKey(player, maze, tilesize, 0.0f, 0);
+    CheckItem(player, maze, tilesize, 0.0f, 0);
     dead = PlayerEnemyCollision(player, enemy1);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
-    if (winGame) {
-        std::cout << "\WINNNNNNNNNNNNNN!!!!!\n";
-    }
-    else {
-        std::cout << "\nNOT WINNNNNNNNNNNNNN!!!!!\n";
-    }
 
 }
 
 void GameState::Draw() {
+    AEGfxSetCamPosition(player.x, player.y);
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
 
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
@@ -130,9 +128,10 @@ void GameState::Draw() {
         }
     }
 
-    RenderMaze(maze, tilesize, wallMesh, pathMesh, GoalMesh, RockMesh);
+    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderPlayer(player, PlayerMesh);
-    AEGfxSetCamPosition(player.x, player.y);
+
+    DrawInventory(player, boxMesh, Font, keyMesh, rockMesh);
 }
 
 void GameState::Free() {

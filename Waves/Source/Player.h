@@ -3,11 +3,19 @@
 #include "Maze.h"
 #include "Enemy.h"
 
+enum InventoryItem {
+    NOTHING = 0,
+    KEY,
+    ROCK
+};
+
+const int INVENTORY_SIZE = 3;
+
 struct Enemy;
 
 struct Player {
     f32 x, y, rad=10.0f;  // Position in world space
-    s8 key=0;
+    InventoryItem inventory[INVENTORY_SIZE] = { ROCK, NOTHING, NOTHING };
 };
 
 extern Player player; // Start at (50, 50) in world space
@@ -18,7 +26,9 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
 bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
 void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[ROW][COL], f32 tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh);
-void CheckKey(Player& player, int maze[10][10], float tileSize, float mazeStartX, float mazeStartY);
+void CheckItem(Player& player, int maze[10][10], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
 bool PlayerEnemyCollision(Player &player, Enemy &enemy);
 bool checkGoal(Player& player, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
+AEGfxVertexList* CreateBoxMesh(u32 color);
+void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, s8 Font, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
 //bool PlayerEnemyCollision(Player &player, Enemy &enemy);
