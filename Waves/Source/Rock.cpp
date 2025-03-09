@@ -104,6 +104,8 @@ namespace rock {
 
         // Launch the rock when the left mouse button is clicked (and if not already active)
         if (AEInputCheckCurr(AEVK_LBUTTON) && !rockActive && hasRock) {
+
+            f32 speed = 15.0f;
             AEInputGetCursorPosition(&mouseX, &mouseY);
 
             rplayer.inventory[rockIndex] = NOTHING;
@@ -125,8 +127,8 @@ namespace rock {
                 rock.y = rplayer.y;
 
                 // Set the rock velocity (adjust the multiplier as needed)
-                rock.dx = normalisedVec.x * 15.0f;
-                rock.dy = normalisedVec.y * 15.0f;
+                rock.dx = normalisedVec.x * speed;
+                rock.dy = normalisedVec.y * speed;
                 rock.currBounce = 0;
                 rockActive = true;
             }
