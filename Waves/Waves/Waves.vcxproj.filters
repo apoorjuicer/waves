@@ -75,7 +75,7 @@
     <ClInclude Include="..\Source\game.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Source\Wave.hpp">
+    <ClInclude Include="..\Source\Wave.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="..\Source\sonar.hpp" />

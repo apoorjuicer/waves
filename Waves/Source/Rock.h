@@ -16,7 +16,7 @@ Technology is prohibited.
 #pragma once
 #include "AEEngine.h"
 #include "Player.h"
-#include "Wave.hpp"
+#include "Wave.h"
 
 struct Rock {
     float x, y, dx, dy;  // Position in world space
