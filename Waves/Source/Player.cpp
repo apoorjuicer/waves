@@ -110,7 +110,7 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 }
 
 
-bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+bool IsWalkable(f32 x, f32 y, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Convert world-space coordinates to grid indices
     int gridX = static_cast<int>((x - mazeStartX + (tileSize / 2)) / tileSize);
     int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
@@ -125,7 +125,7 @@ bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, 
     }
 
     // Check if the grid cell is walkable
-    if (maze[gridY][gridX] != 1) {
+    if (maze1[gridY][gridX] != 1) {
         //std::cout << "Walkable\n";
         //if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
         //    std::cout << maze[gridY][gridX];
@@ -141,45 +141,45 @@ bool IsWalkable(f32 x, f32 y, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, 
 
 }
 
-void addItemToInventory(Player& player, InventoryItem item) {
+void addItemToInventory(Player& player1, InventoryItem item) {
     for (int i{}; i < INVENTORY_SIZE; ++i) {
-        if (player.inventory[i] == NOTHING) {
-            player.inventory[i] = item;
+        if (player1.inventory[i] == NOTHING) {
+            player1.inventory[i] = item;
             return;
          }
     }
 }
 
-bool isInventoryFull(const Player& player) {
+bool isInventoryFull(const Player& player1) {
     for (int i = 0; i < INVENTORY_SIZE; ++i) {
-        if (player.inventory[i] == NOTHING) {
+        if (player1.inventory[i] == NOTHING) {
             return false;  // Found an empty slot
         }
     }
     return true;  // No empty slots, inventory is full
 }
 
-void CheckItem(Player& player, int maze[10][10], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
-    int gridX = static_cast<int>((player.x - mazeStartX + (tileSize / 2)) / tileSize);
-    int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - player.y) / tileSize);
+void CheckItem(Player& player1, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+    int gridX = static_cast<int>((player1.x - mazeStartX + (tileSize / 2)) / tileSize);
+    int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - player1.y) / tileSize);
 
-    if (!isInventoryFull(player)) {
+    if (!isInventoryFull(player1)) {
         if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
             //std::cout << maze[gridY][gridX];
-            maze[gridY][gridX] = 0;
-            addItemToInventory(player, KEY);
+            maze1[gridY][gridX] = 0;
+            addItemToInventory(player1, KEY);
         }
-        if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 4) {
+        if (AEInputCheckCurr(AEVK_E) && maze1[gridY][gridX] == 4) {
             //std::cout << maze[gridY][gridX];
-            maze[gridY][gridX] = 0;
-            addItemToInventory(player, ROCK);
+            maze1[gridY][gridX] = 0;
+            addItemToInventory(player1, ROCK);
         }
     }
 
 }
 
 
-void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[ROW][COL], f32 tileSize) {
+void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[ROW][COL], f32 tileSize) {
     //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position
@@ -187,10 +187,10 @@ void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[ROW
     f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
 
     // Check if the new position is walkable
-    if (IsWalkable(newX, pplayer.y, maze, tileSize, 0.0f, 0)) {
+    if (IsWalkable(newX, pplayer.y, maze1, tileSize, 0.0f, 0)) {
         pplayer.x = newX;
     }
-    if (IsWalkable(pplayer.x, newY, maze, tileSize, 0.0f, 0)) {
+    if (IsWalkable(pplayer.x, newY, maze1, tileSize, 0.0f, 0)) {
         pplayer.y = newY;
     }
 }
@@ -210,10 +210,10 @@ AEGfxVertexList* CreateBoxMesh(u32 color) {
     return AEGfxMeshEnd();
 }
 
-void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
 
-    f32 worldScreenLeft = player.x - (AEGfxGetWindowWidth() / 2);
-    f32 worldScreenBottom = player.y - (AEGfxGetWindowHeight() / 2);
+    f32 worldScreenLeft = player1.x - (AEGfxGetWindowWidth() / 2);
+    f32 worldScreenBottom = player1.y - (AEGfxGetWindowHeight() / 2);
 
     f32 offsetX = 100.0f;
     f32 offsetY = 100.0f;
@@ -233,14 +233,14 @@ void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, AEGfxVertexLi
 
         AEGfxMeshDraw(boxMesh, AE_GFX_MDM_TRIANGLES);
 
-        if (player.inventory[i] == KEY) {
+        if (player1.inventory[i] == KEY) {
             AEMtx33 rockTransform;
             AEMtx33Identity(&rockTransform);
             AEMtx33TransApply(&rockTransform, &rockTransform, x, y);
             AEGfxSetTransform(rockTransform.m);
             AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
         }
-        if (player.inventory[i] == ROCK) {
+        if (player1.inventory[i] == ROCK) {
             AEMtx33 rockTransform;
             AEMtx33Identity(&rockTransform);
             AEMtx33TransApply(&rockTransform, &rockTransform, x, y);
@@ -252,7 +252,7 @@ void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, AEGfxVertexLi
 
 }
  
-bool PlayerEnemyCollision(Player& player, Enemy& enemy) {
+bool PlayerEnemyCollision(Player& player1, Enemy& enemy) {
     // Assuming enemy.x, enemy.y is the center of the enemy rectangle.
     f32 halfWidth = enemy.w * 0.5f;
     f32 halfHeight = enemy.h * 0.5f;
@@ -264,22 +264,22 @@ bool PlayerEnemyCollision(Player& player, Enemy& enemy) {
     f32 bottom = enemy.y + halfHeight;
 
     // Clamp the player's center to the enemy's bounds.
-    f32 closestX = (player.x < left) ? left : (player.x > right ? right : player.x);
-    f32 closestY = (player.y < top) ? top : (player.y > bottom ? bottom : player.y);
+    f32 closestX = (player1.x < left) ? left : (player1.x > right ? right : player1.x);
+    f32 closestY = (player1.y < top) ? top : (player1.y > bottom ? bottom : player1.y);
 
     // Compute the distance between the player's center and the closest point.
-    f32 dx = player.x - closestX;
-    f32 dy = player.y - closestY;
+    f32 dx = player1.x - closestX;
+    f32 dy = player1.y - closestY;
     f32 distanceSquared = dx * dx + dy * dy;
 
     // A collision occurs if the distance is less than or equal to the player's radius.
-    return distanceSquared <= (player.rad * player.rad);
+    return distanceSquared <= (player1.rad * player1.rad);
 };
 
-bool checkGoal(Player& player, int maze[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+bool checkGoal(Player& player1, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Convert player position to grid indices
-    int gridX = static_cast<int>((player.x - mazeStartX + (tileSize / 2)) / tileSize);
-    int gridY = static_cast<int>((mazeStartY + (tileSize / 2) - player.y) / tileSize);
+    int gridX = static_cast<int>((player1.x - mazeStartX + (tileSize / 2)) / tileSize);
+    int gridY = static_cast<int>((mazeStartY + (tileSize / 2) - player1.y) / tileSize);
 
     // Ensure indices are within bounds before accessing the maze array
     if (gridX < 0 || gridX >= COL || gridY < 0 || gridY >= ROW) {
@@ -288,14 +288,14 @@ bool checkGoal(Player& player, int maze[ROW][COL], f32 tileSize, f32 mazeStartX,
 
     bool hasKey = false;
     for (int i{}; i < INVENTORY_SIZE; ++i) {
-        if (player.inventory[i] == KEY) {
+        if (player1.inventory[i] == KEY) {
             hasKey = true;
             break;
         }
     }
 
     // Check if the player has the key and is standing on the goal tile (maze value == 2)
-    return (hasKey && maze[gridY][gridX] == 2 && AEInputCheckCurr(AEVK_E));
+    return (hasKey && maze1[gridY][gridX] == 2 && AEInputCheckCurr(AEVK_E));
 }
 
 
