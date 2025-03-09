@@ -110,7 +110,7 @@ public:
 	void update();
 	void draw();
 
-	void echolocation(int const(&maze)[ROW][COL], f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS], Outline(&outlines)[MAX_NUM_OUTLINES]);
+	void echolocation(f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS], Outline(&outlines)[MAX_NUM_OUTLINES]);
 	
 };
 
@@ -120,13 +120,14 @@ public:
 // find location of reflection waves;
 AEVec2 locate_reflection(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size);
 // finds x and y index of wave with respect to maze and size of each tile;
-std::pair<int, int> find_wave_index(int const(&maze)[ROW][COL], AEVec2 wpos, f32 tilesize);
+std::pair<int, int> find_wave_index(AEVec2 wpos, f32 tilesize);
 // interface for spawning wave;
 void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in, f32 max_size = WAVES_SIZE);
 
 void create_two_outlines(Outline(&outlines)[MAX_NUM_OUTLINES], AEVec2 pos_in, AEVec2 maxlen_in,
 	std::pair<DIRECTION, DIRECTION> dir_pair, AEGfxVertexList** mesh_in, f32 g_rate);
 
+//==================================================================================================================
 //==================================================================================================================
 // TEMPLATES
 //==================================================================================================================
