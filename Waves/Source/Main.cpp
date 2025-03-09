@@ -4,7 +4,8 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief		This file contains the entry point for the game, initializing the Alpha Engine system and managing the game loop. 
+			It sets up the GameStateManager, starts in the main menu, and continuously updates and renders the game until the application exits.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

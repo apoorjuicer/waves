@@ -5,7 +5,8 @@
 \co-author  Guan Shao Jun
 \email		jordainyingzhe.ng@digipen.edu
 
-\brief
+\brief      this file includes functions, to for player movement and collision checking, to 
+            prevent the player from going into the wall
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

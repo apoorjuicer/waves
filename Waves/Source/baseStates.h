@@ -4,7 +4,9 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief      This file defines the BaseState class, an abstract base class for managing game states in a state machine. 
+            It provides a standardized interface for loading, initializing, updating, rendering, 
+            and unloading game states, ensuring a structured transition between different game phases.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -26,4 +28,3 @@ public:
     virtual void Unload() = 0;      // Unload assets
     virtual BaseState* GetNextState() = 0; // Return the next state
 };
-

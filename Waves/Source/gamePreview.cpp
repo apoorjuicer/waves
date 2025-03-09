@@ -4,7 +4,9 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief      This file defines the gamePreview class, which represents a preview state before entering the main game. 
+            It manages the loading, rendering, and interactions within the preview, 
+            including displaying a maze preview and an "OK" button to proceed.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

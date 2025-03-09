@@ -4,7 +4,9 @@
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
-\brief
+\brief      This file defines the instructionState class, which manages the display of game instructions. 
+            It handles loading, rendering, and user interactions, 
+            allowing players to view gameplay guidelines before returning to the main menu.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
