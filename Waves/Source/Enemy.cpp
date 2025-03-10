@@ -291,7 +291,7 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 
 
 
-void EnemyState(Enemy& e,float dt) {
+void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 	static float accumulatedTime = 0.0f;
 	const float updateInterval = 0.1f;  // Move every 0.1 seconds
 	accumulatedTime += dt;
@@ -338,7 +338,7 @@ void EnemyState(Enemy& e,float dt) {
 		// Call function to move enemy
 		if (accumulatedTime >= updateInterval) {
 			if (!e.path.empty() && e.pathIndex < e.path.size()) {
-				e.moveEnemy();
+				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES],mesh);
 			}
 			accumulatedTime = 0.0f;
 		}	
@@ -351,7 +351,7 @@ void EnemyState(Enemy& e,float dt) {
 		// Move enemy if enough time has passed
 		if (accumulatedTime >= updateInterval) {
 			if (!e.path.empty() && e.pathIndex < e.path.size()) {
-				e.moveEnemy();
+				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
 			}
 			accumulatedTime = 0.0f;
 		}
@@ -380,7 +380,7 @@ void EnemyState(Enemy& e,float dt) {
 		// Move enemy if enough time has passed
 		if (accumulatedTime >= updateInterval) {
 			if (e.pathIndex < e.path.size()) {
-				e.moveEnemy();
+				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
 				e.printPosition();
 			}
 			accumulatedTime = 0.0f;
@@ -390,12 +390,12 @@ void EnemyState(Enemy& e,float dt) {
 	}
 }
 
-void UpdateEnemystate(Enemy& e,float dt) {
+void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 	float sightRangeRock = 3.0f * TILE_SIZE;  // Enemy detection range for rock
 	float sightRangePlayer = 1.0f * TILE_SIZE;  // Enemy detection range for player
 	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
-
+	e.enemy_wave(MainWaves, mesh);
 	switch (e.state) {
 	case IDLE:
 		if (seeRock(e, sightRangeRock)) {
@@ -447,5 +447,5 @@ void UpdateEnemystate(Enemy& e,float dt) {
 	}
 
 	//call enemystate after update
-	EnemyState(e, dt);
+	EnemyState(e, dt, (&MainWaves)[MAX_NUM_WAVES], mesh);
 }

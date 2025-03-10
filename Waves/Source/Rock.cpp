@@ -29,12 +29,9 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-#include "AEEngine.h"
+
 #include "Rock.h"
-#include "Maze.h"
-#include "Player.h"
-#include <cmath>      // for std::floor
-#include <iostream>   // for std::cout
+
 // #include "sonar.hpp"
 
 namespace rock {

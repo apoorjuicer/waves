@@ -35,7 +35,7 @@ Technology is prohibited.
 #include "AEEngine.h"
 #include "Player.h"
 #include "Maze.h"
-//#include "Wave.h"
+#include "Wave.h"
 //#include "game.h"
 
 #include <utility> // pair
@@ -100,8 +100,19 @@ struct Enemy {
 	Enemy() : x{ 100.f }, y{ -200.f }, gridX{1}, gridY{2}, w{50.f}, h{50.f}, state{IDLE} {
 		
 	}
+	void enemy_wave(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
+		static f32 time{};
+		if (state != IDLE) {
+			time += AEFrameRateControllerGetFrameTime();
+			if (time > 1.5) {
+				spawn_wave(MainWaves, x, y, mesh, 50.f);
+				time = 0;
+			}
+
+		}
+	}
 	// Moves enemy along the computed path
-	void moveEnemy() {
+	void moveEnemy(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		//printf("moving Enemy\n");
 		if (path.empty()) {
 			//printf("path is empty\n");
@@ -131,11 +142,12 @@ struct Enemy {
 			if (distance > ENEMY_SPEED) {
 				x += (dirX / distance) * ENEMY_SPEED;
 				y += (dirY / distance) * ENEMY_SPEED;
+				//pathIndex++;  // Move to the next step in path
 			}
 			else {
 				// Snap to the exact target when close enough
 				//void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in, f32 max_size = WAVES_SIZE);
-				//spawn_wave(enemy_waves,x,y,);
+				
 				x = targetX;
 				y = targetY;
 				pathIndex++;  // Move to the next step in path
@@ -167,8 +179,8 @@ struct Enemy {
 //void aStarSearch(int grid[][COL], Pair src, Pair dest);
 void RenderEnemy_Mesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
 AEGfxVertexList* createEnemyMesh(u32 enemy_color);
-void EnemyState(Enemy& e, float dt);
-void UpdateEnemystate(Enemy& e, float dt);
+void EnemyState(Enemy& e, float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
+void UpdateEnemystate(Enemy& e, float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 Path astarsearch(int grid[ROW][COL], Pair src, Pair dest, std::vector<Pair>& path);
 
 //class Enemy {

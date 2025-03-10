@@ -32,7 +32,10 @@ Technology is prohibited.
 #include "AEEngine.h"
 #include "Player.h"
 #include "Wave.h"
-
+#include "Maze.h"
+#include "Player.h"
+#include <cmath>      // for std::floor
+#include <iostream>   // for std::cout
 struct Rock {
     float x, y, dx, dy;  // Position in world space
     int currBounce, maxBounce;
