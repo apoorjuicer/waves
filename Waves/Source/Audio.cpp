@@ -36,3 +36,5 @@ void AudioManager::SetVolume(const std::string& name, float volume) {
         std::cout << "Set volume for " << name << " to " << volume << std::endl;
     }
 }
+
+

@@ -20,6 +20,7 @@ public:
     static void PlayAudio(const std::string& name, float volume = 1.0f, float pitch = 1.0f, int loops = 0);
     static void SetVolume(const std::string& name, float volume);
 
+
 private:
     static std::unordered_map<std::string, Audio> audioFiles;
 };

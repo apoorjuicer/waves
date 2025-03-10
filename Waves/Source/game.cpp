@@ -53,8 +53,8 @@ void GameState::Load() {
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
     wave_meshes[2] = Create_LineMesh();
 
-    AEAudioGroup MainMenuGroup = AEAudioCreateGroup();  // For background music
-    AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, MainMenuGroup);
+    AEAudioGroup SfxGroup = AEAudioCreateGroup();  // For background music
+    AudioManager::LoadAudio("Sfx", "Assets/SonarWave.wav", true, SfxGroup);
 }
 
 void GameState::Initialize() {
@@ -105,6 +105,7 @@ void GameState::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
 
     if (AEInputCheckTriggered(AEVK_SPACE)) {
+        AudioManager::PlayAudio("Sfx", 1.0f, 1.0f, -1);
         spawn_wave(wave, player.x, player.y, wave_meshes);
     }
     //debug
@@ -126,7 +127,9 @@ void GameState::Update(f32 deltaTime) {
     for (Wave& w : enemy_wave) {
         if (w.is_active) {
             w.update();
+
         }
+
     }
 
     for (Wave& r : reflections) {
@@ -205,7 +208,7 @@ void GameState::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
-
+    AudioManager::UnloadAudio("Sfx");
     PauseOverlay::Free();
 }
 
