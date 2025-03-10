@@ -22,6 +22,7 @@ Technology is prohibited.
 #include "mainMenu.h"
 #include "winState.h"
 #include "loseState.h"
+#include "pauseOverlay.h"
 
 GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
@@ -72,19 +73,25 @@ void GameState::Initialize() {
     
     enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
     enemy1.updateGridPosition(); // need to call to init conversion
+
+    PauseOverlay::Init();
 }
 
 void GameState::Update(f32 deltaTime) {
-
-    //===========================================================
-    // Use bool var winGame when player won to trigger go winState in GetNextState()
-    // After keycard interacted with 'exit' then winGame = 1;
-    //=========================================================== 
-    
-    // Exit GameState when ESC is pressed
-    if (AEInputCheckTriggered(AEVK_ESCAPE)) {
-        exitGame = true;
+    // Toggle pause when ESC is pressed if not already paused
+    if (AEInputCheckTriggered(AEVK_ESCAPE) && !PauseOverlay::IsPaused()) {
+        PauseOverlay::SetPaused(true);
+        AEInputReset();
     }
+    // If paused, update the pause overlay and skip game updates
+    if (PauseOverlay::IsPaused()) {
+        PauseOverlay::Update();
+        if (PauseOverlay::ShouldExitToMenu()) {
+            exitGame = true;
+        }
+        return;
+    }
+
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
@@ -155,6 +162,11 @@ void GameState::Draw() {
     RenderPlayer(player, PlayerMesh);
 
     DrawInventory(player, boxMesh, keyMesh, rockMesh);
+
+    // If paused, overlay the pause menu on top
+    if (PauseOverlay::IsPaused()) {
+        PauseOverlay::Draw();
+    }
 }
 
 void GameState::Free() {
@@ -173,6 +185,8 @@ void GameState::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
+
+    PauseOverlay::Free();
 }
 
 void GameState::Unload() {}
