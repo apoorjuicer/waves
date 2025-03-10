@@ -17,7 +17,7 @@ Technology is prohibited.
 
 #include "gamePreview.h"
 #include "mainMenu.h"
-#include "game.h"
+#include "game1.h"
 #include "AEEngine.h"
 #include "Player.h"
 
@@ -137,5 +137,5 @@ void gamePreview::Unload() {}
 
 BaseState* gamePreview::GetNextState() {
     // If goMenu is true, transition to main menu
-    return goGame ? new GameState() : nullptr;
+    return goGame ? new GameState1() : nullptr;
 }

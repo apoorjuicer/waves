@@ -1,6 +1,6 @@
 /* Start Header ************************************************************************/
 /*!
-\file		game.cpp
+\file		game1.cpp
 \author		Henry Hu
 \co-author  Jordain Ng, Benjamin Ban, Chewn Thing Kwan, Guan Shao Jun
 \email		zhihenghenrey.hu@digipen.edu
@@ -18,14 +18,9 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 
-#include "game.h"
-#include "mainMenu.h"
-#include "winState.h"
-#include "loseState.h"
-#include "pauseOverlay.h"
-#include "Audio.h"
+#include "game1.h"
 
-GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
+GameState1::GameState1() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {
 
@@ -36,7 +31,7 @@ namespace {
 }
 
 
-void GameState::Load() {
+void GameState1::Load() {
     Import_MapData();
 
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
@@ -60,7 +55,7 @@ void GameState::Load() {
     AudioManager::LoadAudio("GameOver", "Assets/GameOver.wav", true, SfxGroup);
 }
 
-void GameState::Initialize() {
+void GameState1::Initialize() {
     exitGame = false;
     dead = false;
     winGame = false;
@@ -83,7 +78,7 @@ void GameState::Initialize() {
     PauseOverlay::Init();
 }
 
-void GameState::Update(f32 deltaTime) {
+void GameState1::Update(f32 deltaTime) {
     // Toggle pause when ESC is pressed if not already paused
     if (AEInputCheckTriggered(AEVK_ESCAPE) && !PauseOverlay::IsPaused()) {
         PauseOverlay::SetPaused(true);
@@ -152,7 +147,7 @@ void GameState::Update(f32 deltaTime) {
 
 }
 
-void GameState::Draw() {
+void GameState1::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
 
@@ -195,7 +190,7 @@ void GameState::Draw() {
     }
 }
 
-void GameState::Free() {
+void GameState1::Free() {
     for (AEGfxVertexList* (&i) : wave_meshes) {
         if (i) {
             AEGfxMeshFree(i);
@@ -215,9 +210,9 @@ void GameState::Free() {
     PauseOverlay::Free();
 }
 
-void GameState::Unload() {}
+void GameState1::Unload() {}
 
-BaseState* GameState::GetNextState() {
+BaseState* GameState1::GetNextState() {
     //return exitGame ? new MainMenuState() : nullptr;
     //return dead ? new LoseState() : nullptr;
     //return winGame ? new WinState() : nullptr;

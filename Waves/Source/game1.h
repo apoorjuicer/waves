@@ -1,6 +1,6 @@
 /* Start Header ************************************************************************/
 /*!
-\file		game.h
+\file		game1.h
 \author		Henry Hu
 \co-author  Jordain Ng, Benjamin Ban, Chewn Thing Kwan, Guan Shao Jun
 \email		zhihenghenrey.hu@digipen.edu
@@ -25,8 +25,13 @@ Technology is prohibited.
 #include "Rock.h"
 #include "Wave.h"
 #include "Enemy.h"
+#include "mainMenu.h"
+#include "winState.h"
+#include "loseState.h"
+#include "pauseOverlay.h"
+#include "Audio.h"
 
-class GameState : public BaseState {
+class GameState1 : public BaseState {
 private:
     bool exitGame = false;
     bool dead = false;
@@ -51,7 +56,7 @@ private:
     Outline outlines[MAX_NUM_OUTLINES];
 
 public:
-    GameState();
+    GameState1();
     void Load() override;
     void Initialize() override;
     void Update(f32 deltaTime) override;

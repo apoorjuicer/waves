@@ -103,7 +103,9 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     <ClCompile Include="..\Source\Audio.cpp" />
     <ClCompile Include="..\Source\draw_map.cpp" />
     <ClCompile Include="..\Source\Enemy.cpp" />
-    <ClCompile Include="..\Source\game.cpp" />
+    <ClCompile Include="..\Source\game1.cpp" />
+    <ClCompile Include="..\Source\game2.cpp" />
+    <ClCompile Include="..\Source\game3.cpp" />
     <ClCompile Include="..\Source\gamePreview.cpp" />
     <ClCompile Include="..\Source\GSM.cpp" />
     <ClCompile Include="..\Source\instructions.cpp" />
@@ -118,7 +120,9 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     <ClInclude Include="..\Source\Audio.h" />
     <ClInclude Include="..\Source\baseStates.h" />
     <ClInclude Include="..\Source\Enemy.h" />
-    <ClInclude Include="..\Source\game.h" />
+    <ClInclude Include="..\Source\game1.h" />
+    <ClInclude Include="..\Source\game2.h" />
+    <ClInclude Include="..\Source\game3.h" />
     <ClInclude Include="..\Source\gamePreview.h" />
     <ClInclude Include="..\Source\GSM.h" />
     <ClInclude Include="..\Source\instructions.h" />

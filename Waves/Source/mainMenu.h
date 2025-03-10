@@ -18,7 +18,7 @@ Technology is prohibited.
 #pragma once
 #include "baseStates.h"
 #include "AEEngine.h"
-#include "game.h"
+#include "game1.h"
 
 class MainMenuState : public BaseState {
 private:
