@@ -23,7 +23,6 @@ Technology is prohibited.
 #include "Player.h"
 #include "Maze.h"
 #include "Rock.h"
-//#include "enemy_henrey.h"
 #include "Wave.h"
 #include "Enemy.h"
 

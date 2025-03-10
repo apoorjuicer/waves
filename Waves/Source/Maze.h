@@ -15,14 +15,26 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 #pragma once
 #include "AEEngine.h"
+#include "GSM.h"
 #include <iostream>
+#include <fstream>
+#include <sstream>
+#include <string>
 
 
-constexpr int ROW = 10;
-constexpr int COL = 10;
-constexpr float TILE_SIZE = 100.f;
+constexpr int MAX_ROW = 20;
+constexpr int MAX_COL = 20;
 
-extern int maze[ROW][COL];
+// Global variables for the current maze dimensions:
+extern int activeRow;  // e.g., initially 10 or read from file
+extern int activeCol;  // e.g., initially 10 or read from file
+
+// The maze grid: only the region [0..activeRow-1][0..activeCol-1] is used.
+extern int maze[MAX_ROW][MAX_COL];
+
+//constexpr int ROW = 10;
+//constexpr int COL = 10;
+constexpr float TILE_SIZE = 100.0f;
 
 //int maze[ROW][COL] = {
 //    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
@@ -37,5 +49,9 @@ extern int maze[ROW][COL];
 //    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 //};
 
-void RenderMaze(int maze1[ROW][COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
+// File I/O function prototypes:
+bool ImportMapDataFromFile(const std::string& filename);
+void Import_MapData(void);
+
+void RenderMaze(int maze1[MAX_ROW][MAX_COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);

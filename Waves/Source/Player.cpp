@@ -110,7 +110,7 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 }
 
 
-bool IsWalkable(f32 x, f32 y, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Convert world-space coordinates to grid indices
     int gridX = static_cast<int>((x - mazeStartX + (tileSize / 2)) / tileSize);
     int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
@@ -119,7 +119,7 @@ bool IsWalkable(f32 x, f32 y, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX,
     //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
 
     // Check for out-of-bounds
-    if (gridX < 0 || gridX >= ROW || gridY < 0 || gridY >= COL) {
+    if (gridX < 0 || gridX >= MAX_ROW || gridY < 0 || gridY >= MAX_COL) {
         //std::cout << "Out of Bounds\n";
         return false;
     }
@@ -159,7 +159,7 @@ bool isInventoryFull(const Player& player1) {
     return true;  // No empty slots, inventory is full
 }
 
-void CheckItem(Player& player1, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+void CheckItem(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     int gridX = static_cast<int>((player1.x - mazeStartX + (tileSize / 2)) / tileSize);
     int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - player1.y) / tileSize);
 
@@ -179,7 +179,7 @@ void CheckItem(Player& player1, int maze1[ROW][COL], f32 tileSize, f32 mazeStart
 }
 
 
-void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[ROW][COL], f32 tileSize) {
+void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
     //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position
@@ -276,13 +276,13 @@ bool PlayerEnemyCollision(Player& player1, Enemy& enemy) {
     return distanceSquared <= (player1.rad * player1.rad);
 };
 
-bool checkGoal(Player& player1, int maze1[ROW][COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+bool checkGoal(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Convert player position to grid indices
     int gridX = static_cast<int>((player1.x - mazeStartX + (tileSize / 2)) / tileSize);
     int gridY = static_cast<int>((mazeStartY + (tileSize / 2) - player1.y) / tileSize);
 
     // Ensure indices are within bounds before accessing the maze array
-    if (gridX < 0 || gridX >= COL || gridY < 0 || gridY >= ROW) {
+    if (gridX < 0 || gridX >= MAX_COL || gridY < 0 || gridY >= MAX_ROW) {
         return false; // Out of bounds = Not on a goal tile
     }
 

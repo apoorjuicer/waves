@@ -37,6 +37,8 @@ namespace {
 
 
 void GameState::Load() {
+    Import_MapData();
+
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);

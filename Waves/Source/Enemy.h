@@ -103,7 +103,7 @@ struct Enemy {
 	void enemy_wave(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		static f32 time{};
 		if (state != IDLE) {
-			time += AEFrameRateControllerGetFrameTime();
+			time += static_cast<f32>(AEFrameRateControllerGetFrameTime());
 			if (time > 1.5) {
 				spawn_wave(MainWaves, x, y, mesh, 50.f);
 				time = 0;
@@ -113,6 +113,9 @@ struct Enemy {
 	}
 	// Moves enemy along the computed path
 	void moveEnemy(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
+		(void)MainWaves;
+		(void)mesh;
+
 		//printf("moving Enemy\n");
 		if (path.empty()) {
 			//printf("path is empty\n");
@@ -181,7 +184,7 @@ void RenderEnemy_Mesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scale
 AEGfxVertexList* createEnemyMesh(u32 enemy_color);
 void EnemyState(Enemy& e, float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 void UpdateEnemystate(Enemy& e, float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
-Path astarsearch(int grid[ROW][COL], Pair src, Pair dest, std::vector<Pair>& path);
+Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dest, std::vector<Pair>& path);
 
 //class Enemy {
 //public:

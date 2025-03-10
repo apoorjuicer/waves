@@ -69,10 +69,10 @@ namespace {// Utility Functions
 		//pathfinding functions
 		
 	//check cell (row, col) and grid[index] is valid
-	bool isValid(int row, int col, int grid[][COL])
+	bool isValid(int row, int col, int grid[][MAX_COL])
 	{
-		return ((row >= 0) && (row < ROW) && (col >= 0)
-			&& (col < COL)) && grid[row][col] != 1;
+		return ((row >= 0) && (row < MAX_ROW) && (col >= 0)
+			&& (col < MAX_COL)) && grid[row][col] != 1;
 	}
 
 	// check dest reached
@@ -94,7 +94,7 @@ namespace {// Utility Functions
 
 	//reconstruct found path and store in vector path(does not add parentlesss node!(start))
 	//storing from back to front
-	void reconstructPath(Node gridNodes[][COL], Pair dest, std::vector<Pair>& path)
+	void reconstructPath(Node gridNodes[][MAX_COL], Pair dest, std::vector<Pair>& path)
 	{
 		int i = dest.first;
 		int j = dest.second;
@@ -118,7 +118,7 @@ namespace {// Utility Functions
 	}//end of reconstructPath
 
 	void processNeighbor(int new_i, int new_j, int i, int j, Pair dest,
-		Node gridNodes[][COL], bool closedList[][COL],
+		Node gridNodes[][MAX_COL], bool closedList[][MAX_COL],
 		/*int grid[][COL],*/ std::vector<pPair>& openList/*, std::vector<Pair>& path*/) {
 
 		//if (!isValid(new_i, new_j, grid)) { return ; }
@@ -200,7 +200,7 @@ namespace {// Utility Functions
 
 }// end of anon namespace
 
-Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path) {
+Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dst, std::vector<Pair>& path) {
 
 	src = { src.second,src.first };
 	dst = { dst.second,dst.first };
@@ -217,14 +217,14 @@ Path astarsearch(int grid[ROW][COL], Pair src, Pair dst, std::vector<Pair>& path
 	}
 
 	//ini closed list and grid nodes
-	bool closedList[ROW][COL]{};
+	bool closedList[MAX_ROW][MAX_COL]{};
 	//2D array
-	Node gridNodes[ROW][COL]{};
+	Node gridNodes[MAX_ROW][MAX_COL]{};
 
 	//initialize grid
 	int i, j; //i is Y-axis , j is X-axis
-	for (i = 0; i < ROW; i++) {
-		for (j = 0; j < COL; j++) {
+	for (i = 0; i < MAX_ROW; i++) {
+		for (j = 0; j < MAX_COL; j++) {
 			gridNodes[i][j].f = VAL_INF;
 			gridNodes[i][j].g = VAL_INF;
 			gridNodes[i][j].h = VAL_INF;
