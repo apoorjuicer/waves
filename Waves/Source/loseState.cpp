@@ -18,6 +18,7 @@ Technology is prohibited.
 #include "loseState.h"
 #include "mainMenu.h"
 #include "AEEngine.h"
+#include "Audio.h"
 
 LoseState::LoseState() : goMenu(false), loseFont(-1) {}
 
@@ -25,6 +26,8 @@ void LoseState::Load() {
     AEGfxSetBackgroundColor(0.5f, 0.0f, 0.0f); // Dark red background
 
     loseFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+
+
 }
 
 void LoseState::Initialize() {
@@ -50,7 +53,8 @@ void LoseState::Draw() {
 
 void LoseState::Free() {}
 
-void LoseState::Unload() {}
+void LoseState::Unload() {
+}
 
 BaseState* LoseState::GetNextState() {
     // If goMenu is true, transition to main menu

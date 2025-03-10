@@ -55,6 +55,7 @@ void GameState::Load() {
 
     AEAudioGroup SfxGroup = AEAudioCreateGroup();  // For background music
     AudioManager::LoadAudio("Sfx", "Assets/SonarWave.wav", true, SfxGroup);
+    AudioManager::LoadAudio("GameOver", "Assets/GameOver.wav", true, SfxGroup);
 }
 
 void GameState::Initialize() {
@@ -105,7 +106,7 @@ void GameState::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
 
     if (AEInputCheckTriggered(AEVK_SPACE)) {
-        AudioManager::PlayAudio("Sfx", 1.0f, 1.0f, -1);
+        //AudioManager::PlayAudio("Sfx", 1.0f, 1.0f, -1);
         spawn_wave(wave, player.x, player.y, wave_meshes);
     }
     //debug

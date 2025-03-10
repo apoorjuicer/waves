@@ -18,6 +18,7 @@ Technology is prohibited.
 #include "winState.h"
 #include "mainMenu.h"
 #include "AEEngine.h"
+#include "Audio.h"
 
 WinState::WinState() : goNext(false), winFont(-1) {}
 
@@ -26,6 +27,7 @@ void WinState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.5f, 0.0f); // Dark green background
 
     winFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+
 }
 
 void WinState::Initialize() {
