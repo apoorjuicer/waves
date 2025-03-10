@@ -94,14 +94,16 @@ void GameState::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
 
-    if (AEInputCheckTriggered(AEVK_SPACE)) {
+    /*if (AEInputCheckTriggered(AEVK_SPACE)) {
         spawn_wave(wave, player.x, player.y, wave_meshes);
-    }
-    //if (AEInputCheckTriggered(AEVK_E)) {
-    //    std::cout << "\n\n\n\n\n";
-    //}
+    }*/
 
-    UpdateEnemystate(enemy1, deltaTime);
+    if (AEInputCheckTriggered(AEVK_SPACE)) {
+        spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
+    }
+
+    UpdateEnemystate(enemy1, deltaTime, enemy_wave,wave_meshes);
+    enemy1.enemy_wave(enemy_wave, wave_meshes);
 
     for (Wave& w : wave) {
         if (w.is_active) {
@@ -110,6 +112,13 @@ void GameState::Update(f32 deltaTime) {
             w.echolocation(tilesize, reflections, outlines);
         }
     }
+
+    for (Wave& w : enemy_wave) {
+        if (w.is_active) {
+            w.update();
+        }
+    }
+
     for (Wave& r : reflections) {
         if (r.is_active) {
             r.update();
@@ -138,6 +147,12 @@ void GameState::Draw() {
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
     for (Wave& w : wave) {
+        if (w.is_active) {
+            w.draw();
+        }
+    }
+
+    for (Wave& w : enemy_wave) {
         if (w.is_active) {
             w.draw();
         }
