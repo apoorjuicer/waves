@@ -23,6 +23,7 @@ Technology is prohibited.
 #include "winState.h"
 #include "loseState.h"
 #include "pauseOverlay.h"
+#include "Audio.h"
 
 GameState::GameState() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
@@ -52,6 +53,8 @@ void GameState::Load() {
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
     wave_meshes[2] = Create_LineMesh();
 
+    AEAudioGroup MainMenuGroup = AEAudioCreateGroup();  // For background music
+    AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, MainMenuGroup);
 }
 
 void GameState::Initialize() {

@@ -19,6 +19,7 @@ Technology is prohibited.
 #include "mainMenu.h"
 #include "gamePreview.h"
 #include "instructions.h"
+#include "Audio.h"
 #include "Player.h"
 
 
@@ -73,13 +74,18 @@ void MainMenuState::Load() {
     playButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
     guideButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
     exitButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
+
+    AEAudioGroup MainMenuGroup = AEAudioCreateGroup();  // For background music
+    AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, MainMenuGroup);
 }
 
 void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
     menu = false;
-    AEGfxSetCamPosition(0.0f, 0.0f);
+    AEGfxSetCamPosition(0.0f, 0.0f);\
+    AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
+
 }
 
 void MainMenuState::Update(f32 deltaTime) {
