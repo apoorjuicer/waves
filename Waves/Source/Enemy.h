@@ -102,9 +102,9 @@ struct Enemy {
 	}
 	void enemy_wave(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		static f32 time{};
-		if (state == PATROL) {
+		if (state != IDLE) {
 			time += AEFrameRateControllerGetFrameTime();
-			if (time > 1.0) {
+			if (time > 1.5) {
 				spawn_wave(MainWaves, x, y, mesh, 50.f);
 				time = 0;
 			}
@@ -147,7 +147,7 @@ struct Enemy {
 			else {
 				// Snap to the exact target when close enough
 				//void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in, f32 max_size = WAVES_SIZE);
-
+				
 				x = targetX;
 				y = targetY;
 				pathIndex++;  // Move to the next step in path

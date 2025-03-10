@@ -395,7 +395,7 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 	float sightRangePlayer = 1.0f * TILE_SIZE;  // Enemy detection range for player
 	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
-
+	e.enemy_wave(MainWaves, mesh);
 	switch (e.state) {
 	case IDLE:
 		if (seeRock(e, sightRangeRock)) {
