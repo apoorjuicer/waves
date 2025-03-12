@@ -161,9 +161,14 @@ namespace {// Utility Functions
 		// Convert player's world position to grid coordinates
 		/*int playerGridX = static_cast<int>(round(player.x / TILE_SIZE));
 		int playerGridY = static_cast<int>(round(player.y / -TILE_SIZE));*/
+		static int lastPlayerX = -1, lastPlayerY = -1;
 		int playerGridX = static_cast<int>((player.x + TILE_SIZE / 2) / TILE_SIZE);
 		int playerGridY = static_cast<int>((player.y - TILE_SIZE / 2) / TILE_SIZE) * -1;
-
+		if (playerGridX == lastPlayerX && playerGridY == lastPlayerY) {
+			return; // Skip recalculating path if player hasn't moved
+		}
+		lastPlayerX = playerGridX;
+		lastPlayerY = playerGridY;
 		// Convert enemy's current position to grid coordinates
 		int enemyGridX = e.gridX;
 		int enemyGridY = e.gridY;
@@ -188,13 +193,21 @@ namespace {// Utility Functions
 	bool seePlayer(Enemy& e, float sightRange) {
 		float dist_x = player.x - e.x;
 		float dist_y = player.y - e.y;
-		return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+		//return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+		float distSq = dist_x * dist_x + dist_y * dist_y;
+		float rangeSq = sightRange * sightRange; 
+
+		return distSq <= rangeSq;  // Compare squared values
 	}
 
 	bool seeRock(Enemy& e, float sightRange) {
 		float dist_x = lastRock.x - e.x;
 		float dist_y = lastRock.y - e.y;
-		return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+		//return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
+		float distSq = dist_x * dist_x + dist_y * dist_y;
+		float rangeSq = sightRange * sightRange;
+
+		return distSq <= rangeSq;  // Compare squared values
 	}
 
 
@@ -300,7 +313,7 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 	bool inPatrolPath = std::find(e.patrolPath.begin(), e.patrolPath.end(), currIndex) != e.patrolPath.end();
 	//std::cout << "current enemy index :" << currIndex.first << "," << currIndex.second << "\n";
 	//pursuit rock
-	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
+	int destX = static_cast<int>((lastRock.x + TILE_SIZE / 2) / TILE_SIZE);
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 	// Enemy position conversion
 	int srcX = static_cast<int>(e.x / TILE_SIZE);
@@ -392,57 +405,89 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 
 void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 	float sightRangeRock = 3.0f * TILE_SIZE;  // Enemy detection range for rock
-	float sightRangePlayer = 1.0f * TILE_SIZE;  // Enemy detection range for player
+	float sightRangePlayer = 2.0f * TILE_SIZE;  // Enemy detection range for player
 	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 	e.enemy_wave(MainWaves, mesh);
+
+	const float IDLE_TIME = 3.0f;       // Time to stay idle
+	const float PATROL_TIME = 10.0f;     // Time to stay patrol 
+	const float PURSUIT_TIME = 6.0f;    // Time to pursue rock
+
+	e.stateTimer -= dt;
+
 	switch (e.state) {
 	case IDLE:
-		if (seeRock(e, sightRangeRock)) {
-			e.state = PURSUIT_ROCK;
-		}
-		else if (seePlayer(e, sightRangePlayer)) {
-			e.state = PURSUIT_PLAYER;
-		}
-		else {
-			e.state = PATROL;
-		}
+	
+			if (seeRock(e, sightRangeRock)) {
+				e.state = PURSUIT_ROCK;
+				e.stateTimer = PURSUIT_TIME;
+			}
+			else if (seePlayer(e, sightRangePlayer)) {
+				e.state = PURSUIT_PLAYER;
+				e.stateTimer = PURSUIT_TIME;
+			}
+			else if (e.stateTimer <= 0.0f) {
+
+				e.state = PATROL;
+				e.stateTimer = PATROL_TIME;
+			}
+		
 		break;
 	case PATROL:
-		if (seeRock(e, sightRangeRock)) {
-			e.state = PURSUIT_ROCK;
-		}
-		else if (seePlayer(e, sightRangePlayer)) {
-			e.state = PURSUIT_PLAYER;
-		}
-		break;
-	case PURSUIT_PLAYER:
-		if (seeRock(e, sightRangeRock)) {
-			e.state = PURSUIT_ROCK;
-		}
-		else if (!seePlayer(e, sightRangePlayer)) { //player zao alr
-			e.state = PATROL;
-		}
+	
+			if (seeRock(e, sightRangeRock)) {
+				e.state = PURSUIT_ROCK;
+				e.stateTimer = PURSUIT_TIME;
+			}
+			else if (seePlayer(e, sightRangePlayer)) {
+				e.state = PURSUIT_PLAYER;
+				e.stateTimer = PURSUIT_TIME;
+			}
+			else if (e.stateTimer <= 0.0f) { //idle
+				e.state = IDLE;
+				e.stateTimer = IDLE_TIME;
+			}//timer
 
+		
+			break;
+	case PURSUIT_PLAYER:
+	
+			if (seeRock(e, sightRangeRock)) {
+				e.state = PURSUIT_ROCK;
+				e.stateTimer = PURSUIT_TIME;
+			}
+			else if (!seePlayer(e, sightRangePlayer) && (e.stateTimer <= 0.0f)) { //player zao alr
+				e.state = PATROL;
+				e.stateTimer = PATROL_TIME;
+			}
+
+				
 		break;
 	case PURSUIT_ROCK:
-		if (e.gridX == destX &&
-			e.gridY == destY ){
-			//std::cout << "Enemy reached the rock!\n";
-			if (seePlayer(e, sightRangePlayer)) {
-				e.state = PURSUIT_PLAYER;
-				//std::cout << "Switching to PURSUIT_PLAYER.\n";
+
+			if (e.gridX == destX && e.gridY == destY) {
+				//std::cout << "Enemy reached the rock!\n";
+				if (seePlayer(e, sightRangePlayer)) {
+					e.state = PURSUIT_PLAYER;
+					e.stateTimer = PURSUIT_TIME;
+					//std::cout << "Switching to PURSUIT_PLAYER.\n";
+				}
+				else {
+					e.state = IDLE;  // Reached the rock
+					e.stateTimer = IDLE_TIME;
+				}
 			}
-			else {
-				e.state = IDLE;  // Reached the rock
-			}	
-		}
-		else if (seePlayer(e, sightRangePlayer)) { 
-			e.state = PURSUIT_PLAYER;
-		}
-		else if (!seePlayer(e, sightRangePlayer)) { //player zao alr
-			e.state = PATROL;
-		}
+			else if (seePlayer(e, sightRangePlayer)) {
+				e.state = PURSUIT_PLAYER;
+				e.stateTimer = PURSUIT_TIME;
+			}
+			else if (!seePlayer(e, sightRangePlayer) && (e.stateTimer <= 0.0f)) { //player zao alr
+				e.state = PATROL;
+				e.stateTimer = PATROL_TIME;
+
+			}
+		
 		break;
 	}
 

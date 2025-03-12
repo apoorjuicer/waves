@@ -49,7 +49,7 @@ Technology is prohibited.
 
 //#define TILE_SIZE_X 100
 //#define TILE_SIZE_Y -100
-constexpr float ENEMY_SPEED = 12.0f;  // Pixels per frame (adjust as needed)
+constexpr float ENEMY_SPEED = 20.0f;  // Pixels per frame (adjust as needed)
 constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
 
 // create shortcut for <int, int> pair
@@ -95,7 +95,7 @@ struct Enemy {
 	int pathIndex = 0; // Current target in path
 	bool reachPath = false;
 	//Wave enemy_waves[MAX_NUM_WAVES];
-
+	float stateTimer = 0;
 	// Constructor initializes all members
 	Enemy() : x{ 100.f }, y{ -200.f }, gridX{1}, gridY{2}, w{50.f}, h{50.f}, state{IDLE} {
 		
@@ -166,6 +166,8 @@ struct Enemy {
 		/*gridX = static_cast<int>(round(x / TILE_SIZE));
 		gridY = static_cast<int>(round(y / -TILE_SIZE));*/
 		//manual offset superior
+	/*	gridX = static_cast<int>((x + TILE_SIZE / 2) / TILE_SIZE);
+		gridY = static_cast<int>((y - TILE_SIZE / 2) / TILE_SIZE) * -1;*/
 		gridX = static_cast<int>((x + TILE_SIZE / 2) / TILE_SIZE);
 		gridY = static_cast<int>((y - TILE_SIZE / 2) / TILE_SIZE) * -1;
 	}
