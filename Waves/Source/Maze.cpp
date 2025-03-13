@@ -101,7 +101,7 @@ void Import_MapData(void) {
     // For instance, if your current state is of type GameState (platform level):
     //    if (dynamic_cast<GameState*>(gsm.currentState) != nullptr)
     // For this sample, we'll choose Maze1.
-    filePath = "Assets/Maze1.txt";
+    filePath = "Assets/Maze2.txt";
 
     // Import maze data. If it fails, log an error and update the GSM to quit.
     if (!ImportMapDataFromFile(filePath)) {

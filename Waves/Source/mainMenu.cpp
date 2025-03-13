@@ -75,8 +75,8 @@ void MainMenuState::Load() {
     guideButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
     exitButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
 
-    AEAudioGroup MainMenuGroup = AEAudioCreateGroup();  // For background music
-    AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, MainMenuGroup);
+    //AEAudioGroup MainMenuGroup = AEAudioCreateGroup();  // For background music
+    //AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, MainMenuGroup);
 }
 
 void MainMenuState::Initialize() {
@@ -84,7 +84,7 @@ void MainMenuState::Initialize() {
     startGame = false;
     menu = false;
     AEGfxSetCamPosition(0.0f, 0.0f);\
-    AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
+    //AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
 
 }
 
@@ -160,12 +160,13 @@ void MainMenuState::Unload() {
         AEGfxDestroyFont(menuFont);
         menuFont = -1;
     }
-    AudioManager::UnloadAudio("MainMenu");
+    //AudioManager::UnloadAudio("MainMenu");
 }
 
 BaseState* MainMenuState::GetNextState() {
     if (startGame) {
-        return new gamePreview();
+        return new GameState1();
+        // return new gamePreview();
     }
     if (menu) {
         return new instructionState();

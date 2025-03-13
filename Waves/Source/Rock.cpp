@@ -115,7 +115,7 @@ namespace rock {
         }
 
         // Launch the rock when the left mouse button is clicked (and if not already active)
-        if (AEInputCheckCurr(AEVK_LBUTTON) && !rockActive && hasRock) {
+        if (AEInputCheckCurr(AEVK_RBUTTON) && !rockActive && hasRock) {
 
             f32 speed = 15.0f;
             AEInputGetCursorPosition(&mouseX, &mouseY);

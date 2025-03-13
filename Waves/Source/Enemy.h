@@ -104,7 +104,7 @@ struct Enemy {
 		static f32 time{};
 		if (state != IDLE) {
 			time += static_cast<f32>(AEFrameRateControllerGetFrameTime());
-			if (time > 1.5) {
+			if (time > 1.0) {
 				spawn_wave(MainWaves, x, y, mesh, 50.f);
 				time = 0;
 			}

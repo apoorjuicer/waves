@@ -51,8 +51,8 @@ void GameState1::Load() {
     wave_meshes[2] = Create_LineMesh();
 
     AEAudioGroup SfxGroup = AEAudioCreateGroup();  // For background music
-    AudioManager::LoadAudio("Sfx", "Assets/SonarWave.wav", true, SfxGroup);
-    AudioManager::LoadAudio("GameOver", "Assets/GameOver.wav", true, SfxGroup);
+    //AudioManager::LoadAudio("Sfx", "Assets/SonarWave.wav", true, SfxGroup);
+    //AudioManager::LoadAudio("GameOver", "Assets/GameOver.wav", true, SfxGroup);
 }
 
 void GameState1::Initialize() {
@@ -96,7 +96,7 @@ void GameState1::Update(f32 deltaTime) {
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
-    f32 speed = 500.0f;
+    f32 speed = 200.0f;
     if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
@@ -150,12 +150,11 @@ void GameState1::Update(f32 deltaTime) {
 void GameState1::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
-
-    RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-
+    RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
-    RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
+    RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     
@@ -206,7 +205,7 @@ void GameState1::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
-    AudioManager::UnloadAudio("Sfx");
+    //AudioManager::UnloadAudio("Sfx");
     PauseOverlay::Free();
 }
 
