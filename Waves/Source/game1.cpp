@@ -93,7 +93,7 @@ void GameState1::Update(f32 deltaTime) {
         return;
     }
 
-    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
+    AEGfxSetBackgroundColor(0.2f, 0.2f, 0.2f);
 
     // Player movement
     f32 speed = 200.0f;
@@ -142,7 +142,7 @@ void GameState1::Update(f32 deltaTime) {
     }
 
     CheckItem(player, maze, tilesize, 0.0f, 0);
-    dead = PlayerEnemyCollision(player, enemy1);
+    dead = PlayerEnemyCollision(player, enemy1, tilesize);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
 
 }

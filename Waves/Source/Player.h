@@ -44,7 +44,7 @@ bool IsWalkable(f32 x, f32 y, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 maze
 void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[MAX_ROW][MAX_COL], f32 tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh);
 void CheckItem(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
-bool PlayerEnemyCollision(Player &player, Enemy &enemy);
+bool PlayerEnemyCollision(Player &player, Enemy &enemy, f32 tilesize);
 bool checkGoal(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
 AEGfxVertexList* CreateBoxMesh(u32 color);
 void DrawInventory(const Player& player, AEGfxVertexList* boxMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
