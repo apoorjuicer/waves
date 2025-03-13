@@ -17,22 +17,22 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-
 #include "game1.h"
-
-GameState1::GameState1() : exitGame(false), winGame(false), tilesize(100.0f),
-pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {
-
-}
 
 namespace {
     Enemy enemy1;
 }
 
+GameState1::GameState1() : exitGame(false), winGame(false), tilesize(100.0f),
+pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
+pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
 
 void GameState1::Load() {
-    Import_MapData();
+    if (!ImportMapDataFromFile("Assets/Maze1.txt")) {
+        std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
+        // Transition to quit state, etc.
+    }
+    //Import_MapData();
 
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
@@ -223,11 +223,10 @@ BaseState* GameState1::GetNextState() {
         return new LoseState();
     }
     if (winGame) {
-        return new WinState();
+        return new gameTransition();
     }
     //if (winGame) {
     //    return new WinState();
     //}
     return nullptr;  // Stay in the current state if nothing changes
-
 }

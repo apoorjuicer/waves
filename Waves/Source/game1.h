@@ -20,6 +20,7 @@ Technology is prohibited.
 #pragma once
 #include "baseStates.h"
 #include "AEEngine.h"
+#include "gameTransition.h"
 #include "Player.h"
 #include "Maze.h"
 #include "Rock.h"
