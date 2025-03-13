@@ -72,7 +72,7 @@ namespace PauseOverlay {
         AEGfxSetTransform(t.m);
         AEGfxMeshDraw(pauseScreenMesh, AE_GFX_MDM_TRIANGLES);
 
-        // --- Draw and center text on the Resume button ---
+        // --- Draw and center text on the Game Paused Text---
         // The Resume button is drawn at world coordinates: (player.x, player.y + kResumeY)
         // Compute the normalized coordinates for that center point:
         float winW = (float)AEGfxGetWindowWidth();
