@@ -37,19 +37,50 @@ bool IsMouseInsideButton(float buttonX, float buttonY, float buttonWidth, float 
         worldMouseY <= buttonY + buttonHeight / 2);
 }
 
-AEGfxVertexList* CreateButtonMesh(float width, float height, u32 color) {
+AEGfxVertexList* CreateButtonMesh(u32 color) {
     AEGfxMeshStart();
 
     // Create a rectangle using two triangles
-    AEGfxTriAdd(-width / 2, -height / 2, color, 0.0f, 1.0f,
-        width / 2, -height / 2, color, 1.0f, 1.0f,
-        -width / 2, height / 2, color, 0.0f, 0.0f);
+    AEGfxTriAdd(-0.5f, -0.5f, color, 0.0f, 1.0f,
+                0.5f, -0.5f, color, 1.0f, 1.0f,
+                -0.5f, 0.5f, color, 0.0f, 0.0f);
 
-    AEGfxTriAdd(width / 2, -height / 2, color, 1.0f, 1.0f,
-        width / 2, height / 2, color, 1.0f, 0.0f,
-        -width / 2, height / 2, color, 0.0f, 0.0f);
+    AEGfxTriAdd(0.5f, -0.5f, color, 1.0f, 1.0f,
+                0.5f, 0.5f, color, 1.0f, 0.0f,
+                -0.5f, 0.5f, color, 0.0f, 0.0f);
 
     return AEGfxMeshEnd();
+}
+
+// Utility function to draw buttons with scaling
+void DrawButton(AEGfxVertexList* buttonMesh, float x, float y, const char* text, s8 font, float scaleX, float scaleY) {
+    if (!buttonMesh || font == -1) return;
+
+    // Create scaling and translation matrices
+    AEMtx33 scaleMtx, transMtx, finalMtx;
+    AEMtx33Scale(&scaleMtx, scaleX, scaleY);  // Scale the mesh
+    AEMtx33Trans(&transMtx, x, y);            // Position the mesh
+    AEMtx33Concat(&finalMtx, &transMtx, &scaleMtx);
+    AEGfxSetTransform(finalMtx.m);
+    AEGfxMeshDraw(buttonMesh, AE_GFX_MDM_TRIANGLES);
+
+    // Retrieve camera position and window dimensions for text conversion
+    float camX, camY;
+    AEGfxGetCamPosition(&camX, &camY);
+    float winW = (float)AEGfxGetWindowWidth();
+    float winH = (float)AEGfxGetWindowHeight();
+
+    // Get the text dimensions (assumes scale of 1.0 for printing)
+    float textWidth, textHeight;
+    AEGfxGetPrintSize(font, text, 1.0f, &textWidth, &textHeight);
+
+    // Convert the world button center (x,y) to normalized screen coordinates,
+    // subtracting half the text width/height to center the text.
+    float normX = (x - camX) / (winW / 2.0f) - (textWidth * 0.5f);
+    float normY = (y - camY) / (winH / 2.0f) - (textHeight * 0.5f);
+
+    // Draw the text in normalized coordinates with black color
+    AEGfxPrint(font, text, normX, normY, 1.0f, 0, 0, 0, 1);
 }
 
 MainMenuState::MainMenuState()
@@ -70,9 +101,9 @@ void MainMenuState::Load() {
         printf("ERROR: Failed to load font\n");
     }
 
-    playButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
-    guideButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
-    exitButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
+    playButtonMesh = CreateButtonMesh(0xFFFFFFFF);
+    guideButtonMesh = CreateButtonMesh(0xFFFFFFFF);
+    exitButtonMesh = CreateButtonMesh(0xFFFFFFFF);
 
     //AEAudioGroup MainMenuGroup = AEAudioCreateGroup();  // For background music
     //AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, MainMenuGroup);
@@ -111,68 +142,15 @@ void MainMenuState::Update(f32 deltaTime) {
 }
 
 void MainMenuState::Draw() {
-    auto ToNormalizedX = [](float xWorld) {
-        return xWorld / (AEGfxGetWindowWidth() * 0.5f);
-        };
-    auto ToNormalizedY = [](float yWorld) {
-        return yWorld / (AEGfxGetWindowHeight() * 0.5f);
-        };
-
     if (menuFont != -1) {
         AEGfxPrint(menuFont, "Wave", -0.10f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     if (!playButtonMesh || !guideButtonMesh || !exitButtonMesh) return;
 
-    AEMtx33 transform;
-
-    // Play Button (Center)===========================================
-    AEMtx33Trans(&transform, 0.0f, 100.0f);
-    AEGfxSetTransform(transform.m);
-    AEGfxMeshDraw(playButtonMesh, AE_GFX_MDM_TRIANGLES);
-    //AEGfxPrint(buttonFont, "Play", -0.075f, 0.18f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-
-    float textPlayWidth, textPlayHeight;
-    AEGfxGetPrintSize(buttonFont, "Play", 1.0f, &textPlayWidth, &textPlayHeight);
-
-    // The button's center in world coords is (0, 100). Convert that to normalized:
-    float centerPlayX = ToNormalizedX(0.0f);
-    float centerPlayY = ToNormalizedY(100.0f);
-
-    // Offset by half the text size so it’s centered on that point
-    float textPlayX = centerPlayX - (textPlayWidth * 0.5f);
-    float textPlayY = centerPlayY - (textPlayHeight * 0.5f);
-
-    // Now print in normalized coordinates
-    AEGfxPrint(buttonFont, "Play", textPlayX, textPlayY, 1.0f, 0, 0, 0, 1);
-
-    // Guide Button (Below Play Button) ==============================
-    AEMtx33Trans(&transform, 0.0f, -50.0f);  // Moved down
-    AEGfxSetTransform(transform.m);
-    AEGfxMeshDraw(guideButtonMesh, AE_GFX_MDM_TRIANGLES);
-    //AEGfxPrint(buttonFont, "Guide", -0.095f, -0.15f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-
-    float textGuideWidth, textGuideHeight;
-    AEGfxGetPrintSize(buttonFont, "Guide", 1.0f, &textGuideWidth, &textGuideHeight);
-    float centerGuideX = ToNormalizedX(0.0f);
-    float centerGuideY = ToNormalizedY(-50.0f);
-    float textGuideX = centerGuideX - (textGuideWidth * 0.5f);
-    float textGuideY = centerGuideY - (textGuideHeight * 0.5f);
-    AEGfxPrint(buttonFont, "Guide", textGuideX, textGuideY, 1.0f, 0, 0, 0, 1);
-
-    // Exit Button (Below Guide Button) =============================
-    AEMtx33Trans(&transform, 0.0f, -200.0f);  // Moved down further
-    AEGfxSetTransform(transform.m);
-    AEGfxMeshDraw(exitButtonMesh, AE_GFX_MDM_TRIANGLES);
-    //AEGfxPrint(buttonFont, "Exit", -0.075f, -0.475f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
-
-    float textExitWidth, textExitHeight;
-    AEGfxGetPrintSize(buttonFont, "Exit", 1.0f, &textExitWidth, &textExitHeight);
-    float centerExitX = ToNormalizedX(0.0f);
-    float centerExitY = ToNormalizedY(-200.0f);
-    float textExitX = centerExitX - (textExitWidth * 0.5f);
-    float textExitY = centerExitY - (textExitHeight * 0.5f);
-    AEGfxPrint(buttonFont, "Exit", textExitX, textExitY, 1.0f, 0, 0, 0, 1);
+    DrawButton(playButtonMesh, 0.0f, 100.0f, "Play", buttonFont, 200.0f, 100.0f);
+    DrawButton(guideButtonMesh, 0.0f, -50.0f, "Guide", buttonFont, 200.0f, 100.0f);
+    DrawButton(exitButtonMesh, 0.0f, -200.0f, "Exit", buttonFont, 200.0f, 100.0f);
 }
 
 void MainMenuState::Free() {

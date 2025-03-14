@@ -46,4 +46,5 @@ public:
 };
 
 bool IsMouseInsideButton(float buttonX, float buttonY, float buttonWidth, float buttonHeight);
-AEGfxVertexList* CreateButtonMesh(float width, float height, u32 color);
+AEGfxVertexList* CreateButtonMesh(u32 color);
+void DrawButton(AEGfxVertexList* buttonMesh, float x, float y, const char* text, s8 font, float scaleX, float scaleY);

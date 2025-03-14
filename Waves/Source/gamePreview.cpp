@@ -51,7 +51,7 @@ void gamePreview::Load() {
 
     maze1_mesh = TextureMesh();
 
-    okButtonMesh = CreateButtonMesh(200.0f, 100.0f, 0xFFFFFFFF);
+    okButtonMesh = CreateButtonMesh(0xFFFFFFFF);
 }
 
 void gamePreview::Initialize() {

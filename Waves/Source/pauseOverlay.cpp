@@ -42,9 +42,9 @@ namespace PauseOverlay {
         sExitToMenu = false;
         sFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 50);
         mFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 100);
-        pauseScreenMesh = CreateButtonMesh(pauseMenuX, pauseMenuY, 0xFF404040);
-        sResumeMesh = CreateButtonMesh(kButtonW, kButtonH, 0xFF202020);
-        sMainMenuMesh = CreateButtonMesh(kButtonW, kButtonH, 0xFF202020);
+        pauseScreenMesh = CreateButtonMesh(0xFF404040);
+        sResumeMesh = CreateButtonMesh(0xFF202020);
+        sMainMenuMesh = CreateButtonMesh(0xFF202020);
     }
 
     void Update() {
@@ -65,18 +65,18 @@ namespace PauseOverlay {
     void Draw() {
         if (!sPaused) return;
 
-        AEMtx33 t;
+        AEMtx33 t, scaleMtx, finalMtx;
 
         // Draw pause screen background (using player's world position as base)
         AEMtx33Trans(&t, player.x, player.y);
-        AEGfxSetTransform(t.m);
+        AEMtx33Scale(&scaleMtx, pauseMenuX, pauseMenuY);
+        AEMtx33Concat(&finalMtx, &t, &scaleMtx);
+        AEGfxSetTransform(finalMtx.m);
         AEGfxMeshDraw(pauseScreenMesh, AE_GFX_MDM_TRIANGLES);
 
-        // --- Draw and center text on the Game Paused Text---
-        // The Resume button is drawn at world coordinates: (player.x, player.y + kResumeY)
-        // Compute the normalized coordinates for that center point:
-        float winW = (float)AEGfxGetWindowWidth();
-        float winH = (float)AEGfxGetWindowHeight();
+        // --- Draw and center text on the Game Paused Text ---
+        //float winW = (float)AEGfxGetWindowWidth();
+        //float winH = (float)AEGfxGetWindowHeight();
         float camX, camY;
         AEGfxGetCamPosition(&camX, &camY);
         float textWidth, textHeight;
@@ -84,61 +84,16 @@ namespace PauseOverlay {
         // Get text dimensions (normalized units) for "Game Paused":
         AEGfxGetPrintSize(mFont, "Game Paused", 1.0f, &textWidth, &textHeight);
 
-        // Center the text horizontally by subtracting half its width,
-        // and center vertically by subtracting half its height from 0.0f
-        // so that it’s in the exact middle of the screen.
+        // Center the text horizontally and vertically (normalized coordinates)
         float centerX = -textWidth * 0.5f;
         float centerY = textHeight * 0.5f;
-
-        // Print at scale = 1.0, with white color (1.0f,1.0f,1.0f,1.0f).
         AEGfxPrint(mFont, "Game Paused", centerX, centerY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
-        // Button center in world space:
-        float resumeCenterX = player.x + kResumeX;
-        float resumeCenterY = player.y + kResumeY;
+        // --- Draw the Resume Button using DrawButton() ---
+        DrawButton(sResumeMesh, player.x + kResumeX, player.y + kResumeY, "Resume", sFont, 300.0f, 100.0f);
 
-        // Convert to normalized screen coordinates:
-        float normX = (resumeCenterX - camX) / (winW / 2.0f);
-        float normY = (resumeCenterY - camY) / (winH / 2.0f);
-
-        // Get text dimensions (normalized units) for "Resume":
-        AEGfxGetPrintSize(sFont, "Resume", 1.0f, &textWidth, &textHeight);
-
-        // Offset so that the text's center aligns with the button center:
-        normX -= textWidth / 2.0f;
-        normY -= textHeight / 2.0f;
-
-        // Draw the Resume button mesh:
-        AEMtx33Trans(&t, player.x + kResumeX, player.y + kResumeY);
-        AEGfxSetTransform(t.m);
-        AEGfxMeshDraw(sResumeMesh, AE_GFX_MDM_TRIANGLES);
-
-        // Print the centered text:
-        AEGfxPrint(sFont, "Resume", normX, normY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-
-        // --- Draw and center text on the Main Menu button ---
-        // Button center in world space:
-        float mainMenuCenterX = player.x + kMainMenuX;
-        float mainMenuCenterY = player.y + kMainMenuY;
-
-        // Convert to normalized coordinates:
-        normX = (mainMenuCenterX - camX) / (winW / 2.0f);
-        normY = (mainMenuCenterY - camY) / (winH / 2.0f);
-
-        // Get text dimensions for "Main Menu":
-        AEGfxGetPrintSize(sFont, "Main Menu", 1.0f, &textWidth, &textHeight);
-
-        // Offset to center the text:
-        normX -= textWidth / 2.0f;
-        normY -= textHeight / 2.0f;
-
-        // Draw the Main Menu button mesh:
-        AEMtx33Trans(&t, player.x + kMainMenuX, player.y + kMainMenuY);
-        AEGfxSetTransform(t.m);
-        AEGfxMeshDraw(sMainMenuMesh, AE_GFX_MDM_TRIANGLES);
-
-        // Print the centered text:
-        AEGfxPrint(sFont, "Main Menu", normX, normY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        // --- Draw the Main Menu Button using DrawButton() ---
+        DrawButton(sMainMenuMesh, player.x + kMainMenuX, player.y + kMainMenuY, "Main Menu", sFont, 300.0f, 100.0f);
     }
 
     void Free() {

@@ -36,8 +36,8 @@ void gameTransition::Load() {
 
     transitionFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 70);
 
-    continueButtonMesh = CreateButtonMesh(kButtonW, kButtonH, 0xFF202020);
-    quitButtonMesh = CreateButtonMesh(kButtonW, kButtonH, 0xFF202020);
+    continueButtonMesh = CreateButtonMesh(0xFF202020);
+    quitButtonMesh = CreateButtonMesh(0xFF202020);
 }
 
 void gameTransition::Initialize() {
@@ -72,13 +72,13 @@ void gameTransition::Update(f32 deltaTime) {
 
 void gameTransition::Draw() {
 
-    AEMtx33 t;
+    //AEMtx33 t;
 
     // --- Draw and center text on the Game Paused Text---
     // The Resume button is drawn at world coordinates: (player.x, player.y + kResumeY)
     // Compute the normalized coordinates for that center point:
-    float winW = (float)AEGfxGetWindowWidth();
-    float winH = (float)AEGfxGetWindowHeight();
+    //float winW = (float)AEGfxGetWindowWidth();
+    //float winH = (float)AEGfxGetWindowHeight();
     float camX, camY;
     AEGfxGetCamPosition(&camX, &camY);
     float textWidth, textHeight;
@@ -100,51 +100,14 @@ void gameTransition::Draw() {
     float resumeCenterX = player.x + kContinueX;
     float resumeCenterY = player.y + kContinueY;
 
-    // Convert to normalized screen coordinates:
-    float normX = (resumeCenterX - camX) / (winW / 2.0f);
-    float normY = (resumeCenterY - camY) / (winH / 2.0f);
-
-    // Get text dimensions (normalized units) for "Resume":
-    AEGfxGetPrintSize(transitionFont, "Yes", 1.0f, &textWidth, &textHeight);
-
-    // Offset so that the text's center aligns with the button center:
-    normX -= textWidth / 2.0f;
-    normY -= textHeight / 2.0f;
-
-    // Draw the Resume button mesh:
-    AEMtx33Trans(&t, player.x + kContinueX, player.y + kContinueY);
-    AEGfxSetTransform(t.m);
-    AEGfxMeshDraw(continueButtonMesh, AE_GFX_MDM_TRIANGLES);
-
-    // Print the centered text:
-    AEGfxPrint(transitionFont, "Yes", normX, normY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+    DrawButton(continueButtonMesh, resumeCenterX, resumeCenterY, "Yes", transitionFont, 200.0f, 100.0f);
 
     // --- Draw and center text on the Main Menu button ---
     // Button center in world space:
     float mainMenuCenterX = player.x + kQuitX;
     float mainMenuCenterY = player.y + kQuitY;
 
-    // Convert to normalized coordinates:
-    normX = (mainMenuCenterX - camX) / (winW / 2.0f);
-    normY = (mainMenuCenterY - camY) / (winH / 2.0f);
-
-    // Get text dimensions for "Main Menu":
-    AEGfxGetPrintSize(transitionFont, "NO", 1.0f, &textWidth, &textHeight);
-
-    // Offset to center the text:
-    normX -= textWidth / 2.0f;
-    normY -= textHeight / 2.0f;
-
-    // Draw the Main Menu button mesh:
-    AEMtx33Trans(&t, player.x + kQuitX, player.y + kQuitY);
-    AEGfxSetTransform(t.m);
-    AEGfxMeshDraw(quitButtonMesh, AE_GFX_MDM_TRIANGLES);
-
-    // Print the centered text:
-    AEGfxPrint(transitionFont, "NO", normX, normY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-
-    // Switch to color render mode
-    //AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+    DrawButton(quitButtonMesh, mainMenuCenterX, mainMenuCenterY, "NO", transitionFont, 200.0f, 100.0f);
 }
 
 void gameTransition::Free() {
