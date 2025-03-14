@@ -36,3 +36,5 @@ public:
     void Unload() override;
     BaseState* GetNextState() override;
 };
+
+AEGfxVertexList* TextureMesh();

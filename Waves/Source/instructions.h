@@ -18,10 +18,13 @@ Technology is prohibited.
 #pragma once
 #include "baseStates.h"
 #include "AEEngine.h"
+#include "gamePreview.h"
 
 class instructionState : public BaseState {
 private:
     bool goMenu;   // Flag for returning to the main menu
+    AEGfxTexture* guide = nullptr;
+    AEGfxVertexList* guide_mesh = nullptr;
 public:
     instructionState();
     void Load() override;

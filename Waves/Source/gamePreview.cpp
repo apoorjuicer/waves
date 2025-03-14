@@ -57,13 +57,6 @@ void gamePreview::Load() {
 void gamePreview::Initialize() {
     AEInputReset();    // Reset any prior input events
     goGame = false;
-
-    // If user clicks the left mouse button, check if within the "Play" or "Exit"
-    if (AEInputCheckTriggered(AEVK_LBUTTON)) {
-        if (IsMouseInsideButton(0.0f, 100.0f, 200.0f, 100.0f)) {
-            goGame = true;
-        }
-    }
 }
 
 void gamePreview::Update(f32 deltaTime) {

@@ -19,11 +19,14 @@ Technology is prohibited.
 #include "mainMenu.h"
 #include "AEEngine.h"
 
-instructionState::instructionState() : goMenu(false){}
+instructionState::instructionState() : goMenu(false), guide(nullptr), guide_mesh(nullptr) {}
 
 void instructionState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
+    guide = AEGfxTextureLoad("Assets/Guide.png");
+
+    guide_mesh = TextureMesh();
 }
 
 void instructionState::Initialize() {
@@ -34,12 +37,47 @@ void instructionState::Update(f32 deltaTime) {
     (f32)deltaTime;
 
     // Example: Press ENTER to return to main menu
-    if (AEInputCheckTriggered(AEVK_RETURN)) {
+    if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         goMenu = true;
     }
 }
 
-void instructionState::Draw() {}
+void instructionState::Draw() {
+    // Tell the Alpha Engine to get ready to draw something with texture.
+    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+
+    // Set the the color to multiply to white, so that the sprite can 
+    // display the full range of colors (default is black).
+    AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+
+    // Set the color to add to nothing, so that we don't alter the sprite's color
+    AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Set blend mode to AE_GFX_BM_BLEND, which will allow transparency.
+    AEGfxSetBlendMode(AE_GFX_BM_BLEND);
+    AEGfxSetTransparency(1.0f);
+
+    // Tell Alpha Engine to use the texture stored in pTex
+    AEGfxTextureSet(guide, 0, 0);
+
+    // Create a 3x3 transformation matrix
+    AEMtx33 transform;
+    AEMtx33Identity(&transform);
+
+    int winWidth = AEGfxGetWindowWidth();
+    int winHeight = AEGfxGetWindowHeight();
+
+    AEMtx33Scale(&transform, (f32)winWidth, (f32)winHeight);
+
+    // Optionally, translate to reposition
+    AEMtx33TransApply(&transform, &transform, 0.0f, 0.0f);
+
+    // Apply the transformation
+    AEGfxSetTransform(transform.m);
+
+    // Tell Alpha Engine to draw the mesh with the above settings.
+    AEGfxMeshDraw(guide_mesh, AE_GFX_MDM_TRIANGLES);
+}
 
 void instructionState::Free() {}
 
