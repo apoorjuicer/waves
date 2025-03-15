@@ -36,7 +36,7 @@ private:
     bool exitGame = false;
     bool dead = false;
     bool winGame = false;
-    f32 tilesize = 100.0f;
+    f32 tilesize = (((AEGfxGetWindowWidth() / 10.0f) < (AEGfxGetWindowHeight() / 10.0f)) ? (AEGfxGetWindowWidth() / 10.0f) : (AEGfxGetWindowHeight() / 10.0f));
     AEGfxVertexList* pDonutMesh = nullptr;
     AEGfxVertexList* PlayerMesh = nullptr;
     AEGfxVertexList* wallMesh = nullptr;
