@@ -104,9 +104,8 @@ void MainMenuState::Load() {
     playButtonMesh = CreateButtonMesh(0xFFFFFFFF);
     guideButtonMesh = CreateButtonMesh(0xFFFFFFFF);
     exitButtonMesh = CreateButtonMesh(0xFFFFFFFF);
-
-    AEAudioGroup MainMenuGroup = AEAudioCreateGroup();  // For background music
-    AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, MainMenuGroup);
+    AEAudioGroup BGMGROUP = AEAudioCreateGroup();  // For background music
+    AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, BGMGROUP);
 }
 
 void MainMenuState::Initialize() {
@@ -120,7 +119,9 @@ void MainMenuState::Initialize() {
 
 void MainMenuState::Update(f32 deltaTime) {
     (f32)deltaTime;
-
+    if (!AudioManager::IsAudioPlaying("MainMenu")) {
+        AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
+    }
     // If user clicks the left mouse button, check if within the "Play" or "Exit"
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
         // Play button
@@ -174,7 +175,7 @@ void MainMenuState::Unload() {
         AEGfxDestroyFont(menuFont);
         menuFont = -1;
     }
-    //AudioManager::UnloadAudio("MainMenu");
+    AudioManager::UnloadAudio("MainMenu");
 }
 
 BaseState* MainMenuState::GetNextState() {

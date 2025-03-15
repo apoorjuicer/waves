@@ -18,6 +18,7 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "game1.h"
+bool waveSpawned = false;  // Flag to track if the wave has been spawned
 
 namespace {
     Enemy enemy1;
@@ -50,9 +51,6 @@ void GameState1::Load() {
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
     wave_meshes[2] = Create_LineMesh();
 
-    AEAudioGroup SfxGroup = AEAudioCreateGroup();  // For background music
-    //AudioManager::LoadAudio("Sfx", "Assets/SonarWave.wav", true, SfxGroup);
-    //AudioManager::LoadAudio("GameOver", "Assets/GameOver.wav", true, SfxGroup);
 }
 
 void GameState1::Initialize() {
@@ -74,12 +72,19 @@ void GameState1::Initialize() {
     
     enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
     enemy1.updateGridPosition(); // need to call to init conversion
-
+    AEAudioGroup SFXgroup = AEAudioCreateGroup();  // For background music
+    AudioManager::LoadAudio("GameBGM", "Assets/GameBGM.mp3", true, SFXgroup);
+    AudioManager::LoadAudio("Waves", "Assets/SonarWave.wav", true, SFXgroup);
+    AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
+
 }
 
 void GameState1::Update(f32 deltaTime) {
     // Toggle pause when ESC is pressed if not already paused
+    if (!AudioManager::IsAudioPlaying("GameBGM")) {
+        AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
+    }
     if (AEInputCheckTriggered(AEVK_ESCAPE) && !PauseOverlay::IsPaused()) {
         PauseOverlay::SetPaused(true);
         AEInputReset();
@@ -102,9 +107,15 @@ void GameState1::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
     if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
 
-    if (AEInputCheckTriggered(AEVK_SPACE)) {
-        //AudioManager::PlayAudio("Sfx", 1.0f, 1.0f, -1);
+    if (AEInputCheckTriggered(AEVK_SPACE) && !waveSpawned) {
         spawn_wave(wave, player.x, player.y, wave_meshes);
+        AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
+        waveSpawned = true; // Set flag to prevent further triggers
+    }
+
+    // Reset the flag when SPACE is released
+    if (!AEInputCheckCurr(AEVK_SPACE)) {
+        waveSpawned = false;
     }
     //debug
    /* if (AEInputCheckTriggered(AEVK_SPACE)) {
@@ -205,7 +216,6 @@ void GameState1::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
-    //AudioManager::UnloadAudio("Sfx");
     PauseOverlay::Free();
 }
 
