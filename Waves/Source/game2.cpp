@@ -23,7 +23,7 @@ namespace {
     Enemy enemy2;
 }
 
-GameState2::GameState2() : exitGame(false), winGame(false), tilesize((((AEGfxGetWindowWidth() / 10.0f) < (AEGfxGetWindowHeight() / 10.0f)) ? (AEGfxGetWindowWidth() / 10.0f) : (AEGfxGetWindowHeight() / 10.0f))),
+GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
 
