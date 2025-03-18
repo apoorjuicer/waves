@@ -17,13 +17,22 @@ Technology is prohibited.
 
 #pragma once
 #include<iostream>
+#include <vector>
 #include "Maze.h"
 #include "Enemy.h"
 
-enum InventoryItem {
+enum InventoryItemType {
     NOTHING = 0,
     KEY,
     ROCK
+};
+
+struct WorldItem {
+    InventoryItemType type;
+    f32 x, y;
+    bool collected;
+
+    WorldItem(InventoryItemType t, f32 posX, f32 posY) : type(t), x(posX), y(posY), collected(false) {}
 };
 
 const int INVENTORY_SIZE = 3;
@@ -32,9 +41,14 @@ struct Enemy;
 
 struct Player {
     f32 x, y, rad=10.0f;  // Position in world space
-    InventoryItem inventory[INVENTORY_SIZE] = { ROCK, NOTHING, NOTHING };
+    InventoryItemType inventory[3] = { NOTHING, NOTHING, NOTHING };
+    //InventoryItem inventory[INVENTORY_SIZE] = { ROCK, NOTHING, NOTHING };'
+
+    void PickUpItem(InventoryItemType itemType);
+    void DropItem(f32 dropX, f32 dropY);
 };
 
+extern std::vector<WorldItem> worldItems;
 extern Player player; // Start at (50, 50) in world space
 extern Player lastRock;
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color);

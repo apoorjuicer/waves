@@ -52,6 +52,7 @@ constexpr float TILE_SIZE = 100.0f;
 // File I/O function prototypes:
 bool ImportMapDataFromFile(const std::string& filename);
 //void Import_MapData(void);
+void createWorldItems(f32 tileSize);
 
 void RenderMaze(int maze1[MAX_ROW][MAX_COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);

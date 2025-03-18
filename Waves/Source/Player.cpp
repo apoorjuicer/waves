@@ -141,42 +141,68 @@ bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 maz
 
 }
 
-void addItemToInventory(Player& player1, InventoryItem item) {
-    for (int i{}; i < INVENTORY_SIZE; ++i) {
-        if (player1.inventory[i] == NOTHING) {
-            player1.inventory[i] = item;
-            return;
-         }
-    }
-}
+//void addItemToInventory(Player& player1, InventoryItemType item) {
+//    for (int i{}; i < INVENTORY_SIZE; ++i) {
+//        if (player1.inventory[i] == NOTHING) {
+//            player1.inventory[i] = item;
+//            return;
+//         }
+//    }
+//}
 
-bool isInventoryFull(const Player& player1) {
-    for (int i = 0; i < INVENTORY_SIZE; ++i) {
-        if (player1.inventory[i] == NOTHING) {
-            return false;  // Found an empty slot
-        }
-    }
-    return true;  // No empty slots, inventory is full
-}
+//bool isInventoryFull(const Player& player1) {
+//    for (int i = 0; i < INVENTORY_SIZE; ++i) {
+//        if (player1.inventory[i] == NOTHING) {
+//            return false;  // Found an empty slot
+//        }
+//    }
+//    return true;  // No empty slots, inventory is full
+//}
 
 void CheckItem(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
-    int gridX = static_cast<int>((player1.x - mazeStartX + (tileSize / 2)) / tileSize);
-    int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - player1.y) / tileSize);
+    if (AEInputCheckCurr(AEVK_E)) {
+        f32 playerMinX = player1.x - player1.rad;
+        f32 playerMaxX = player1.x + player1.rad;
+        f32 playerMinY = player1.y - player1.rad;
+        f32 playerMaxY = player1.y + player1.rad;
 
-    if (!isInventoryFull(player1)) {
-        if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
-            //std::cout << maze[gridY][gridX];
-            maze1[gridY][gridX] = 0;
-            addItemToInventory(player1, KEY);
-        }
-        if (AEInputCheckCurr(AEVK_E) && maze1[gridY][gridX] == 4) {
-            //std::cout << maze[gridY][gridX];
-            maze1[gridY][gridX] = 0;
-            addItemToInventory(player1, ROCK);
+        for (auto& item : worldItems) {
+            if (!item.collected &&
+                item.x + player1.rad >= playerMinX && item.x - player1.rad <= playerMaxX &&
+                item.y + player1.rad >= playerMinY && item.y - player1.rad <= playerMaxY) {
+
+                // Pick up the item (add it to the player's inventory)
+                player1.PickUpItem(item.type);
+
+                // Mark the item as collected
+                item.collected = true;
+                break;
+            }
         }
     }
-
 }
+
+void Player::PickUpItem(InventoryItemType itemType) {
+    for (int i = 0; i < INVENTORY_SIZE; ++i) {
+        if (inventory[i] == NOTHING) {
+            inventory[i] = itemType;
+            return;
+        }
+    }
+}
+
+void Player::DropItem(f32 dropX, f32 dropY) {
+    for (int i = {INVENTORY_SIZE -1 }; i >=0; --i) {
+        if (inventory[i] == ROCK) {
+            // Drop the item and add it to worldItems
+            worldItems.emplace_back(WorldItem(inventory[i], dropX, dropY));
+            inventory[i] = NOTHING;  // Clear the slot
+            return;
+        }
+    }
+}
+
+
 
 
 void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
@@ -220,7 +246,7 @@ void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh, AEGfxVertexL
     f32 boxSize = 80.0f;
     f32 spacing = 20.0f;
 
-    for (int i = 0;i < INVENTORY_SIZE;++i) {
+    for (int i = { INVENTORY_SIZE - 1 };i >=0 ;--i) {
         //std::cout << "Item in :" << i << " is " << player.inventory[i] << std::endl;
         f32 x = worldScreenLeft + offsetX + i * (boxSize + spacing);
         f32 y = worldScreenBottom + offsetY;

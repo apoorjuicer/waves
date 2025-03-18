@@ -199,6 +199,10 @@ void GameState2::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
+    worldItems.clear();
+    for (int i{};i < INVENTORY_SIZE;++i) {
+        player.inventory[i] = NOTHING;
+    }
     PauseOverlay::Free();
 }
 

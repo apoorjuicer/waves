@@ -19,6 +19,7 @@ Technology is prohibited.
 
 #include "game1.h"
 bool waveSpawned = false;  // Flag to track if the wave has been spawned
+std::vector<WorldItem> worldItems;
 
 namespace {
     Enemy enemy1;
@@ -29,6 +30,7 @@ pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
 
 void GameState1::Load() {
+    worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze1.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
         // Transition to quit state, etc.
@@ -50,6 +52,7 @@ void GameState1::Load() {
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
     wave_meshes[2] = Create_LineMesh();
+    createWorldItems(tilesize);
 
 }
 
@@ -60,7 +63,8 @@ void GameState1::Initialize() {
     player.x = 100.f;
     player.y = -100.f;
     //
-
+    
+    player.inventory[0] = ROCK;
     enemy1.x = 100.f;
     enemy1.y = -700.f;
     enemy1.startPatrol = { 1,7 };
@@ -216,6 +220,10 @@ void GameState1::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
+    worldItems.clear();
+    for (int i{};i < INVENTORY_SIZE;++i) {
+        player.inventory[i] = NOTHING;
+    }
     PauseOverlay::Free();
 }
 

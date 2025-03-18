@@ -120,7 +120,7 @@ namespace rock {
             f32 speed = 15.0f;
             AEInputGetCursorPosition(&mouseX, &mouseY);
 
-            rplayer.inventory[rockIndex] = NOTHING;
+            /*rplayer.inventory[rockIndex] = NOTHING;*/
 
             // Get screen dimensions
             f32 screenWidth = static_cast<f32>(AEGfxGetWindowWidth());
@@ -194,15 +194,7 @@ namespace rock {
                 rockActive = false;
                 lastRock1.x = rock.x;
                 lastRock1.y = rock.y;
-
-                // Convert world coordinates to grid indices
-                int gridX = static_cast<int>((lastRock1.x - mazeStartX + (tileSize / 2)) / tileSize);
-                int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - lastRock1.y) / tileSize);
-
-                // Ensure the grid position is valid before updating the maze
-                if (gridX >= 0 && gridX < MAX_COL && gridY >= 0 && gridY < MAX_ROW) {
-                    maze1[gridY][gridX] = 4;  // Mark the rock's last location in the maze
-                }
+                rplayer.DropItem(rock.x, rock.y);
             }
 
             // Draw the rock at its current position

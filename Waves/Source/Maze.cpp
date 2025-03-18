@@ -16,6 +16,7 @@ Technology is prohibited.
 
 #include "AEEngine.h"
 #include "Maze.h"
+#include "Player.h"
 
 int activeRow = 10; // initial active rows
 int activeCol = 10; // initial active columns
@@ -111,11 +112,41 @@ bool ImportMapDataFromFile(const std::string& filename) {
 //    }
 //}
 
-void RenderMaze(int maze1[MAX_ROW][MAX_COL], float tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+void createWorldItems(f32 tileSize) {
+    float startY = tileSize; // Y starts at the top (10 tiles * tile size)
+
+
+    std::cout << "Rendering Maze and World Items:" << std::endl;
+    for (int y{};y < MAX_ROW;++y) {
+        for (int x{}; x < MAX_COL; ++x) {
+            int tileValue = maze[y][x];
+            f32 worldX = x * tileSize;
+            f32 worldY = startY - ((y + 1) * tileSize);
+
+            if (tileValue == 3) {
+                worldItems.emplace_back(WorldItem(KEY, worldX, worldY));
+                std::cout << "WorldItem KEY at (" << worldX << ", " << worldY << ")" << std::endl;
+            }
+            else if (tileValue == 4) {
+                worldItems.emplace_back(WorldItem(ROCK, worldX, worldY));
+                std::cout << "WorldItem ROCK at (" << worldX << ", " << worldY << ")" << std::endl;
+            }
+        }
+    }
+}
+
+void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
+
+    // Print out the inventory items for debugging
+    std::cout << "Player's Inventory: ";
+    for (int i = 0; i < INVENTORY_SIZE; ++i) {
+        std::cout << player.inventory[i] << " ";  // Output each item type in the inventory
+    }
+    std::cout << std::endl;
 
     for (int y = 0; y < MAX_ROW; ++y) {
         for (int x = 0; x < MAX_COL; ++x) {
@@ -133,19 +164,24 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], float tileSize, AEGfxVertexList* wa
             if (maze1[y][x] == 2) {
                 AEGfxMeshDraw(goalMesh, AE_GFX_MDM_TRIANGLES);
             }
-            if (maze1[y][x] == 3) {
+        }
+    }
+
+    //std::cout << "World items info: ";
+    //    int i{ 1 };
+    for (const auto& item : worldItems) {
+        //std::cout << i++ << "." << item.type << ", x:" << item.x << ", y:" << item.y<<", collected?"<< item.collected << std::endl;
+        if (!item.collected) {
+            AEMtx33 transform = { 0 };
+            AEMtx33Trans(&transform, item.x, item.y);
+            AEGfxSetTransform(transform.m);
+
+            if (item.type == KEY) {
                 AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
             }
-            if (maze1[y][x] == 4) {
+            else if (item.type == ROCK) {
                 AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
             }
-            //if (maze[y][x] == 0) {
-            //    continue;
-            //    AEMtx33 transform = { 0 };
-            //    AEMtx33Trans(&transform, posX, posY);
-            //    AEGfxSetTransform(transform.m);
-            //    AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
-            //}
         }
     }
 }
