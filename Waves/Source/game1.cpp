@@ -76,8 +76,8 @@ void GameState1::Initialize() {
     enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup SFXgroup = AEAudioCreateGroup();  // For background music
-    AudioManager::LoadAudio("GameBGM", "Assets/GameBGM.mp3", true, SFXgroup);
-    AudioManager::LoadAudio("Waves", "Assets/SonarWave.wav", true, SFXgroup);
+    AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, SFXgroup);
+    AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", true, SFXgroup);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 

@@ -34,4 +34,7 @@ void GameState3::Free() {}
 
 void GameState3::Unload() {}
 
-BaseState* GameState3::GetNextState() {}
+BaseState* GameState3::GetNextState() 
+{
+    return nullptr;
+}
