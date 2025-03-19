@@ -58,7 +58,6 @@ void GameState2::Initialize() {
     winGame = false;
     player.x = 100.f;
     player.y = -100.f;
-    //
 
     enemy2.x = 100.f;
     enemy2.y = -700.f;
@@ -90,7 +89,7 @@ void GameState2::Update(f32 deltaTime) {
         return;
     }
 
-    AEGfxSetBackgroundColor(0.2f, 0.2f, 0.2f);
+    AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
 
     // Player movement
     f32 speed = 200.0f;

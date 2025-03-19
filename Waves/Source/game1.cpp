@@ -62,7 +62,6 @@ void GameState1::Initialize() {
     winGame = false;
     player.x = 100.f;
     player.y = -100.f;
-    //
     
     player.inventory[0] = ROCK;
     enemy1.x = 100.f;
@@ -102,7 +101,7 @@ void GameState1::Update(f32 deltaTime) {
         return;
     }
 
-    AEGfxSetBackgroundColor(0.2f, 0.2f, 0.2f);
+    AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
 
     // Player movement
     f32 speed = 200.0f;
