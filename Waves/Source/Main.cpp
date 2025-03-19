@@ -22,6 +22,7 @@ Technology is prohibited.
 
 #include "GSM.h"
 #include "mainMenu.h"
+#include "splash.h"
 
 
 // ---------------------------------------------------------------------------
@@ -48,11 +49,13 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	GameStateManager gameStateManager;
 	gameStateManager.SetGameRunningPtr(&gGameRunning); // Provide the pointer to GSM
 
-	// Create main menu
-	MainMenuState* menu = new MainMenuState();
-	//menu->SetGameRunningPtr(&gGameRunning); // <-- Pass pointer here
+	//// Create main menu
+	//MainMenuState* menu = new MainMenuState();
+	//gameStateManager.SetState(menu);
 
-	gameStateManager.SetState(menu);
+	// Start with the splash state
+	SplashState* splash = new SplashState();
+	gameStateManager.SetState(splash);
 
 	// reset the system modules
 	AESysReset();

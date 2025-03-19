@@ -16,7 +16,10 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 #pragma once
+
 #include "baseStates.h"
+#include "AEEngine.h"
+#include <iostream>
 
 class GameStateManager {
 private:
