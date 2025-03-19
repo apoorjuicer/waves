@@ -88,11 +88,11 @@ MainMenuState::MainMenuState()
     playButtonMesh(nullptr), guideButtonMesh(nullptr), exitButtonMesh(nullptr) {}
 
 void MainMenuState::Load() {
-    AEGfxSetBackgroundColor(0.3f, 0.3f, 0.3f);
+    AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
 
     // Use relative path instead of absolute path
-    menuFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 70);
-    buttonFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 50);
+    menuFont = AEGfxCreateFont("Assets/Fonts/Nosifer-Regular.ttf", 100);
+    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-SemiBoldItalic.ttf", 50);
 
     if (menuFont == -1) {
         printf("ERROR: Failed to load font\n");
@@ -105,7 +105,7 @@ void MainMenuState::Load() {
     guideButtonMesh = CreateButtonMesh(0xFFFFFFFF);
     exitButtonMesh = CreateButtonMesh(0xFFFFFFFF);
     AEAudioGroup BGMGROUP = AEAudioCreateGroup();  // For background music
-    AudioManager::LoadAudio("MainMenu", "Assets/MainMenu.wav", true, BGMGROUP);
+    AudioManager::LoadAudio("MainMenu", "Assets/Audio/MainMenu.wav", true, BGMGROUP);
 }
 
 void MainMenuState::Initialize() {
@@ -144,7 +144,14 @@ void MainMenuState::Update(f32 deltaTime) {
 
 void MainMenuState::Draw() {
     if (menuFont != -1) {
-        AEGfxPrint(menuFont, "Wave", -0.10f, 0.5f, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        float textWidth, textHeight;
+        AEGfxGetPrintSize(menuFont, "WAVES", 1.0f, &textWidth, &textHeight);
+
+        // Center X: 0.0f is the center of the screen, subtract half of text width
+        float normX = -(textWidth * 0.5f);
+        float normY = 0.5f;  // Keep Y position as before
+
+        AEGfxPrint(menuFont, "WAVES", normX, normY, 1.0f, 1.0f, 0.0f, 0.0f, 1.0f);
     }
 
     if (!playButtonMesh || !guideButtonMesh || !exitButtonMesh) return;
