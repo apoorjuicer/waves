@@ -510,8 +510,8 @@ std::vector<Pair> findPatrolPoints(int grid[MAX_ROW][MAX_COL]) {
 	for (int y = 0; y < MAX_ROW; y++) {       // Row (Y)
 		for (int x = 0; x < MAX_COL; x++) { // Column (X)
 			if (grid[y][x] == 9) {
-				patrolPoints.push_back({ y, x });
-				std::cout << "Found patrol point: (" << x << ", " << y << ")\n";
+				patrolPoints.push_back({ x, y });
+				//std::cout << "Found patrol point: (" << x << ", " << y << ")\n";
 			}
 		}
 	}
@@ -520,9 +520,20 @@ std::vector<Pair> findPatrolPoints(int grid[MAX_ROW][MAX_COL]) {
 
 void setEnemyPatrol(Enemy& e, int grid[MAX_ROW][MAX_COL]) {
 	e.patrolPath = findPatrolPoints(grid);
-	e.startPatrol = e.patrolPath.front();
-	e.endPatrol = e.patrolPath.back();
-	e.x = e.endPatrol.second * TILE_SIZE;
-	e.y = e.endPatrol.first * -TILE_SIZE;
-	e.updateGridPosition();
+	//if (!e.patrolPath.empty()) {
+	//	e.startPatrol = e.patrolPath.front();
+	//	e.endPatrol = e.patrolPath.back();
+	//}
+	//else {
+	//	std::cout << "[ERROR] No patrol points found!\n";
+	//}
+	//std::cout << "[DEBUG] Enemy Patrol Path:\n";
+	//for (size_t i = 0; i < e.patrolPath.size(); i++) {
+	//	std::cout << "Patrol Point " << i << ": ("
+	//		<< e.patrolPath[i].first << ", "
+	//		<< e.patrolPath[i].second << ")\n";
+	//}
+	/*std::cout << "Enemy patrol start: (" << e.startPatrol.first << ", " << e.startPatrol.second << ")\n";
+	std::cout << "Enemy patrol end: (" << e.endPatrol.first << ", " << e.endPatrol.second << ")\n";*/
+
 }
