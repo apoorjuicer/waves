@@ -141,8 +141,6 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wall
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
-    // Print out the inventory items for debugging
-    std::cout << "Player's Inventory: ";
     for (int i = 0; i < INVENTORY_SIZE; ++i) {
         std::cout << player.inventory[i] << " ";  // Output each item type in the inventory
     }
