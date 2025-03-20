@@ -730,13 +730,13 @@ AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegment
 AEGfxVertexList* Create_LineMesh() {
 
 	// skewed square;
-	AEGfxTriAdd(-0.5f, 0.0f, 0xFFFFFFFF, 0.0f, 1.0f,
-		-0.5f, 1.0f, 0xFFFFFFFF, 1.0f, 1.0f,
-		0.5f, 0.0f, 0xFFFFFFFF, 0.0f, 0.0f);		// bottom left aligned triangle;
+	AEGfxTriAdd(-0.5f, 0.0f, 0xFFFF0000, 0.0f, 1.0f,
+		-0.5f, 1.0f, 0xFFFF0000, 1.0f, 1.0f,
+		0.5f, 0.0f, 0xFFFF0000, 0.0f, 0.0f);		// bottom left aligned triangle;
 
-	AEGfxTriAdd(-0.5f, 1.0f, 0xFFFFFFFF, 1.0f, 1.0f,
-		0.5f, 1.0f, 0xFFFFFFFF, 1.0f, 0.0f,
-		0.5f, 0.0f, 0xFFFFFFFF, 0.0f, 0.0f);		// top right aligned triangle;
+	AEGfxTriAdd(-0.5f, 1.0f, 0xFFFF0000, 1.0f, 1.0f,
+		0.5f, 1.0f, 0xFFFF0000, 1.0f, 0.0f,
+		0.5f, 0.0f, 0xFFFF0000, 0.0f, 0.0f);		// top right aligned triangle;
 	return AEGfxMeshEnd();
 
 }
