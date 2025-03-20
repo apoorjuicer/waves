@@ -18,6 +18,10 @@ Technology is prohibited.
 #pragma once
 #include "baseStates.h"
 #include "AEEngine.h"
+#include "mainMenu.h"
+#include "game1.h"
+#include "game2.h"
+#include "Player.h"
 
 class gameTransition : public BaseState {
 private:

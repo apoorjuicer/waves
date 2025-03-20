@@ -15,12 +15,7 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-#include "AEEngine.h"
 #include "mainMenu.h"
-#include "gamePreview.h"
-#include "instructions.h"
-#include "Audio.h"
-#include "Player.h"
 
 bool IsMouseInsideButton(float buttonX, float buttonY, float buttonWidth, float buttonHeight) {
     s32 mouseX, mouseY;
@@ -112,9 +107,8 @@ void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
     menu = false;
-    AEGfxSetCamPosition(0.0f, 0.0f);\
+    AEGfxSetCamPosition(0.0f, 0.0f);
     AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
-
 }
 
 void MainMenuState::Update(f32 deltaTime) {
@@ -187,7 +181,8 @@ void MainMenuState::Unload() {
 
 BaseState* MainMenuState::GetNextState() {
     if (startGame) {
-        return new GameState1();
+        return new LevelSelectState();
+        //return new GameState1();
         // return new gamePreview();
     }
     if (menu) {

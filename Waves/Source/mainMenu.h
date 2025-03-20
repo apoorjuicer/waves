@@ -19,6 +19,11 @@ Technology is prohibited.
 #include "baseStates.h"
 #include "AEEngine.h"
 #include "game1.h"
+#include "select.h"
+#include "gamePreview.h"
+#include "instructions.h"
+#include "Audio.h"
+#include "Player.h"
 
 class MainMenuState : public BaseState {
 private:
