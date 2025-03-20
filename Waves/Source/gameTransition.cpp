@@ -16,11 +16,6 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "gameTransition.h"
-#include "mainMenu.h"
-#include "game1.h"
-#include "game2.h"
-#include "AEEngine.h"
-#include "Player.h"
 
 const f32 kButtonW = 300.0f;
 const f32 kButtonH = 100.0f;
@@ -49,17 +44,6 @@ void gameTransition::Initialize() {
 void gameTransition::Update(f32 deltaTime) {
     (f32)deltaTime;
 
-    //// Example: Press ENTER to return to main menu
-    //if (AEInputCheckTriggered(AEVK_RETURN)) {
-    //    continueGame = true;
-    //}
-
-    //if (AEInputCheckTriggered(AEVK_LBUTTON)) {
-    //    if (IsMouseInsideButton(0.0f, -300.0f, 200.0f, 100.0f)) {
-    //        continueGame = true;
-    //    }
-    //}
-
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
         if (IsMouseInsideButton(kContinueX, kContinueY, kButtonW, kButtonH)) {
             continueGame = true;
@@ -70,10 +54,8 @@ void gameTransition::Update(f32 deltaTime) {
     }
 }
 
-void gameTransition::Draw() {
-
-    //AEMtx33 t;
-
+void gameTransition::Draw() 
+{
     // --- Draw and center text on the Game Paused Text---
     // The Resume button is drawn at world coordinates: (player.x, player.y + kResumeY)
     // Compute the normalized coordinates for that center point:
@@ -100,14 +82,14 @@ void gameTransition::Draw() {
     float resumeCenterX = player.x + kContinueX;
     float resumeCenterY = player.y + kContinueY;
 
-    DrawButton(continueButtonMesh, resumeCenterX, resumeCenterY, "Yes", transitionFont, 200.0f, 100.0f);
+    DrawButton(continueButtonMesh, resumeCenterX, resumeCenterY, "Yes", transitionFont, kButtonW, kButtonH);
 
     // --- Draw and center text on the Main Menu button ---
     // Button center in world space:
     float mainMenuCenterX = player.x + kQuitX;
     float mainMenuCenterY = player.y + kQuitY;
 
-    DrawButton(quitButtonMesh, mainMenuCenterX, mainMenuCenterY, "NO", transitionFont, 200.0f, 100.0f);
+    DrawButton(quitButtonMesh, mainMenuCenterX, mainMenuCenterY, "NO", transitionFont, kButtonW, kButtonH);
 }
 
 void gameTransition::Free() {
