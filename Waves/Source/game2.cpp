@@ -28,6 +28,7 @@ pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
 
 void GameState2::Load() {
+    worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze2.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
         // Transition to quit state, etc.
@@ -49,6 +50,8 @@ void GameState2::Load() {
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
     wave_meshes[2] = Create_LineMesh();
+
+    createWorldItems(tilesize);
 
 }
 
@@ -149,7 +152,7 @@ void GameState2::Draw() {
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {
