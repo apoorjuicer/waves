@@ -211,6 +211,7 @@ namespace {// Utility Functions
 	}
 
 
+
 }// end of anon namespace
 
 Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dst, std::vector<Pair>& path) {
@@ -220,12 +221,13 @@ Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dst, std::vector<Pai
 
 	path.clear(); //reset path
 	if (!isValid(dst.first, dst.second, grid) || !isValid(src.first, src.second, grid)) {
-		//printf("Source or Destination is invalid\n");
+		printf("Source or Destination is invalid\n");
+		//printf("(%d,%d)\n", path.front().first,path.front().second);
 		return Path::NO_PATH;
 	}
 	// If the destination cell is the same as source cell
 	if (isDestination(src.first, src.second, dst)) {
-		//printf("Already at the destination\n");
+		printf("Already at the destination\n");
 		return Path::NO_PATH;
 	}
 
@@ -309,7 +311,7 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 	const float updateInterval = 0.1f;  // Move every 0.1 seconds
 	accumulatedTime += dt;
 	Pair currIndex = { e.gridX,e.gridY };
-
+	Path result = Path::NO_PATH;
 	bool inPatrolPath = std::find(e.patrolPath.begin(), e.patrolPath.end(), currIndex) != e.patrolPath.end();
 	//std::cout << "current enemy index :" << currIndex.first << "," << currIndex.second << "\n";
 	//pursuit rock
@@ -351,7 +353,7 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 		// Call function to move enemy
 		if (accumulatedTime >= updateInterval) {
 			if (!e.path.empty() && e.pathIndex < e.path.size()) {
-				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES],mesh);
+					e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);		
 			}
 			accumulatedTime = 0.0f;
 		}	
@@ -364,7 +366,9 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 		// Move enemy if enough time has passed
 		if (accumulatedTime >= updateInterval) {
 			if (!e.path.empty() && e.pathIndex < e.path.size()) {
-				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
+				//e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
+					e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
+			
 			}
 			accumulatedTime = 0.0f;
 		}
@@ -394,7 +398,7 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 		if (accumulatedTime >= updateInterval) {
 			if (e.pathIndex < e.path.size()) {
 				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
-				e.printPosition();
+				//e.printPosition();
 			}
 			accumulatedTime = 0.0f;
 		}
@@ -410,9 +414,13 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 	e.enemy_wave(MainWaves, mesh);
 
-	const float IDLE_TIME = 2.0f;       // Time to stay idle
-	const float PATROL_TIME = 10.0f;     // Time to stay patrol 
-	const float PURSUIT_TIME = 3.0f;    // Time to pursue rock
+	//const float IDLE_TIME = 2.0f;       // Time to stay idle
+	//const float PATROL_TIME = 20.0f;     // Time to stay patrol 
+	//const float PURSUIT_TIME = 3.0f;    // Time to pursue rock
+
+	 float IDLE_TIME = e.idle_timer;       // Time to stay idle
+	 float PATROL_TIME = e.patrol_timer;     // Time to stay patrol 
+	 float PURSUIT_TIME = e.pursuit_timer;    // Time to pursue rock
 
 	e.stateTimer -= dt;
 
@@ -493,4 +501,28 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 
 	//call enemystate after update
 	EnemyState(e, dt, (&MainWaves)[MAX_NUM_WAVES], mesh);
+}
+
+
+std::vector<Pair> findPatrolPoints(int grid[MAX_ROW][MAX_COL]) {
+	std::vector<Pair> patrolPoints;
+
+	for (int y = 0; y < MAX_ROW; y++) {       // Row (Y)
+		for (int x = 0; x < MAX_COL; x++) { // Column (X)
+			if (grid[y][x] == 9) {
+				patrolPoints.push_back({ y, x });
+				std::cout << "Found patrol point: (" << x << ", " << y << ")\n";
+			}
+		}
+	}
+	return patrolPoints;
+}
+
+void setEnemyPatrol(Enemy& e, int grid[MAX_ROW][MAX_COL]) {
+	e.patrolPath = findPatrolPoints(grid);
+	e.startPatrol = e.patrolPath.front();
+	e.endPatrol = e.patrolPath.back();
+	e.x = e.endPatrol.second * TILE_SIZE;
+	e.y = e.endPatrol.first * -TILE_SIZE;
+	e.updateGridPosition();
 }

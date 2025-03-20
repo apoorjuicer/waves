@@ -96,6 +96,9 @@ struct Enemy {
 	bool reachPath = false;
 	//Wave enemy_waves[MAX_NUM_WAVES];
 	float stateTimer = 0;
+	float idle_timer = 3.f;
+	float patrol_timer =  10.f;
+	float pursuit_timer = 3.f;
 	// Constructor initializes all members
 	Enemy() : x{ 100.f }, y{ -200.f }, gridX{1}, gridY{2}, w{50.f}, h{50.f}, state{IDLE} {
 		
@@ -173,8 +176,8 @@ struct Enemy {
 	}
 	// Display enemy position, for debug
 	void printPosition() {
-		//std::cout << "Enemy Position in World: (" << x << ", " << y << ")\n";
-		//std::cout << "Enemy Position in Grid: (" << gridX << ", " << gridY << ")\n";
+		std::cout << "Enemy Position in World: (" << x << ", " << y << ")\n";
+		std::cout << "Enemy Position in Grid: (" << gridX << ", " << gridY << ")\n";
 	}
 };
 
@@ -187,6 +190,10 @@ AEGfxVertexList* createEnemyMesh(u32 enemy_color);
 void EnemyState(Enemy& e, float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 void UpdateEnemystate(Enemy& e, float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dest, std::vector<Pair>& path);
+
+std::vector<Pair> findPatrolPoints(int grid[MAX_ROW][MAX_COL]);
+void setEnemyPatrol(Enemy& enemy, int grid[MAX_ROW][MAX_COL]);
+
 
 //class Enemy {
 //public:

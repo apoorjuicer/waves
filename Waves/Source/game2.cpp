@@ -52,7 +52,14 @@ void GameState2::Load() {
     wave_meshes[2] = Create_LineMesh();
 
     createWorldItems(tilesize);
+    //enemy2.patrolPath = findPatrolPoints(maze);
+    setEnemyPatrol(enemy2, maze);
 
+    //for (size_t i = 0; i < enemy2.patrolPath.size(); i++) {
+    //    std::cout << "Patrol Point " << i << ": ("
+    //        << enemy2.patrolPath[i].second << ", "
+    //        << enemy2.patrolPath[i].first << ")\n";
+    //}
 }
 
 void GameState2::Initialize() {
@@ -62,17 +69,17 @@ void GameState2::Initialize() {
     player.x = 100.f;
     player.y = -100.f;
 
-    enemy2.x = 100.f;
-    enemy2.y = -700.f;
-    enemy2.startPatrol = { 1,7 };
-    enemy2.endPatrol = { 8,7 };
-    // enemy1.state = PATROL;
-    enemy2.state = IDLE;
-    //enemy1.state = IDLE;
-   // enemy1.state = PURSUIT_ROCK;
+    //enemy2.x = 100.f;
+    //enemy2.y = -700.f;
+   // enemy2.startPatrol = { 2,7 };
+    //enemy2.endPatrol = { 10,10 };
+    //enemy2.startPatrol = enemy2.patrolPath.front();
+    //enemy2.endPatrol = enemy2.patrolPath.back();
+    enemy2.state = PATROL;
+    //enemy2.idle_timer = 3.f;
+    enemy2.patrol_timer = 20.f;
+    //enemy2.pursuit_timer = 3.f;
 
-    enemy2.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
-    enemy2.updateGridPosition(); // need to call to init conversion
 
     PauseOverlay::Init();
 }

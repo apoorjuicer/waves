@@ -54,6 +54,20 @@ void GameState1::Load() {
     wave_meshes[2] = Create_LineMesh();
     createWorldItems(tilesize);
 
+    setEnemyPatrol(enemy1, maze);
+
+    for (int i = 0;i < MAX_ROW;i++) {
+        for (int j = 0;j < MAX_COL;j++) {
+            std::cout << maze[i][j] << ',';
+        }
+        std::cout << "\n";
+    }
+
+    //for (size_t i = 0; i < enemy1.patrolPath.size(); i++) {
+    //    std::cout << "Patrol Point " << i << ": ("
+    //        << enemy1.patrolPath[i].second << ", "
+    //        << enemy1.patrolPath[i].first << ")\n";
+    //}
 }
 
 void GameState1::Initialize() {
@@ -64,16 +78,12 @@ void GameState1::Initialize() {
     player.y = -100.f;
     
     player.inventory[0] = ROCK;
-    enemy1.x = 100.f;
-    enemy1.y = -700.f;
-    enemy1.startPatrol = { 1,7 };
-    enemy1.endPatrol = { 8,7 };
-   // enemy1.state = PATROL;
-    enemy1.state = IDLE;
-    //enemy1.state = IDLE;
-   // enemy1.state = PURSUIT_ROCK;
-    
-    enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
+    //enemy1.x = 100.f;
+    //enemy1.y = -700.f;
+    //enemy1.startPatrol = { 1,7 };
+    //enemy1.endPatrol = { 8,7 };
+    //enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
+    enemy1.state = PATROL;
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup SFXgroup = AEAudioCreateGroup();  // For background music
     AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, SFXgroup);
@@ -84,6 +94,8 @@ void GameState1::Initialize() {
 }
 
 void GameState1::Update(f32 deltaTime) {
+
+
     // Toggle pause when ESC is pressed if not already paused
     if (!AudioManager::IsAudioPlaying("GameBGM")) {
         AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
@@ -170,7 +182,7 @@ void GameState1::Draw() {
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     //(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     
     for (Wave& w : wave) {
         if (w.is_active) {
