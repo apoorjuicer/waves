@@ -94,6 +94,8 @@ namespace rock {
     // Global rock object
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
     bool rockActive = false;
+    f32 rockThrowSoundTimer = 0.0f; // Timer for the rock throw sound
+    const f32 rockThrowSoundDuration = 0.3f; // Duration to play the sound (in seconds)
 
     void drawRock(Player& rplayer, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock1) {
         f32 rockRad = 10.0f;
@@ -119,6 +121,10 @@ namespace rock {
 
             f32 speed = 15.0f;
             AEInputGetCursorPosition(&mouseX, &mouseY);
+
+            // Play the rock throw sound
+            AudioManager::PlayAudio("Rock Throw", 0.3f, 1.0f, 0);
+            rockThrowSoundTimer = 0.0f; // Reset the timer
 
             /*rplayer.inventory[rockIndex] = NOTHING;*/
 
@@ -150,6 +156,14 @@ namespace rock {
             // Assume dt is the time elapsed this frame in seconds
             f32 dt = (f32)AEFrameRateControllerGetFrameTime();
 
+            // Update the timer
+            rockThrowSoundTimer += dt;
+
+            // Stop the sound if the timer exceeds the duration
+            if (rockThrowSoundTimer >= rockThrowSoundDuration) {
+                AudioManager::StopAudio("Rock Throw");
+            }
+
             // Base damping factor: 2% reduction per second.
             const f32 baseDamping = 0.40f;
 
@@ -177,6 +191,9 @@ namespace rock {
                 rock.x = prevX;
                 rock.dx *= static_cast<f32>( - 0.4);
                 rock.currBounce++;
+
+                // Play the collision sound
+                AudioManager::PlayAudio("Collide", 0.8f, 1.0f, 0);
             }
 
             // --- Process Y Movement ---
@@ -187,6 +204,9 @@ namespace rock {
                 rock.y = prevY;
                 rock.dy *= static_cast<f32>( - 0.4);
                 rock.currBounce++;
+
+                // Play the collision sound
+                AudioManager::PlayAudio("Collide", 0.8f, 1.0f, 0);
             }
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
