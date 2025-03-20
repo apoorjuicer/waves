@@ -49,7 +49,7 @@ Technology is prohibited.
 
 //#define TILE_SIZE_X 100
 //#define TILE_SIZE_Y -100
-constexpr float ENEMY_SPEED = 20.0f;  // Pixels per frame (adjust as needed)
+constexpr float ENEMY_SPEED = 16.0f;  // Pixels per frame (adjust as needed)
 constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
 
 // create shortcut for <int, int> pair

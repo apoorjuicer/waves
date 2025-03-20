@@ -410,9 +410,9 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 	e.enemy_wave(MainWaves, mesh);
 
-	const float IDLE_TIME = 3.0f;       // Time to stay idle
+	const float IDLE_TIME = 2.0f;       // Time to stay idle
 	const float PATROL_TIME = 10.0f;     // Time to stay patrol 
-	const float PURSUIT_TIME = 6.0f;    // Time to pursue rock
+	const float PURSUIT_TIME = 3.0f;    // Time to pursue rock
 
 	e.stateTimer -= dt;
 
