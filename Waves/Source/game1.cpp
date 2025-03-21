@@ -81,6 +81,7 @@ void GameState1::Initialize() {
     AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
     AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, InGame);
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
+    AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 
@@ -160,6 +161,10 @@ void GameState1::Update(f32 deltaTime) {
 
     CheckItem(player, maze, tilesize, 0.0f, 0);
     dead = PlayerEnemyCollision(player, enemy1, tilesize);
+    if (dead)
+    {
+        AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
+    }
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
 
 }

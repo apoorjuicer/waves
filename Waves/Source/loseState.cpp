@@ -26,6 +26,8 @@ void LoseState::Load() {
     AEGfxSetBackgroundColor(0.5f, 0.0f, 0.0f); // Dark red background
 
     loseFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+    //AEAudioGroup LOSESFX = AEAudioCreateGroup();  // For background music
+    //AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, LOSESFX);
 
 
 }
@@ -41,6 +43,11 @@ void LoseState::Update(f32 deltaTime) {
     if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         goMenu = true;
     }
+    //if (losesound)
+    //{
+    //    AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
+    //    losesound = false;
+    //}
 
     // Use bool var goMenu when player 'dies' to trigger go mainMenu in GetNextState()
 }
