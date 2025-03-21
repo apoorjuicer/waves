@@ -27,7 +27,8 @@ namespace {
 
 GameState1::GameState1() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
+pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
+goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1){}
 
 void GameState1::Load() {
     worldItems.clear();
@@ -82,6 +83,7 @@ void GameState1::Initialize() {
     AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, InGame);
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
     AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
+    AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 
@@ -160,13 +162,19 @@ void GameState1::Update(f32 deltaTime) {
     }
 
     CheckItem(player, maze, tilesize, 0.0f, 0);
-    dead = PlayerEnemyCollision(player, enemy1, tilesize);
-    if (dead)
-    {
-        AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
-    }
-    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
 
+    dead = PlayerEnemyCollision(player, enemy1, tilesize);
+    //if (dead)
+    //{
+    //    AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
+
+    //}
+
+    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
+    //if (winGame)
+    //{
+    //    AudioManager::PlayAudio("Win", 3.0f, 1.0f, -1);
+    //}
 }
 
 void GameState1::Draw() {
