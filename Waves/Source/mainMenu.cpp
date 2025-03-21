@@ -167,7 +167,6 @@ void MainMenuState::Free() {
     if (exitButtonMesh) {
         AEGfxMeshFree(exitButtonMesh);
         exitButtonMesh = nullptr;
-        AudioManager::UnloadAudio("MainMenu");
     }
 
 }
@@ -178,6 +177,7 @@ void MainMenuState::Unload() {
         menuFont = -1;
     }
     AudioManager::UnloadAudio("MainMenu");
+
 }
 
 BaseState* MainMenuState::GetNextState() {
