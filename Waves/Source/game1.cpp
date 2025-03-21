@@ -76,10 +76,10 @@ void GameState1::Initialize() {
     enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
-    AEAudioGroup RockThrow = AEAudioCreateGroup();  // For background music
+    //AEAudioGroup RockThrow = AEAudioCreateGroup();  // For background music
     AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, InGame);
-    AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", true, InGame);
-    AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, RockThrow);
+    AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
+    AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, InGame);
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
