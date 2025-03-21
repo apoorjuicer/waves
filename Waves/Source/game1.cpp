@@ -223,6 +223,7 @@ void GameState1::Free() {
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
     worldItems.clear();
+    AudioManager::UnloadAudio("GameBGM");
     for (int i{};i < INVENTORY_SIZE;++i) {
         player.inventory[i] = NOTHING;
     }
