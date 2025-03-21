@@ -23,7 +23,6 @@ class LoseState : public BaseState {
 private:
     bool goMenu;   // Flag for returning to the main menu
     s8 loseFont;
-    bool losesound = true;
     //bool retryGame; Button to go back to the game
 public:
     LoseState();
