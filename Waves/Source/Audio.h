@@ -7,8 +7,8 @@
 #include <iostream>
 
 struct Audio {
-    AEAudio sound;
-    AEAudioGroup group;
+    AEAudio sound = {};
+    AEAudioGroup group = {};
     bool isPlaying = false;  // ✅ Track whether the audio is playing
 };
 
