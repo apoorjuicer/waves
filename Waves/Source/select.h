@@ -6,6 +6,7 @@
 #include "game1.h"
 #include "game2.h"
 #include "game3.h"
+#include "utility.h"
 
 class LevelSelectState : public BaseState {
 private:
@@ -18,6 +19,8 @@ private:
     AEGfxVertexList* game2ButtonMesh = nullptr;
     AEGfxVertexList* game3ButtonMesh = nullptr;
     AEGfxVertexList* back2mainButtonMesh = nullptr;
+	AEGfxTexture* pHomeIconTexture = nullptr;
+
 public:
     LevelSelectState();
     void Load() override;                // Load assets (e.g. fonts, textures)

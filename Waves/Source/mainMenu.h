@@ -24,6 +24,7 @@ Technology is prohibited.
 #include "instructions.h"
 #include "Audio.h"
 #include "Player.h"
+#include "utility.h"
 
 class MainMenuState : public BaseState {
 private:
@@ -32,9 +33,11 @@ private:
     int* pGameRunning; // <-- Pointer to gGameRunning
     s8 menuFont;
     s8 buttonFont;
-    AEGfxVertexList* playButtonMesh = nullptr;  // Mesh for the 'Play' button
-    AEGfxVertexList* guideButtonMesh = nullptr;  // Mesh for 'Guide' button
-    AEGfxVertexList* exitButtonMesh = nullptr;   // Mesh for 'Exit' button
+    AEGfxVertexList* playButtonMesh = nullptr;      // Mesh for the 'Play' button
+    AEGfxVertexList* guideButtonMesh = nullptr;     // Mesh for 'Guide' button
+    AEGfxVertexList* creditButtonMesh = nullptr;    // Mesh for 'Credits' button
+    AEGfxVertexList* settingButtonMesh = nullptr;   // Mesh for 'Settings' button
+    AEGfxVertexList* exitButtonMesh = nullptr;      // Mesh for 'Exit' button
 public:
     MainMenuState();
 
@@ -49,7 +52,3 @@ public:
     void Unload() override;
     BaseState* GetNextState() override;
 };
-
-bool IsMouseInsideButton(float buttonX, float buttonY, float buttonWidth, float buttonHeight);
-AEGfxVertexList* CreateButtonMesh(u32 color);
-void DrawButton(AEGfxVertexList* buttonMesh, float x, float y, const char* text, s8 font, float scaleX, float scaleY);

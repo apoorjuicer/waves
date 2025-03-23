@@ -13,8 +13,7 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "pauseOverlay.h"
-#include "mainMenu.h"
-#include "Player.h"
+
 
 // Internal variables (file scope)
 namespace {
@@ -90,10 +89,10 @@ namespace PauseOverlay {
         AEGfxPrint(mFont, "Game Paused", centerX, centerY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
         // --- Draw the Resume Button using DrawButton() ---
-        DrawButton(sResumeMesh, player.x + kResumeX, player.y + kResumeY, "Resume", sFont, 300.0f, 100.0f);
+        DrawButton(sResumeMesh, player.x + kResumeX, player.y + kResumeY, "Resume", sFont, 300.0f, 100.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
         // --- Draw the Main Menu Button using DrawButton() ---
-        DrawButton(sMainMenuMesh, player.x + kMainMenuX, player.y + kMainMenuY, "Main Menu", sFont, 300.0f, 100.0f);
+        DrawButton(sMainMenuMesh, player.x + kMainMenuX, player.y + kMainMenuY, "Main Menu", sFont, 300.0f, 100.0f, 0.0f, 0.0f, 0.0f, 1.0f);
     }
 
     void Free() {

@@ -16,9 +16,6 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "winState.h"
-#include "mainMenu.h"
-#include "AEEngine.h"
-#include "Audio.h"
 
 WinState::WinState() : goNext(false), winFont(-1) {}
 
@@ -57,10 +54,12 @@ void WinState::Free() {
 
 void WinState::Unload() {
     // Unload any assets if needed
+    if (winFont != -1) {
+        AEGfxDestroyFont(winFont);
+        winFont = -1;
+    }
 }
 
 BaseState* WinState::GetNextState() {
-    // If goNext is true, transition to NextLevelState
-    //return goNext ? new NextLevelState() : nullptr;
     return goNext ? new MainMenuState() : nullptr;
 }

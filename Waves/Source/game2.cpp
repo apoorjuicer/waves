@@ -152,7 +152,7 @@ void GameState2::Draw() {
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
-    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {

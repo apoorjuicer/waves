@@ -14,6 +14,8 @@ Technology is prohibited.
 
 #pragma once
 #include "AEEngine.h"
+#include "utility.h"
+#include "Player.h"
 
 namespace PauseOverlay {
     void Init();

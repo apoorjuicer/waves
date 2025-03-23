@@ -82,20 +82,33 @@ void gameTransition::Draw()
     float resumeCenterX = player.x + kContinueX;
     float resumeCenterY = player.y + kContinueY;
 
-    DrawButton(continueButtonMesh, resumeCenterX, resumeCenterY, "Yes", transitionFont, kButtonW, kButtonH);
+    DrawButton(continueButtonMesh, resumeCenterX, resumeCenterY, "Yes", transitionFont, kButtonW, kButtonH, 0.0f, 0.0f, 0.0f, 1.0f);
 
     // --- Draw and center text on the Main Menu button ---
     // Button center in world space:
     float mainMenuCenterX = player.x + kQuitX;
     float mainMenuCenterY = player.y + kQuitY;
 
-    DrawButton(quitButtonMesh, mainMenuCenterX, mainMenuCenterY, "NO", transitionFont, kButtonW, kButtonH);
+    DrawButton(quitButtonMesh, mainMenuCenterX, mainMenuCenterY, "NO", transitionFont, kButtonW, kButtonH, 0.0f, 0.0f, 0.0f, 1.0f);
 }
 
 void gameTransition::Free() {
+	if (continueButtonMesh) {
+		AEGfxMeshFree(continueButtonMesh);
+		continueButtonMesh = nullptr;
+	}
+	if (quitButtonMesh) {
+		AEGfxMeshFree(quitButtonMesh);
+		quitButtonMesh = nullptr;
+	}
 }
 
-void gameTransition::Unload() {}
+void gameTransition::Unload() {
+	if (transitionFont != -1) {
+		AEGfxDestroyFont(transitionFont);
+		transitionFont = -1;
+	}
+}
 
 BaseState* gameTransition::GetNextState() {
     if (continueGame) {

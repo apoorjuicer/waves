@@ -18,6 +18,8 @@ Technology is prohibited.
 #pragma once
 #include "baseStates.h"
 #include "AEEngine.h"
+#include "mainMenu.h"
+#include "Audio.h"
 
 class LoseState : public BaseState {
 private:
