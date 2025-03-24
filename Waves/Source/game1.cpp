@@ -51,7 +51,7 @@ void GameState1::Load() {
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
-    wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
+    wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
     wave_meshes[2] = Create_LineMesh();
     createWorldItems(tilesize);
 
@@ -117,7 +117,9 @@ void GameState1::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
 
     if (AEInputCheckTriggered(AEVK_SPACE) && !waveSpawned) {
-        spawn_wave(wave, player.x, player.y, wave_meshes);
+        //spawn_wave(wave, player.x, player.y, wave_meshes);
+        spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
+
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
         waveSpawned = true; // Set flag to prevent further triggers
     }
@@ -134,6 +136,8 @@ void GameState1::Update(f32 deltaTime) {
     UpdateEnemystate(enemy1, deltaTime, enemy_wave,wave_meshes);
     //enemy1.enemy_wave(enemy_wave, wave_meshes);
 
+    dir_wave.update();
+    dir_wave.check_collide();
     for (Wave& w : wave) {
         if (w.is_active) {
             // update wave size;
@@ -182,12 +186,11 @@ void GameState1::Draw() {
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
-    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     //(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-    
+    dir_wave.draw();
     for (Wave& w : wave) {
         if (w.is_active) {
             w.draw();
@@ -211,6 +214,7 @@ void GameState1::Draw() {
     }
     RenderPlayer(player, PlayerMesh);
 
+    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     DrawInventory(player, boxMesh, keyMesh, rockMesh);
 
     // If paused, overlay the pause menu on top

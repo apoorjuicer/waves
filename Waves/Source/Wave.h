@@ -86,7 +86,7 @@ struct GameObj {
 struct Outline : public GameObj {
 	f32 max_len;
 	f32 growth_rate;
-	f32 lifespan;
+	f32 lifetime;
 
 	Outline();
 
@@ -107,11 +107,27 @@ public:
 	Wave();
 
 	void spawn(AEVec2 pos_in, AEGfxVertexList** mesh_in, f32 max_in, f32 grow_r = GROWTH_R, f32 size_in = 0.f, DIRECTION = DIR_NULL);
-	void update();
-	void draw();
-
 	void echolocation(f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS], Outline(&outlines)[MAX_NUM_OUTLINES]);
 	
+	virtual void draw();
+	virtual void update();
+};
+
+class DirectionalWave : public Wave {
+private:
+	DIRECTION direction;
+	AEVec2 prevp;
+	f32 lifetime;
+
+public:
+	DirectionalWave();
+
+	void spawn(AEVec2 pos_in, AEGfxVertexList** mesh_in, f32 max_in, DIRECTION = DIR_NULL, f32 grow_r = GROWTH_R);
+	void check_collide();
+	//void echolocation();
+
+	void update() override;
+	void draw() override;
 };
 
 //==================================================================================================================
@@ -120,9 +136,11 @@ public:
 // find location of reflection waves;
 AEVec2 locate_reflection(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size);
 // finds x and y index of wave with respect to maze and size of each tile;
-std::pair<int, int> find_wave_index(AEVec2 wpos, f32 tilesize);
+std::pair<int, int> find_wave_index(AEVec2 wpos);
 // interface for spawning wave;
 void spawn_wave(Wave(&arr)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexList** mesh_in, f32 max_size = WAVES_SIZE);
+// interface for spawning directional wave;
+void spawn_dir_wave(DirectionalWave& wave, AEVec2 ppos, AEGfxVertexList** mesh_in);
 
 void create_two_outlines(Outline(&outlines)[MAX_NUM_OUTLINES], AEVec2 pos_in, AEVec2 maxlen_in,
 	std::pair<DIRECTION, DIRECTION> dir_pair, AEGfxVertexList** mesh_in, f32 g_rate);

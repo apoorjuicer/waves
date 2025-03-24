@@ -27,16 +27,16 @@ namespace {
 
 		switch (dir_in) {
 			case DIR_LEFT:
-				rot = 90;
+				rot = 90; // 135
 				break;
 			case DIR_RIGHT:
-				rot = -90;
+				rot = -90; // -45
 				break;
 			case DIR_DOWN:
-				rot = 180;
+				rot = 180; // 225
 				break;
 			default:
-				rot = 0;
+				rot = 0; // 45
 		}
 
 		return rot;
@@ -79,6 +79,40 @@ namespace {
 
 		// return result;
 		return (distanceSquared <= radiusSquared) ? true : false;
+	}
+
+	DIRECTION find_direction(AEVec2 dist, AEVec2 pos1, AEVec2 pos2) {
+
+		AEVec2 V{ pos1.x - pos2.x, pos1.y - pos2.y }; AEVec2 Vn{ V.y, -V.x };
+		DIRECTION dir = DIR_NULL;
+
+		// four corner vectors;
+		AEVec2 topleft{ -1, 1 }, topright{ 1, 1 }, botleft{ -1, -1 }, botright{ 1, -1 };
+		// four directions
+		AEVec2 up{ 0, 1 }, down{ 0, -1 }, left{ -1, 0 }, right{ 1, 0 };
+
+		if (dist.y > dist.x) {
+			// mouse above player
+			if (pos1.y > pos2.y && (AEVec2DotProduct(&V, &up) >= 0) && (AEVec2DotProduct(&Vn, &topleft) * AEVec2DotProduct(&Vn, &topright) < 0)) {
+				dir = DIR_UP;
+			}
+			// mouse below player
+			else if (pos1.y < pos2.y && (AEVec2DotProduct(&V, &down) >= 0) && (AEVec2DotProduct(&Vn, &botleft) * AEVec2DotProduct(&Vn, &botright) < 0)) {
+				dir = DIR_DOWN;
+			}
+		}
+		else {
+			// mouse left of player
+			if (pos1.x < pos2.x && (AEVec2DotProduct(&V, &left) >= 0) && (AEVec2DotProduct(&Vn, &topleft) * AEVec2DotProduct(&Vn, &botleft) < 0)) {
+				dir = DIR_LEFT;
+			}
+			// mouse right of player
+			else if (pos1.x > pos2.x && (AEVec2DotProduct(&V, &right) >= 0) && (AEVec2DotProduct(&Vn, &botright) * AEVec2DotProduct(&Vn, &topright) < 0)) {
+				dir = DIR_RIGHT;
+			}
+		}
+
+		return dir;
 	}
 
 	f32 outline_maxlen(std::pair<int, int> wave_pos, std::pair<int, int> wall_pos, f32& line, f32 tilesize, DIRECTION dir) {
@@ -298,7 +332,7 @@ void Wave::echolocation(f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS], O
 				// distance of wave position from wall position;
 				f32 dist_x{ abs(pos.x - wpos.x) }, dist_y{ abs(pos.y - wpos.y) };
 
-				std::pair<int, int> wave_index = find_wave_index(pos, tilesize);
+				std::pair<int, int> wave_index = find_wave_index(pos);
 
 				// variables for creating reflections;
 				AEGfxVertexList** r_mesh{ nullptr };
@@ -482,11 +516,129 @@ void Wave::echolocation(f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS], O
 	}
 }
 
+DirectionalWave::DirectionalWave() : direction{DIR_NULL}, prevp{}, lifetime{} {}
+
+void DirectionalWave::spawn(AEVec2 pos_in, AEGfxVertexList** mesh_in, f32 max_in, DIRECTION dir_in, f32 grow_r) {
+	// GameObj variables;
+	mesh = mesh_in;
+	type = TYPE_WAVE;
+	is_active = true;
+
+	rot = set_rotation(dir_in);
+
+	scale.x = scale.y = 0.f;
+
+	// Wave variables;
+	max_size = max_in;
+	growth_rate = grow_r;
+
+	// DirWave unique;
+	direction = dir_in;
+	prevp = pos = pos_in;
+	lifetime = 0.f;
+
+	return;
+}
+
+void DirectionalWave::check_collide() {
+	AEVec2 tmp = pos;
+
+	switch (direction) {
+	case DIR_LEFT:
+		tmp.x = tmp.x - (0.3f * scale.x);
+		break;
+	case DIR_RIGHT:
+		tmp.x = tmp.x + (0.3f * scale.x);
+		break;
+	case DIR_DOWN:
+		tmp.y = tmp.y - (0.3f * scale.y);
+		break;
+	case DIR_UP:
+		tmp.y = tmp.y + (0.3f * scale.y);
+		break;
+	}
+
+	std::pair<int, int> windex = find_wave_index(tmp);
+	if (maze[windex.second][windex.first] == 1) {
+		is_active = false;
+	}
+}
+
+void DirectionalWave::update() {
+	// quick exit for non-active wave;
+	if (!is_active) {
+		return;
+	}
+
+	if (lifetime > 1.f) {
+		is_active = false;
+
+		scale.x = 0.f;
+		growth_rate = GROWTH_R;
+
+		for (short& i : r_collision) {
+			i = 0;
+		}
+		lifetime = 0.f;
+		return;
+	}
+
+	// check if wave has grown to max_size;
+	if (scale.x >= max_size || scale.y >= max_size) {
+		f32 move = (growth_rate / GROWTH_R - 1.f) * 0.8;
+
+		switch (direction) {
+		case DIR_LEFT:
+			pos.x -= move;
+			break;
+		case DIR_RIGHT:
+			pos.x += move;
+			break;
+		case DIR_UP:
+			pos.y += move;
+			break;
+		case DIR_DOWN:
+			pos.y -= move;
+			break;
+		}
+
+	}
+
+	// update wave size;
+	f32 dt = static_cast<f32>(AEFrameRateControllerGetFrameTime());
+	lifetime += dt;
+
+	if (scale.x <= max_size && scale.y <= max_size) {
+		scale.x += growth_rate * dt;
+		scale.y += growth_rate * dt;
+	}
+	else {
+		scale.x += growth_rate * dt * 0.1;
+		scale.y += growth_rate * dt * 0.1;
+	}
+	growth_rate *= 1.05f;
+
+	return;
+}
+
+void DirectionalWave::draw() {
+	// quick exit for non-active wave;
+	if (!is_active) {
+		return;
+	}
+	// set transforms;
+	AEMtx33 transform = set_transform(scale, pos, rot + 45.f);
+	AEGfxSetTransform(transform.m);
+	// draw wave;
+	AEGfxMeshDraw(mesh[1], AE_GFX_MDM_TRIANGLES);
+
+	return;
+}
 
 //==================================================================================================================
 // OUTLINE MEMBER FUNCTIONS;
 //==================================================================================================================
-Outline::Outline() : max_len{}, growth_rate{}, lifespan{} {}
+Outline::Outline() : max_len{}, growth_rate{}, lifetime{} {}
 
 void Outline::spawn(AEVec2 pos_in, f32 max_in, f32 grow_r, AEGfxVertexList** mesh_in, DIRECTION dir_in) {
 
@@ -516,16 +668,16 @@ void Outline::update() {
 	}
 
 	f32 dt = static_cast<f32>(AEFrameRateControllerGetFrameTime());
-	lifespan += dt;
+	lifetime += dt;
 
-	if (lifespan >= 1.5f) {
+	if (lifetime >= 1.5f) {
 		is_active = false;
 
 		// reset variables;
 		scale.x = scale.y = 2.f;
 		growth_rate = GROWTH_R;
 
-		lifespan = 0.f;
+		lifetime = 0.f;
 	}
 
 	if (scale.y > max_len) {
@@ -601,13 +753,13 @@ AEVec2 locate_reflection(AEVec2 wave_pos, AEVec2 wall_pos, f32 wall_size) {
 	return AEVec2{ pos_x, pos_y };
 }
 // finds x and y index of wave with respect to maze and size of each tile;
-std::pair<int, int> find_wave_index(AEVec2 wpos, f32 tilesize) {
+std::pair<int, int> find_wave_index(AEVec2 wpos) {
 
 	int x_idx{}, y_idx{};
 
 	// maze begins at 0,0; x -> positive, y -> negative;
-	x_idx = static_cast<int>((wpos.x - tilesize / 2.f) / tilesize) + 1;
-	y_idx = abs(static_cast<int>((wpos.y - tilesize / 2.f) / tilesize));
+	x_idx = static_cast<int>((wpos.x - TILE_SIZE / 2.f) / TILE_SIZE) + 1;
+	y_idx = abs(static_cast<int>((wpos.y - TILE_SIZE / 2.f) / TILE_SIZE));
 
 	return { x_idx, y_idx };
 }
@@ -621,6 +773,25 @@ void spawn_wave(Wave(&wave)[MAX_NUM_WAVES], f32 pos_x, f32 pos_y, AEGfxVertexLis
 		}
 	}
 }
+// spawn directional wave with reference to mouse position;
+void spawn_dir_wave(DirectionalWave& wave, AEVec2 ppos, AEGfxVertexList** mesh_in) {
+	// init mouse store;
+	s32 mx{}, my{};
+	// calculate position with respect to cam;
+	AEInputGetCursorPosition(&mx, &my);
+
+	f32 mpos_x = static_cast<f32>(mx - AEGfxGetWindowWidth() / 2) + ppos.x;
+	f32 mpos_y = static_cast<f32>(AEGfxGetWindowHeight() / 2 - my) + ppos.y;
+
+	// distance between player and mouse position;
+	f32 dist_x = abs(ppos.x - mpos_x);
+	f32 dist_y = abs(ppos.y - mpos_y);
+
+	DIRECTION dir = find_direction(AEVec2{ dist_x, dist_y }, AEVec2{ mpos_x, mpos_y }, ppos);
+	
+	wave.spawn(ppos, mesh_in, 100.f, dir);
+}
+
 // creates a pair of outlines;
 void create_two_outlines(Outline(&outlines)[MAX_NUM_OUTLINES], AEVec2 pos_in, AEVec2 maxlen_in,
 	std::pair<DIRECTION, DIRECTION> dir_pair, AEGfxVertexList** mesh_in, f32 g_rate) {

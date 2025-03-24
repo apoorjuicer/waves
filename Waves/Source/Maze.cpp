@@ -38,7 +38,7 @@ int maze[MAX_ROW][MAX_COL] =
 bool ImportMapDataFromFile(const std::string& filename) {
     std::ifstream file(filename);
     if (!file.is_open()) {
-        std::cerr << "Error: Could not open file " << filename << "\n";
+        //std::cerr << "Error: Could not open file " << filename << "\n";
         return false;
     }
 
@@ -46,43 +46,43 @@ bool ImportMapDataFromFile(const std::string& filename) {
 
     // Read row count from first line (e.g., "ROW: 10")
     if (!std::getline(file, line)) {
-        std::cerr << "Error: Failed to read row info from file " << filename << "\n";
+        //std::cerr << "Error: Failed to read row info from file " << filename << "\n";
         return false;
     }
     std::istringstream issRow(line);
     if (!(issRow >> label >> activeRow)) {
-        std::cerr << "Error: Failed to parse row info from file " << filename << "\n";
+        //std::cerr << "Error: Failed to parse row info from file " << filename << "\n";
         return false;
     }
 
     // Read column count from second line (e.g., "COL: 10")
     if (!std::getline(file, line)) {
-        std::cerr << "Error: Failed to read column info from file " << filename << "\n";
+        //std::cerr << "Error: Failed to read column info from file " << filename << "\n";
         return false;
     }
     std::istringstream issCol(line);
     if (!(issCol >> label >> activeCol)) {
-        std::cerr << "Error: Failed to parse column info from file " << filename << "\n";
+        //std::cerr << "Error: Failed to parse column info from file " << filename << "\n";
         return false;
     }
 
     // Validate dimensions against MAX_ROW and MAX_COL.
     if (activeRow <= 0 || activeRow > MAX_ROW || activeCol <= 0 || activeCol > MAX_COL) {
-        std::cerr << "Error: Maze dimensions (" << activeRow << "x" << activeCol
-            << ") out of allowed range (" << MAX_ROW << "x" << MAX_COL << ")\n";
+        //std::cerr << "Error: Maze dimensions (" << activeRow << "x" << activeCol
+        //    << ") out of allowed range (" << MAX_ROW << "x" << MAX_COL << ")\n";
         return false;
     }
 
     // Read maze data row by row.
     for (int i = 0; i < activeRow; ++i) {
         if (!std::getline(file, line)) {
-            std::cerr << "Error: Not enough rows in maze file " << filename << "\n";
+        //    std::cerr << "Error: Not enough rows in maze file " << filename << "\n";
             return false;
         }
         std::istringstream iss(line);
         for (int j = 0; j < activeCol; ++j) {
             if (!(iss >> maze[i][j])) {
-                std::cerr << "Error: Failed to read maze data at row " << i << ", col " << j << "\n";
+             //   std::cerr << "Error: Failed to read maze data at row " << i << ", col " << j << "\n";
                 return false;
             }
         }
@@ -116,7 +116,7 @@ void createWorldItems(f32 tileSize) {
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
 
-    std::cout << "Rendering Maze and World Items:" << std::endl;
+    //std::cout << "Rendering Maze and World Items:" << std::endl;
     for (int y{};y < MAX_ROW;++y) {
         for (int x{}; x < MAX_COL; ++x) {
             int tileValue = maze[y][x];
@@ -125,11 +125,11 @@ void createWorldItems(f32 tileSize) {
 
             if (tileValue == 3) {
                 worldItems.emplace_back(WorldItem(KEY, worldX, worldY));
-                std::cout << "WorldItem KEY at (" << worldX << ", " << worldY << ")" << std::endl;
+             //   std::cout << "WorldItem KEY at (" << worldX << ", " << worldY << ")" << std::endl;
             }
             else if (tileValue == 4) {
                 worldItems.emplace_back(WorldItem(ROCK, worldX, worldY));
-                std::cout << "WorldItem ROCK at (" << worldX << ", " << worldY << ")" << std::endl;
+                //std::cout << "WorldItem ROCK at (" << worldX << ", " << worldY << ")" << std::endl;
             }
         }
     }
@@ -142,9 +142,9 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wall
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
     for (int i = 0; i < INVENTORY_SIZE; ++i) {
-        std::cout << player.inventory[i] << " ";  // Output each item type in the inventory
+        //std::cout << player.inventory[i] << " ";  // Output each item type in the inventory
     }
-    std::cout << std::endl;
+    //std::cout << std::endl;
 
     for (int y = 0; y < MAX_ROW; ++y) {
         for (int x = 0; x < MAX_COL; ++x) {

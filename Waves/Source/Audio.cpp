@@ -11,28 +11,28 @@ void AudioManager::LoadAudio(const std::string& name, const std::string& filepat
     AEAudio sound = isMusic ? AEAudioLoadMusic(filepath.c_str()) : AEAudioLoadSound(filepath.c_str());
 
     if (!AEAudioIsValidAudio(sound)) {
-        std::cerr << "Failed to load audio: " << filepath << std::endl;
+        //std::cerr << "Failed to load audio: " << filepath << std::endl;
         return;
     }
 
     audioFiles[name] = { sound, group };
-    std::cout << "Loaded audio: " << name << std::endl;
+    //std::cout << "Loaded audio: " << name << std::endl;
 }
 
 void AudioManager::UnloadAudio(const std::string& name) {
     auto it = audioFiles.find(name);
     if (it != audioFiles.end()) {
         AEAudioUnloadAudio(it->second.sound);
-        audioFiles.erase(it);
-        std::cout << "Unloaded audio: " << name << std::endl;
+        //audioFiles.erase(it);
+        //std::cout << "Unloaded audio: " << name << std::endl;
     }
 }
 
 void AudioManager::PlayAudio(const std::string& name, float volume, float pitch, int loops) {
     auto it = audioFiles.find(name);
     if (it != audioFiles.end()) {
-        AEAudioPlay(it->second.sound, it->second.group, volume, pitch, loops);
-        std::cout << "Playing audio: " << name << " at volume " << volume << std::endl;
+        //AEAudioPlay(it->second.sound, it->second.group, volume, pitch, loops);
+        //std::cout << "Playing audio: " << name << " at volume " << volume << std::endl;
     }
 }
 
@@ -40,7 +40,7 @@ void AudioManager::StopAudio(const std::string& name) {
     auto it = audioFiles.find(name);
     if (it != audioFiles.end()) {
         AEAudioStopGroup(it->second.group);
-        std::cout << "Stopped audio: " << name << std::endl;
+        //std::cout << "Stopped audio: " << name << std::endl;
     }
 }
 
@@ -48,7 +48,7 @@ void AudioManager::SetVolume(const std::string& name, float volume) {
     auto it = audioFiles.find(name);
     if (it != audioFiles.end()) {
         AEAudioSetGroupVolume(it->second.group, volume);
-        std::cout << "Set volume for " << name << " to " << volume << std::endl;
+        //std::cout << "Set volume for " << name << " to " << volume << std::endl;
     }
 }
 
