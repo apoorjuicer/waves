@@ -61,6 +61,7 @@ void GameState2::Initialize() {
     winGame = false;
     player.x = 100.f;
     player.y = -100.f;
+    player.inventory[0] = ROCK;
 
     enemy2.x = 100.f;
     enemy2.y = -700.f;
