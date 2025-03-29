@@ -49,6 +49,7 @@ void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
     menu = false;
+    waitingForMouseRelease = true;
     AEGfxSetCamPosition(0.0f, 0.0f);
     AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
 }
@@ -60,6 +61,14 @@ void MainMenuState::Update(f32 deltaTime) {
         AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
     }
     
+	// Prevent multiple clicks
+    if (waitingForMouseRelease) {
+        if (!AEInputCheckCurr(AEVK_LBUTTON)) {
+            waitingForMouseRelease = false;
+        }
+        return;
+    }
+
     // Only check clicks when the left mouse button is triggered.
     if (AEInputCheckTriggered(AEVK_LBUTTON))
     {

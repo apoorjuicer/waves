@@ -38,6 +38,7 @@ private:
     AEGfxVertexList* creditButtonMesh = nullptr;    // Mesh for 'Credits' button
     AEGfxVertexList* settingButtonMesh = nullptr;   // Mesh for 'Settings' button
     AEGfxVertexList* exitButtonMesh = nullptr;      // Mesh for 'Exit' button
+	bool waitingForMouseRelease = true; 		    // Prevents multiple clicks  
 public:
     MainMenuState();
 
