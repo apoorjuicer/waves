@@ -33,7 +33,6 @@ Technology is prohibited.
 #include "Player.h"
 #include "Wave.h"
 #include "Maze.h"
-#include "Player.h"
 #include "Audio.h"
 #include <cmath>      // for std::floor
 #include <iostream>   // for std::cout

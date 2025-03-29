@@ -193,7 +193,7 @@ namespace rock {
                 rock.currBounce++;
 
                 // Play the collision sound
-                AudioManager::PlayAudio("Collide", 0.8f, 1.0f, 0);
+                AudioManager::PlayAudio("Collide", 0.4f, 1.0f, 0);
             }
 
             // --- Process Y Movement ---
@@ -206,7 +206,7 @@ namespace rock {
                 rock.currBounce++;
 
                 // Play the collision sound
-                AudioManager::PlayAudio("Collide", 0.8f, 1.0f, 0);
+                AudioManager::PlayAudio("Collide", 0.4f, 1.0f, 0);
             }
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
