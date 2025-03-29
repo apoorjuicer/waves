@@ -17,12 +17,20 @@ Technology is prohibited.
 
 #include "loseState.h"
 
-LoseState::LoseState() : goMenu(false), loseFont(-1){}
+const f32 kButtonW = 300.0f;
+const f32 kButtonH = 100.0f;
+const f32 kokY = -200.0f;
+const f32 kokX = 0.0f;
+
+LoseState::LoseState() : goMenu(false), loseFont(-1), buttonFont(-1), okButtonMesh(nullptr) {}
 
 void LoseState::Load() {
     AEGfxSetBackgroundColor(0.5f, 0.0f, 0.0f); // Dark red background
 
     loseFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+
+    okButtonMesh = CreateButtonMesh(0xFF505050);
 }
 
 void LoseState::Initialize() {
@@ -37,17 +45,27 @@ void LoseState::Update(f32 deltaTime) {
         goMenu = true;
     }
 
-    // Use bool var goMenu when player 'dies' to trigger go mainMenu in GetNextState()
+    if (AEInputCheckTriggered(AEVK_LBUTTON)) {
+        if (IsMouseInsideButton(kokX, kokY, kButtonW, kButtonH)) {
+            goMenu = true;
+        }
+    }
 }
 
 void LoseState::Draw() {
     if (loseFont != -1) {
-        AEGfxPrint(loseFont, "Game Over", -0.65f, 0.0f, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
+        AEGfxPrint(loseFont, "GAME OVER", -0.65f, 0.0f, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
     }
 
+    DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
-void LoseState::Free() {}
+void LoseState::Free() {
+    if (okButtonMesh) {
+        AEGfxMeshFree(okButtonMesh);
+        okButtonMesh = nullptr;
+    }
+}
 
 void LoseState::Unload() {
     if (loseFont != -1) {
