@@ -26,7 +26,7 @@ gamePreview::gamePreview() : goGame(false), previewFont(-1), maze1(nullptr), maz
 void gamePreview::Load() {
     AEGfxSetBackgroundColor(0.3f, 0.3f, 0.3f);
 
-    previewFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 70);
+    previewFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
 
     maze1 = AEGfxTextureLoad("Assets/Maze1.png");
 
