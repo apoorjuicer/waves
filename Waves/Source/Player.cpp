@@ -19,6 +19,7 @@ Technology is prohibited.
 #include "Player.h"
 #include "Maze.h"
 #include<iostream>
+#include "Audio.h"
 
 extern Player player = { 100.0f, -100.0f };
 extern Player lastRock = { 0.0f, 0.0f };
@@ -165,7 +166,9 @@ void CheckItem(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 m
     UNREFERENCED_PARAMETER(mazeStartY);
     UNREFERENCED_PARAMETER(maze1);
 
-    if (AEInputCheckCurr(AEVK_E)) {
+    if (AEInputCheckTriggered(AEVK_E)) {
+        AudioManager::PlayAudio("Collect", 0.2f, 1.0f, 0);
+
         f32 playerMinX = player1.x - player1.rad;
         f32 playerMaxX = player1.x + player1.rad;
         f32 playerMinY = player1.y - player1.rad;

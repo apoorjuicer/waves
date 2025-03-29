@@ -17,8 +17,6 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-
-
 #include "game3.h"
 
 namespace {
@@ -81,6 +79,7 @@ void GameState3::Initialize() {
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
     AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
     AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+    AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 }
@@ -232,14 +231,22 @@ void GameState3::Free() {
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
     worldItems.clear();
-    AudioManager::UnloadAudio("GameBGM");
+
     for (int i{};i < INVENTORY_SIZE;++i) {
         player.inventory[i] = NOTHING;
     }
     PauseOverlay::Free();
 }
 
-void GameState3::Unload() {}
+void GameState3::Unload() {
+    AudioManager::UnloadAudio("GameBGM");
+    AudioManager::UnloadAudio("Waves");
+    AudioManager::UnloadAudio("Rock Throw");
+    AudioManager::UnloadAudio("Collide");
+    AudioManager::UnloadAudio("GameOver");
+    AudioManager::UnloadAudio("Win");
+	AudioManager::UnloadAudio("Collect");
+}
 
 BaseState* GameState3::GetNextState() 
 {

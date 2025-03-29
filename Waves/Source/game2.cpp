@@ -81,11 +81,15 @@ void GameState2::Initialize() {
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
     AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
     AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+    AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 }
 
 void GameState2::Update(f32 deltaTime) {
+    if (!AudioManager::IsAudioPlaying("GameBGM")) {
+        AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
+    }
     // Toggle pause when ESC is pressed if not already paused
     if (AEInputCheckTriggered(AEVK_ESCAPE) && !PauseOverlay::IsPaused()) {
         PauseOverlay::SetPaused(true);
@@ -111,6 +115,11 @@ void GameState2::Update(f32 deltaTime) {
 
     if (AEInputCheckTriggered(AEVK_SPACE)) {
         spawn_wave(wave, player.x, player.y, wave_meshes);
+        AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
+    }
+
+    // Reset the flag when SPACE is released
+    if (!AEInputCheckCurr(AEVK_SPACE)) {
     }
     //debug
    /* if (AEInputCheckTriggered(AEVK_SPACE)) {
@@ -212,13 +221,22 @@ void GameState2::Free() {
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
     worldItems.clear();
+
     for (int i{};i < INVENTORY_SIZE;++i) {
         player.inventory[i] = NOTHING;
     }
     PauseOverlay::Free();
 }
 
-void GameState2::Unload() {}
+void GameState2::Unload() {
+    AudioManager::UnloadAudio("GameBGM");
+    AudioManager::UnloadAudio("Waves");
+    AudioManager::UnloadAudio("Rock Throw");
+    AudioManager::UnloadAudio("Collide");
+    AudioManager::UnloadAudio("GameOver");
+    AudioManager::UnloadAudio("Win");
+	AudioManager::UnloadAudio("Collect");
+}
 
 BaseState* GameState2::GetNextState() {
     if (exitGame) {

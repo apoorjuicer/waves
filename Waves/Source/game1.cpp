@@ -82,13 +82,13 @@ void GameState1::Initialize() {
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
     AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
     AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+	AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 
 }
 
 void GameState1::Update(f32 deltaTime) {
-    // Toggle pause when ESC is pressed if not already paused
     if (!AudioManager::IsAudioPlaying("GameBGM")) {
         AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     }
@@ -159,7 +159,7 @@ void GameState1::Update(f32 deltaTime) {
         }
     }
 
-    CheckItem(player, maze, tilesize, 0.0f, 0);
+    CheckItem(player, maze, tilesize, 0.0f, 0); 
 
     dead = PlayerEnemyCollision(player, enemy1, tilesize);
     //if (dead)
@@ -236,20 +236,24 @@ void GameState1::Free() {
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
     worldItems.clear();
-    AudioManager::UnloadAudio("GameBGM");
+    
     for (int i{};i < INVENTORY_SIZE;++i) {
         player.inventory[i] = NOTHING;
     }
     PauseOverlay::Free();
 }
 
-void GameState1::Unload() {}
+void GameState1::Unload() {
+    AudioManager::UnloadAudio("GameBGM");
+	AudioManager::UnloadAudio("Waves");
+	AudioManager::UnloadAudio("Rock Throw");
+	AudioManager::UnloadAudio("Collide");
+	AudioManager::UnloadAudio("GameOver");
+	AudioManager::UnloadAudio("Win");
+	AudioManager::UnloadAudio("Collect");
+}
 
 BaseState* GameState1::GetNextState() {
-    //return exitGame ? new MainMenuState() : nullptr;
-    //return dead ? new LoseState() : nullptr;
-    //return winGame ? new WinState() : nullptr;
-
     if (exitGame) {
         return new MainMenuState();
     }
