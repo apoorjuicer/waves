@@ -34,9 +34,7 @@ void GameState1::Load() {
     worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze1.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
-        // Transition to quit state, etc.
     }
-    //Import_MapData();
 
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
@@ -257,10 +255,7 @@ BaseState* GameState1::GetNextState() {
         return new LoseState();
     }
     if (winGame) {
-        return new gameTransition();
+        return new gameTransition(new GameState2());
     }
-    //if (winGame) {
-    //    return new WinState();
-    //}
     return nullptr;  // Stay in the current state if nothing changes
 }

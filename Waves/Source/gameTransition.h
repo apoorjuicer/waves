@@ -30,8 +30,9 @@ private:
     s8 transitionFont;
     AEGfxVertexList* continueButtonMesh = nullptr;
     AEGfxVertexList* quitButtonMesh = nullptr;
+    BaseState* nNextState;          // Pointer to the next state 
 public:
-    gameTransition();
+    gameTransition(BaseState* nextState);
     void Load() override;
     void Initialize() override;
     void Update(f32 deltaTime) override;
@@ -40,4 +41,3 @@ public:
     void Unload() override;
     BaseState* GetNextState() override;
 };
-

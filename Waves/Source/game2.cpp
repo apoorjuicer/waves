@@ -25,15 +25,14 @@ namespace {
 
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
+pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
+goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
 
 void GameState2::Load() {
     worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze2.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
-        // Transition to quit state, etc.
     }
-    //Import_MapData();
 
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
@@ -74,7 +73,15 @@ void GameState2::Initialize() {
 
     enemy2.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
     enemy2.updateGridPosition(); // need to call to init conversion
-
+    AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
+    AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
+    AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, InGame);
+    AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
+    AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, RockThrow);
+    AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
+    AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
+    AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+    AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 }
 
@@ -219,7 +226,7 @@ BaseState* GameState2::GetNextState() {
         return new LoseState();
     }
     if (winGame) {
-        return new WinState();
+        return new gameTransition(new GameState3());
     }
     return nullptr;
 }

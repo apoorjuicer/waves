@@ -24,7 +24,7 @@ const f32 kContinueX = -300.0f;
 const f32 kQuitY = -200.0f;
 const f32 kQuitX = 300.0f;
 
-gameTransition::gameTransition() : continueGame(false), quitGame(false), transitionFont(-1), continueButtonMesh(nullptr), quitButtonMesh(nullptr) {}
+gameTransition::gameTransition(BaseState* nextState) : continueGame(false), quitGame(false), transitionFont(-1), continueButtonMesh(nullptr), quitButtonMesh(nullptr), nNextState(nextState) {}
 
 void gameTransition::Load() {
     AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
@@ -112,7 +112,7 @@ void gameTransition::Unload() {
 
 BaseState* gameTransition::GetNextState() {
     if (continueGame) {
-        return new GameState2();
+        return nNextState;
     }
     if (quitGame) {
         return new MainMenuState();

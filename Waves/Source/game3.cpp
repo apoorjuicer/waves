@@ -22,7 +22,7 @@ Technology is prohibited.
 #include "game3.h"
 
 namespace {
-    Enemy enemy1;
+    Enemy enemy3;
 }
 
 GameState3::GameState3() : exitGame(false), winGame(false), tilesize(100.0f),
@@ -34,9 +34,7 @@ void GameState3::Load() {
     worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze3.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze3.txt. Quitting game.\n";
-        // Transition to quit state, etc.
     }
-    //Import_MapData();
 
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
@@ -64,17 +62,17 @@ void GameState3::Initialize() {
     player.y = -100.f;
 
     player.inventory[0] = ROCK;
-    enemy1.x = 100.f;
-    enemy1.y = -700.f;
-    enemy1.startPatrol = { 1,7 };
-    enemy1.endPatrol = { 8,7 };
+    enemy3.x = 100.f;
+    enemy3.y = -700.f;
+    enemy3.startPatrol = { 1,7 };
+    enemy3.endPatrol = { 8,7 };
     // enemy1.state = PATROL;
-    enemy1.state = IDLE;
+    enemy3.state = IDLE;
     //enemy1.state = IDLE;
    // enemy1.state = PURSUIT_ROCK;
 
-    enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
-    enemy1.updateGridPosition(); // need to call to init conversion
+    enemy3.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
+    enemy3.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
     AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
     AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, InGame);
@@ -127,7 +125,7 @@ void GameState3::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    UpdateEnemystate(enemy1, deltaTime, enemy_wave, wave_meshes);
+    UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
     //enemy1.enemy_wave(enemy_wave, wave_meshes);
 
     for (Wave& w : wave) {
@@ -159,7 +157,7 @@ void GameState3::Update(f32 deltaTime) {
 
     CheckItem(player, maze, tilesize, 0.0f, 0);
 
-    dead = PlayerEnemyCollision(player, enemy1, tilesize);
+    dead = PlayerEnemyCollision(player, enemy3, tilesize);
     //if (dead)
     //{
     //    AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
@@ -177,13 +175,12 @@ void GameState3::Update(f32 deltaTime) {
 void GameState3::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
-    RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
+    RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-    //(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {
