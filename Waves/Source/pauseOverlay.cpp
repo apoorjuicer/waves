@@ -39,8 +39,13 @@ namespace PauseOverlay {
     void Init() {
         sPaused = false;
         sExitToMenu = false;
-        sFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 50);
-        mFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 100);
+
+        /*sFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 50);
+        mFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 100);*/
+
+        sFont = FontManager::GetFont("NunitoBold50");
+        mFont = FontManager::GetFont("NunitoBold100");
+
         pauseScreenMesh = CreateButtonMesh(0xFF404040);
         sResumeMesh = CreateButtonMesh(0xFF606060);
         sMainMenuMesh = CreateButtonMesh(0xFF606060);
@@ -97,7 +102,7 @@ namespace PauseOverlay {
         if (pauseScreenMesh) { AEGfxMeshFree(pauseScreenMesh); sResumeMesh = nullptr; }
         if (sResumeMesh) { AEGfxMeshFree(sResumeMesh); sResumeMesh = nullptr; }
         if (sMainMenuMesh) { AEGfxMeshFree(sMainMenuMesh); sMainMenuMesh = nullptr; }
-        if (sFont != -1) { AEGfxDestroyFont(sFont); sFont = -1; }
+        //if (sFont != -1) { AEGfxDestroyFont(sFont); sFont = -1; }
     }
 
     bool IsPaused() { return sPaused; }

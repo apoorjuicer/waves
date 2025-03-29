@@ -29,7 +29,8 @@ gameTransition::gameTransition(BaseState* nextState) : continueGame(false), quit
 void gameTransition::Load() {
     AEGfxSetBackgroundColor(0.4f, 0.4f, 0.4f);
 
-    transitionFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+    //transitionFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+    transitionFont = FontManager::GetFont("NunitoBold70");
 
     continueButtonMesh = CreateButtonMesh(0xFF505050);
     quitButtonMesh = CreateButtonMesh(0xFF505050);
@@ -103,10 +104,10 @@ void gameTransition::Free() {
 }
 
 void gameTransition::Unload() {
-	if (transitionFont != -1) {
+	/*if (transitionFont != -1) {
 		AEGfxDestroyFont(transitionFont);
 		transitionFont = -1;
-	}
+	}*/
 }
 
 BaseState* gameTransition::GetNextState() {

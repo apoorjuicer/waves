@@ -27,8 +27,11 @@ LoseState::LoseState() : goMenu(false), loseFont(-1), buttonFont(-1), okButtonMe
 void LoseState::Load() {
     AEGfxSetBackgroundColor(0.5f, 0.0f, 0.0f); // Dark red background
 
-    loseFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
-    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+    //loseFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+    //buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+
+    loseFont = FontManager::GetFont("Buggy80");
+    buttonFont = FontManager::GetFont("NunitoBold70");
 
     okButtonMesh = CreateButtonMesh(0xFF505050);
 }
@@ -72,10 +75,10 @@ void LoseState::Free() {
 }
 
 void LoseState::Unload() {
-    if (loseFont != -1) {
+    /*if (loseFont != -1) {
         AEGfxDestroyFont(loseFont);
         loseFont = -1;
-    }
+    }*/
 }
 
 BaseState* LoseState::GetNextState() {

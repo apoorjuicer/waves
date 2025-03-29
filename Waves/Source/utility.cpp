@@ -159,3 +159,49 @@ AEGfxVertexList* TextureMesh() {
 
     return AEGfxMeshEnd();
 }
+
+// ==========================================================
+// Font Manager Implementation
+// ==========================================================
+
+namespace FontManager {
+    // Internal cache for font handles
+    static std::unordered_map<std::string, s8> fontCache;
+
+    void InitializeFonts() {
+        // Load Nunito-Bold at multiple sizes
+        fontCache["NunitoBold50"] = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 50);
+        fontCache["NunitoBold70"] = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+        fontCache["NunitoBold100"] = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 100);
+
+        // Load Nunito-SemiBoldItalic at size 70
+        fontCache["NunitoSemiBoldItalic70"] = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-SemiBoldItalic.ttf", 70);
+
+        // Load Nunito-MediumItalic at size 100
+        fontCache["NunitoMediumItalic100"] = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-MediumItalic.ttf", 100);
+
+        // Load a separate font used in LoseState and WinState
+        fontCache["Buggy80"] = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+
+        // Load Nosifer-Regular for the main menu
+        fontCache["NosiferRegular150"] = AEGfxCreateFont("Assets/Fonts/Nosifer-Regular.ttf", 150);
+    }
+
+    s8 GetFont(const std::string& key) {
+        auto it = fontCache.find(key);
+        if (it != fontCache.end()) {
+            return it->second;
+        }
+        return -1; // Not found
+    }
+
+    void ShutdownFonts() {
+        for (auto& pair : fontCache) {
+            if (pair.second != -1) {
+                AEGfxDestroyFont(pair.second);
+                pair.second = -1;
+            }
+        }
+        fontCache.clear();
+    }
+}

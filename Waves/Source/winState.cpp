@@ -27,8 +27,11 @@ WinState::WinState() : goNext(false), winFont(-1), buttonFont(-1), okButtonMesh(
 void WinState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.5f, 0.0f); // Dark green background
 
-    winFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
-    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+    /*winFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);*/
+
+    winFont = FontManager::GetFont("Buggy80");
+    buttonFont = FontManager::GetFont("NunitoBold70");
 
     okButtonMesh = CreateButtonMesh(0xFF505050);
 }
@@ -73,10 +76,10 @@ void WinState::Free() {
 
 void WinState::Unload() {
     // Unload any assets if needed
-    if (winFont != -1) {
+    /*if (winFont != -1) {
         AEGfxDestroyFont(winFont);
         winFont = -1;
-    }
+    }*/
 }
 
 BaseState* WinState::GetNextState() {

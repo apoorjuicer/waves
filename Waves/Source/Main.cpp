@@ -46,6 +46,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	int gGameRunning = 1;
 
+	// Initialize fonts globally
+	FontManager::InitializeFonts();
+
 	GameStateManager gameStateManager;
 	gameStateManager.SetGameRunningPtr(&gGameRunning); // Provide the pointer to GSM
 
@@ -78,6 +81,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		// Informing the system about the loop's end
 		AESysFrameEnd();
 	}
+
+	// Shutdown and free fonts
+	FontManager::ShutdownFonts();
 
 	// free the system
 	AESysExit();
