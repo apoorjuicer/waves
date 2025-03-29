@@ -53,9 +53,13 @@ void LoseState::Update(f32 deltaTime) {
 }
 
 void LoseState::Draw() {
-    if (loseFont != -1) {
-        AEGfxPrint(loseFont, "GAME OVER", -0.65f, 0.0f, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
-    }
+    float textWidth, textHeight;
+    AEGfxGetPrintSize(loseFont, "GAME OVER", 1.5f, &textWidth, &textHeight);
+
+    float centeredX = -textWidth * 0.5f;
+    float centeredY = 0.0f;
+
+    AEGfxPrint(loseFont, "GAME OVER", centeredX, centeredY, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
 
     DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 }

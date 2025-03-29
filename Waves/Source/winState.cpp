@@ -53,9 +53,13 @@ void WinState::Update(f32 deltaTime) {
 }
 
 void WinState::Draw() {
-    if (winFont != -1) {
-        AEGfxPrint(winFont, "YOU WIN", -0.48f, 0.0f, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
-    }
+    float textWidth, textHeight;
+    AEGfxGetPrintSize(winFont, "YOU WIN", 1.5f, &textWidth, &textHeight);
+
+    float centeredX = -textWidth * 0.5f;
+    float centeredY = 0.0f;
+
+    AEGfxPrint(winFont, "YOU WIN", centeredX, centeredY, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
 
     DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 }
