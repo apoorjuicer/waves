@@ -16,32 +16,14 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "gamePreview.h"
-#include "mainMenu.h"
-#include "game1.h"
-#include "AEEngine.h"
-#include "Player.h"
-
-AEGfxVertexList* TextureMesh() {
-    AEGfxMeshStart();
-
-    // Create a rectangle using two triangles
-    AEGfxTriAdd(-0.5, -0.5, 0xFFFFFFFF, 0.0f, 1.0f,
-        0.5, -0.5, 0xFFFFFFFF, 1.0f, 1.0f,
-        -0.5, 0.5, 0xFFFFFFFF, 0.0f, 0.0f);
-
-    AEGfxTriAdd(0.5, -0.5, 0xFFFFFFFF, 1.0f, 1.0f,
-        0.5, 0.5, 0xFFFFFFFF, 1.0f, 0.0f,
-        -0.5, 0.5, 0xFFFFFFFF, 0.0f, 0.0f);
-
-    return AEGfxMeshEnd();
-}
 
 gamePreview::gamePreview() : goGame(false), previewFont(-1), maze1(nullptr), maze1_mesh(nullptr), okButtonMesh(nullptr) {}
 
 void gamePreview::Load() {
     AEGfxSetBackgroundColor(0.3f, 0.3f, 0.3f);
 
-    previewFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 70);
+    //previewFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+    previewFont = FontManager::GetFont("NunitoBold70");
 
     maze1 = AEGfxTextureLoad("Assets/Maze1.png");
 
@@ -122,11 +104,27 @@ void gamePreview::Draw() {
 }
 
 void gamePreview::Free() {
-    AEGfxMeshFree(maze1_mesh);
-    AEGfxTextureUnload(maze1);
+    if (okButtonMesh) {
+        AEGfxMeshFree(okButtonMesh);
+        okButtonMesh = nullptr;
+    }
+    if (maze1_mesh) {
+        AEGfxMeshFree(maze1_mesh);
+        maze1_mesh = nullptr;
+    }
+
 }
 
-void gamePreview::Unload() {}
+void gamePreview::Unload() {
+	/*if (previewFont != -1) {
+		AEGfxDestroyFont(previewFont);
+		previewFont = -1;
+	}*/
+	if (maze1) {
+		AEGfxTextureUnload(maze1);
+		maze1 = nullptr;
+	}
+}
 
 BaseState* gamePreview::GetNextState() {
     // If goMenu is true, transition to main menu

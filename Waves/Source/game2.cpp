@@ -25,15 +25,14 @@ namespace {
 
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
+pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
+goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
 
 void GameState2::Load() {
     worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze2.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
-        // Transition to quit state, etc.
     }
-    //Import_MapData();
 
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
@@ -61,6 +60,7 @@ void GameState2::Initialize() {
     winGame = false;
     player.x = 100.f;
     player.y = -100.f;
+    player.inventory[0] = ROCK;
 
     //enemy2.x = 100.f;
     //enemy2.y = -700.f;
@@ -73,11 +73,23 @@ void GameState2::Initialize() {
     enemy2.patrol_timer = 20.f;
     //enemy2.pursuit_timer = 3.f;
     enemy2.updateGridPosition(); // need to call to init conversion
-
+    AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
+    AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
+    AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, InGame);
+    AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
+    AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, RockThrow);
+    AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
+    AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
+    AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+    AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
+    AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
 }
 
 void GameState2::Update(f32 deltaTime) {
+    if (!AudioManager::IsAudioPlaying("GameBGM")) {
+        AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
+    }
     // Toggle pause when ESC is pressed if not already paused
     if (AEInputCheckTriggered(AEVK_ESCAPE) && !PauseOverlay::IsPaused()) {
         PauseOverlay::SetPaused(true);
@@ -103,6 +115,11 @@ void GameState2::Update(f32 deltaTime) {
 
     if (AEInputCheckTriggered(AEVK_SPACE)) {
         spawn_wave(wave, player.x, player.y, wave_meshes);
+        AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
+    }
+
+    // Reset the flag when SPACE is released
+    if (!AEInputCheckCurr(AEVK_SPACE)) {
     }
     //debug
    /* if (AEInputCheckTriggered(AEVK_SPACE)) {
@@ -146,13 +163,15 @@ void GameState2::Update(f32 deltaTime) {
 
 void GameState2::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
-    rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
+    if (!PauseOverlay::IsPaused()) {
+        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
+    }
     RenderMesh(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
-    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     for (Wave& w : wave) {
         if (w.is_active) {
@@ -202,13 +221,22 @@ void GameState2::Free() {
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
     worldItems.clear();
+
     for (int i{};i < INVENTORY_SIZE;++i) {
         player.inventory[i] = NOTHING;
     }
     PauseOverlay::Free();
 }
 
-void GameState2::Unload() {}
+void GameState2::Unload() {
+    AudioManager::UnloadAudio("GameBGM");
+    AudioManager::UnloadAudio("Waves");
+    AudioManager::UnloadAudio("Rock Throw");
+    AudioManager::UnloadAudio("Collide");
+    AudioManager::UnloadAudio("GameOver");
+    AudioManager::UnloadAudio("Win");
+	AudioManager::UnloadAudio("Collect");
+}
 
 BaseState* GameState2::GetNextState() {
     if (exitGame) {
@@ -218,7 +246,7 @@ BaseState* GameState2::GetNextState() {
         return new LoseState();
     }
     if (winGame) {
-        return new WinState();
+        return new gameTransition(new GameState3());
     }
     return nullptr;
 }

@@ -14,7 +14,7 @@ void SplashState::Load() {
     // mSplashTexture = AEGfxTextureLoad("digipen_logo.png");
     digipen = AEGfxTextureLoad("Assets/DigiPen_Singapore_WEB_RED.png");
 
-    if (digipen == NULL) {
+    if (digipen == nullptr) {
         printf("ERROR: Failed to load texture 'Assets/Maze1.png'\n");
     }
 
@@ -99,15 +99,10 @@ void SplashState::Draw() {
 void SplashState::Free() {
     // Free any runtime resources if needed.
     AEGfxMeshFree(digipen_mesh);
-    AEGfxTextureUnload(digipen);
 }
 
 void SplashState::Unload() {
-    // Unload assets, e.g., unload the splash texture.
-    // if(mSplashTexture) {
-    //     AEGfxTextureUnload(mSplashTexture);
-    //     mSplashTexture = nullptr;
-    // }
+    AEGfxTextureUnload(digipen);
 }
 
 BaseState* SplashState::GetNextState() {

@@ -16,8 +16,6 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "instructions.h"
-#include "mainMenu.h"
-#include "AEEngine.h"
 
 instructionState::instructionState() : goMenu(false), guide(nullptr), guide_mesh(nullptr) {}
 
@@ -79,9 +77,22 @@ void instructionState::Draw() {
     AEGfxMeshDraw(guide_mesh, AE_GFX_MDM_TRIANGLES);
 }
 
-void instructionState::Free() {}
+void instructionState::Free() 
+{
+	if (guide_mesh)
+	{
+		AEGfxMeshFree(guide_mesh);
+		guide_mesh = nullptr;
+	}
+}
 
-void instructionState::Unload() {}
+void instructionState::Unload() {
+    if (guide)
+    {
+        AEGfxTextureUnload(guide);
+        guide = nullptr;
+    }
+}
 
 BaseState* instructionState::GetNextState() {
     // If goMenu is true, transition to main menu

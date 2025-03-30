@@ -18,6 +18,10 @@ Technology is prohibited.
 #pragma once
 #include "baseStates.h"
 #include "AEEngine.h"
+#include "utility.h"
+#include "mainMenu.h"
+#include "game1.h"
+#include "Player.h"
 
 class gamePreview : public BaseState {
 private:
@@ -36,5 +40,3 @@ public:
     void Unload() override;
     BaseState* GetNextState() override;
 };
-
-AEGfxVertexList* TextureMesh();
