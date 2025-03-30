@@ -74,18 +74,22 @@ void GameState1::Initialize() {
     exitGame = false;
     dead = false;
     winGame = false;
-    player.x = 100.f;
+    player.x = 300.f;
     player.y = -100.f;
     
     player.inventory[0] = ROCK;
     //enemy1.x = 100.f;
     //enemy1.y = -700.f;
-    enemy1.startPatrol = { 1,7 };
-    enemy1.endPatrol = { 8,4 };
+  
+    enemy1.startPatrol = enemy1.patrolPath.front();
+    enemy1.endPatrol = enemy1.patrolPath.back();
     enemy1.x = enemy1.startPatrol.first * TILE_SIZE;
     enemy1.y = enemy1.startPatrol.second * -TILE_SIZE;
+    //enemy1.x = 1 * TILE_SIZE;
+    //enemy1.y = 1 * -TILE_SIZE;
     //enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
     enemy1.state = PATROL;
+    enemy1.previousState = PATROL;
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
 	AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
@@ -119,7 +123,23 @@ void GameState1::Update(f32 deltaTime) {
     }
 
     AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
-
+    //debug
+    if (AEInputCheckCurr(AEVK_1)) {
+        enemy1.state = IDLE;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
+    if (AEInputCheckCurr(AEVK_2)) {
+        enemy1.state = PATROL;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
+    if (AEInputCheckCurr(AEVK_3)) {
+        enemy1.state = PURSUIT_PLAYER;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
+    if (AEInputCheckCurr(AEVK_4)) {
+        enemy1.state = PURSUIT_ROCK;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
     // Player movement
     f32 speed = 200.0f;
     if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
@@ -174,7 +194,7 @@ void GameState1::Update(f32 deltaTime) {
 
     CheckItem(player, maze, tilesize, 0.0f, 0); 
 
-    dead = PlayerEnemyCollision(player, enemy1, tilesize);
+   // dead = PlayerEnemyCollision(player, enemy1, tilesize);
     //if (dead)
     //{
     //    AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
@@ -186,6 +206,9 @@ void GameState1::Update(f32 deltaTime) {
     //{
     //    AudioManager::PlayAudio("Win", 3.0f, 1.0f, -1);
     //}
+    
+   // std::cout << "playerpos " << player.x << "," << player.y << "\n";
+
 }
 
 void GameState1::Draw() {
@@ -199,7 +222,7 @@ void GameState1::Draw() {
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     //(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
-   RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+   //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     
     for (Wave& w : wave) {
         if (w.is_active) {

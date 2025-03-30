@@ -88,6 +88,7 @@ struct Enemy {
 	//float startPatrolx, startPatroly;
 	//float endPatrolX, endPatrolY;
 	enum Enemy_State state = PATROL;
+	enum Enemy_State previousState;  // Track previous state to detect state changes
 	//vector<pair<int, int>> path; // Stores A* path
 	std::vector<Pair> path = {};
 	std::vector<Pair> patrolPath = {};
@@ -100,9 +101,9 @@ struct Enemy {
 	float patrol_timer =  10.f;
 	float pursuit_timer = 3.f;
 	// Constructor initializes all members
-	Enemy() : x{ 100.f }, y{ -200.f }, gridX{1}, gridY{2}, w{50.f}, h{50.f}, state{IDLE} {
-		
-	}
+	Enemy() : x{ 100.f }, y{ -200.f }, gridX{ 1 }, gridY{ 1 }, w{ 50.f }, h{ 50.f }, state{ IDLE }
+		, previousState{IDLE} {}
+
 	void enemy_wave(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		static f32 time{};
 		if (state != IDLE) {
@@ -119,9 +120,9 @@ struct Enemy {
 		(void)MainWaves;
 		(void)mesh;
 
-		//printf("moving Enemy\n");
+		//std::cout << "moving Enemy\n";
 		if (path.empty()) {
-			//printf("path is empty\n");
+			std::cout << "path is empty\n";
 			return;
 		}
 
@@ -159,20 +160,18 @@ struct Enemy {
 				pathIndex++;  // Move to the next step in path
 			}
 
-			//printf("Moving to: (%d, %d)\n", nextPos.first, nextPos.second);
+			std::cout << "Moving to: (" << nextPos.first << ", " << nextPos.second << ")\n";
 		}
 		
 		updateGridPosition();
-		printPosition();
+		//printPosition();
 	}
 	void updateGridPosition() {
 		/*gridX = static_cast<int>(round(x / TILE_SIZE));
 		gridY = static_cast<int>(round(y / -TILE_SIZE));*/
 		//manual offset superior
-	/*	gridX = static_cast<int>((x + TILE_SIZE / 2) / TILE_SIZE);
-		gridY = static_cast<int>((y - TILE_SIZE / 2) / TILE_SIZE) * -1;*/
 		gridX = static_cast<int>((x + TILE_SIZE / 2) / TILE_SIZE);
-		gridY = static_cast<int>((y - TILE_SIZE / 2) / TILE_SIZE) * -1;
+		gridY = static_cast<int>((y - TILE_SIZE / 2) / -TILE_SIZE);
 	}
 	// Display enemy position, for debug
 	void printPosition() {
@@ -193,8 +192,8 @@ Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dest, std::vector<Pa
 
 std::vector<Pair> findPatrolPoints(int grid[MAX_ROW][MAX_COL]);
 void setEnemyPatrol(Enemy& enemy, int grid[MAX_ROW][MAX_COL]);
-
-
+std::string GetEnemyStateName(Enemy_State state);
+void printEnemyPatrolpoints(Enemy& e, int grid[MAX_ROW][MAX_COL]);
 //class Enemy {
 //public:
 //	f32 x, y; //x y pos

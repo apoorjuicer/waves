@@ -111,9 +111,9 @@ namespace {// Utility Functions
 		path.push_back({ j,i });
 		std::reverse(path.begin(), path.end());
 		// print path
-		//for (const Pair& p : path) {
-		//	//printf(":[%d,%d] ", p.first, p.second);
-		//}
+		for (const Pair& p : path) {
+			std::cout << ":[" << p.first << ", " << p.second << "] ";
+		}
 
 	}//end of reconstructPath
 
@@ -145,16 +145,26 @@ namespace {// Utility Functions
 	//state functions
 	void MovetoPatrolpoint(Enemy& e) {
 		// If the enemy is NOT at startPatrol, force it to go to startPatrol
+		//std::cout << "calling  MovetoPatrolpoint\n";
 		e.path.clear();
 		e.pathIndex = 0;
+		
 		Pair enemyIndex = { e.gridX, e.gridY };
-		astarsearch(maze, enemyIndex, e.startPatrol, e.path);
-	/*	if (e.path.empty()) {
-			std::cout << "Failed to find path to start patrol point.\n";
+		//std::cout << "Enemy World Pos is : [" << e.x << "," << e.y << "]\n";
+		//std::cout << "Enemy Grid Pos is : [" << enemyIndex.first << "," << enemyIndex.second << "]\n";
+		//astarsearch(maze, enemyIndex, e.startPatrol, e.path);
+		if (astarsearch(maze, enemyIndex, e.startPatrol, e.path) == Path::NO_PATH) {
+			//std::cout << "Path find Error MovetoPatrolpoint\n";
+			for (Pair p : e.patrolPath) {
+				//std::cout << ": [" << p.first << "," << p.second<< "]\n";
+			}
 		}
-		else {
-			std::cout << "Path to start patrol point calculated successfully.\n";
-		}*/
+		//if (e.path.empty()) {
+		//	std::cout << "Failed to find path to start patrol point.\n";
+		//}
+		//else {
+		//	std::cout << "Path to start patrol point calculated successfully.\n";
+		//}
 	}
 
 	void chasePlayer(Enemy& e) {
@@ -164,7 +174,7 @@ namespace {// Utility Functions
 		static int lastPlayerX = -1, lastPlayerY = -1;
 		int playerGridX = static_cast<int>((player.x + TILE_SIZE / 2) / TILE_SIZE);
 		int playerGridY = static_cast<int>((player.y - TILE_SIZE / 2) / TILE_SIZE) * -1;
-		if (playerGridX == lastPlayerX && playerGridY == lastPlayerY) {
+		if (e.state == PURSUIT_PLAYER && playerGridX == lastPlayerX && playerGridY == lastPlayerY) {
 			return; // Skip recalculating path if player hasn't moved
 		}
 		lastPlayerX = playerGridX;
@@ -180,8 +190,12 @@ namespace {// Utility Functions
 		Pair enemyPos = { enemyGridX, enemyGridY };
 		Pair playerPos = { playerGridX, playerGridY };
 
-		astarsearch(maze, enemyPos, playerPos, e.path);  // Find path to player
-
+		//astarsearch(maze, enemyPos, playerPos, e.path);  // Find path to player
+		if (astarsearch(maze, enemyPos, playerPos, e.path) == Path::NO_PATH) {
+			//std::cout << "Path find Error chasePlayer";
+			MovetoPatrolpoint(e);  // Recalculate path to patrol point
+			e.state = PATROL;  // Return to patrol if no path is found
+		}
 		/*if (e.path.empty()) {
 			std::cout << "Failed to find a path to the player!\n";
 		}
@@ -221,13 +235,12 @@ Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dst, std::vector<Pai
 
 	path.clear(); //reset path
 	if (!isValid(dst.first, dst.second, grid) || !isValid(src.first, src.second, grid)) {
-		printf("Source or Destination is invalid\n");
-		//printf("(%d,%d)\n", path.front().first,path.front().second);
+		//std::cout << "Source or Destination is invalid\n";
 		return Path::NO_PATH;
 	}
 	// If the destination cell is the same as source cell
 	if (isDestination(src.first, src.second, dst)) {
-		printf("Already at the destination\n");
+		//std::cout << "Already at the destination\n";
 		return Path::NO_PATH;
 	}
 
@@ -341,12 +354,17 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 			// If the enemy has reached the patrol point, switch to the other patrol target
 			if (currIndex == e.startPatrol) {
 				//std::cout << "Reached start patrol, switching to end patrol.\n";
-				astarsearch(maze, currIndex, e.endPatrol, e.path);
+				if (astarsearch(maze, currIndex, e.endPatrol, e.path) == Path::NO_PATH) {
+					//std::cout << "Path find Error end patrol";
+				}
 				e.pathIndex = 0; // Reset path index
 			}
 			else if (currIndex == e.endPatrol) {
 				//std::cout << "Reached end patrol, switching to start patrol.\n";
-				astarsearch(maze, currIndex, e.startPatrol, e.path);
+				//astarsearch(maze, currIndex, e.startPatrol, e.path);
+				if (astarsearch(maze, currIndex, e.startPatrol, e.path) == Path::NO_PATH) {
+					//std::cout << "Path find Error start patrol";
+				}
 				e.pathIndex = 0; // Reset path index
 			}
 		}
@@ -388,7 +406,10 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 			Pair src = { srcX, srcY };
 			Pair dest = { destX, destY };
 
-			astarsearch(maze, src, dest, e.path);
+			//astarsearch(maze, src, dest, e.path);
+			if (astarsearch(maze, src, dest, e.path) == Path::NO_PATH) {
+				//std::cout << "No path pursuit_rock";
+			}
 
 			// Update previous destination
 			prevDestX = destX;
@@ -408,6 +429,16 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 }
 
 void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
+
+	// Clear path and reset index when state changes
+	if (e.previousState != e.state) {
+		/*std::cout << "State changed from " << GetEnemyStateName(e.previousState)
+			<< " to " << GetEnemyStateName(e.state) << "\n";*/
+		e.path.clear();      // Clear old path when switching states
+		e.pathIndex = 0;     // Reset path index
+		e.previousState = e.state;  // Update previous state
+	}
+
 	float sightRangeRock = 3.0f * TILE_SIZE;  // Enemy detection range for rock
 	float sightRangePlayer = 2.0f * TILE_SIZE;  // Enemy detection range for player
 	int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
@@ -450,14 +481,16 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 			}
 			else if (seePlayer(e, sightRangePlayer)) {
 				e.state = PURSUIT_PLAYER;
-				e.stateTimer = PURSUIT_TIME;
+				//e.stateTimer = PURSUIT_TIME;
 			}
 			else if (e.stateTimer <= 0.0f) { //idle
 				e.state = IDLE;
 				e.stateTimer = IDLE_TIME;
-			}//timer
+			}
+			else if (e.path.empty()) {
+				MovetoPatrolpoint(e);
+			}
 
-		
 			break;
 	case PURSUIT_PLAYER:
 	
@@ -469,8 +502,7 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 				e.state = PATROL;
 				e.stateTimer = PATROL_TIME;
 			}
-
-				
+			
 		break;
 	case PURSUIT_ROCK:
 
@@ -500,6 +532,8 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 	}
 
 	//call enemystate after update
+	//std::cout << "enemy state is "<< GetEnemyStateName(e.state) << "\n";
+	e.updateGridPosition();
 	EnemyState(e, dt, (&MainWaves)[MAX_NUM_WAVES], mesh);
 }
 
@@ -511,29 +545,43 @@ std::vector<Pair> findPatrolPoints(int grid[MAX_ROW][MAX_COL]) {
 		for (int x = 0; x < MAX_COL; x++) { // Column (X)
 			if (grid[y][x] == 9) {
 				patrolPoints.push_back({ x, y });
-				//std::cout << "Found patrol point: (" << x << ", " << y << ")\n";
 			}
 		}
 	}
+
+	// Z sorting, y first then X
+	std::sort(patrolPoints.begin(), patrolPoints.end(), [](const Pair& a, const Pair& b) {
+		// Check row y is odd or even
+		bool isOddRow = (a.second % 2 == 1);
+		if (a.second == b.second) {
+			// Reverse X for odd rows, normal order for even rows
+			return isOddRow ? a.first > b.first : a.first < b.first;
+		}
+		return a.second < b.second;  // Sort y
+		});
+
 	return patrolPoints;
 }
 
 void setEnemyPatrol(Enemy& e, int grid[MAX_ROW][MAX_COL]) {
 	e.patrolPath = findPatrolPoints(grid);
-	//if (!e.patrolPath.empty()) {
-	//	e.startPatrol = e.patrolPath.front();
-	//	e.endPatrol = e.patrolPath.back();
-	//}
-	//else {
-	//	std::cout << "[ERROR] No patrol points found!\n";
-	//}
-	//std::cout << "[DEBUG] Enemy Patrol Path:\n";
-	//for (size_t i = 0; i < e.patrolPath.size(); i++) {
-	//	std::cout << "Patrol Point " << i << ": ("
-	//		<< e.patrolPath[i].first << ", "
-	//		<< e.patrolPath[i].second << ")\n";
-	//}
-	/*std::cout << "Enemy patrol start: (" << e.startPatrol.first << ", " << e.startPatrol.second << ")\n";
-	std::cout << "Enemy patrol end: (" << e.endPatrol.first << ", " << e.endPatrol.second << ")\n";*/
+	printEnemyPatrolpoints(e,grid);
+}
 
+void printEnemyPatrolpoints(Enemy& e, int grid[MAX_ROW][MAX_COL]) {
+	// Print sorted patrol points for confirmation
+	for (const Pair& p : e.patrolPath) {
+		//std::cout << "Patrol point: (" << p.first << ", " << p.second << ")\n";
+	}
+}
+
+
+std::string GetEnemyStateName(Enemy_State state) {
+	switch (state) {
+	case IDLE: return "IDLE";
+	case PATROL: return "PATROL";
+	case PURSUIT_PLAYER: return "PURSUIT_PLAYER";
+	case PURSUIT_ROCK: return "PURSUIT_ROCK";
+	default: return "UNKNOWN_STATE,error";
+	}
 }
