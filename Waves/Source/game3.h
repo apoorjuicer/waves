@@ -33,6 +33,27 @@ Technology is prohibited.
 
 class GameState3 : public BaseState {
 private:
+    bool exitGame = false;
+    bool dead = false;
+    bool winGame = false;
+    f32 tilesize = 100.0f;
+    AEGfxVertexList* pDonutMesh = nullptr;
+    AEGfxVertexList* PlayerMesh = nullptr;
+    AEGfxVertexList* wallMesh = nullptr;
+    AEGfxVertexList* pathMesh = nullptr;
+    AEGfxVertexList* enemyMesh = nullptr;
+    AEGfxVertexList* keyMesh = nullptr;
+    AEGfxVertexList* rockMesh = nullptr;
+    AEGfxVertexList* goalMesh = nullptr;
+    AEGfxVertexList* boxMesh = nullptr;
+    AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
+    int prevDestX = -1;
+    int prevDestY = -1;
+
+    Wave wave[MAX_NUM_WAVES];
+    Wave enemy_wave[MAX_NUM_WAVES];
+    Wave reflections[MAX_NUM_REFLECTIONS];
+    Outline outlines[MAX_NUM_OUTLINES];
 
 public:
     GameState3();

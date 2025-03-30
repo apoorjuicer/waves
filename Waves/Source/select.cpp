@@ -22,7 +22,8 @@ LevelSelectState::LevelSelectState() :  game1(nullptr), game2(nullptr), game3(nu
 void LevelSelectState::Load() {
     AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
 
-    selectFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-MediumItalic.ttf", 100);
+    //selectFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-MediumItalic.ttf", 100);
+    selectFont = FontManager::GetFont("NunitoMediumItalic100");
 
     game1ButtonMesh =       CreateButtonMesh(0xFFFFFFFF);
     game2ButtonMesh =       CreateButtonMesh(0xFFFFFFFF);

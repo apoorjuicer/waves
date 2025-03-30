@@ -17,14 +17,23 @@ Technology is prohibited.
 
 #include "winState.h"
 
-WinState::WinState() : goNext(false), winFont(-1) {}
+const f32 kButtonW = 300.0f;
+const f32 kButtonH = 100.0f;
+const f32 kokY = -200.0f;
+const f32 kokX = 0.0f;
+
+WinState::WinState() : goNext(false), winFont(-1), buttonFont(-1), okButtonMesh(nullptr) {}
 
 void WinState::Load() {
-    // E.g. set background color or load victory assets
     AEGfxSetBackgroundColor(0.0f, 0.5f, 0.0f); // Dark green background
 
-    winFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+    /*winFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
+    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);*/
 
+    winFont = FontManager::GetFont("Buggy80");
+    buttonFont = FontManager::GetFont("NunitoBold70");
+
+    okButtonMesh = CreateButtonMesh(0xFF505050);
 }
 
 void WinState::Initialize() {
@@ -39,25 +48,38 @@ void WinState::Update(f32 deltaTime) {
         goNext = true;
     }
 
-    // Use bool var goNext when player won to trigger currently *So go mainMenu in GetNextState()* as winState only shows when completes all the maps
-}
-
-void WinState::Draw() {
-    if (winFont != -1) {
-        AEGfxPrint(winFont, "You Win", -0.48f, 0.0f, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
+    if (AEInputCheckTriggered(AEVK_LBUTTON)) {
+        if (IsMouseInsideButton(kokX, kokY, kButtonW, kButtonH)) {
+            goNext = true;
+        }
     }
 }
 
+void WinState::Draw() {
+    float textWidth, textHeight;
+    AEGfxGetPrintSize(winFont, "YOU WIN", 1.5f, &textWidth, &textHeight);
+
+    float centeredX = -textWidth * 0.5f;
+    float centeredY = 0.0f;
+
+    AEGfxPrint(winFont, "YOU WIN", centeredX, centeredY, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+    DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
+}
+
 void WinState::Free() {
-    // Free any resources if needed
+    if (okButtonMesh) {
+        AEGfxMeshFree(okButtonMesh);
+        okButtonMesh = nullptr;
+    }
 }
 
 void WinState::Unload() {
     // Unload any assets if needed
-    if (winFont != -1) {
+    /*if (winFont != -1) {
         AEGfxDestroyFont(winFont);
         winFont = -1;
-    }
+    }*/
 }
 
 BaseState* WinState::GetNextState() {

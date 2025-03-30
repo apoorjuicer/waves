@@ -20,12 +20,15 @@ Technology is prohibited.
 #include "AEEngine.h"
 #include "mainMenu.h"
 #include "Audio.h"
+#include "utility.h"
+#include "gameTransition.h"
 
 class LoseState : public BaseState {
 private:
     bool goMenu;   // Flag for returning to the main menu
     s8 loseFont;
-    //bool retryGame; Button to go back to the game
+	s8 buttonFont;
+    AEGfxVertexList* okButtonMesh = nullptr;
 public:
     LoseState();
     void Load() override;

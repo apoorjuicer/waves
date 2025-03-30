@@ -164,7 +164,7 @@ namespace rock {
                 AudioManager::StopAudio("Rock Throw");
             }
 
-            // Base damping factor: 2% reduction per second.
+            
             const f32 baseDamping = 0.40f;
 
             // Calculate the frame damping factor.
@@ -189,11 +189,11 @@ namespace rock {
                 // If collision on X axis, revert X and reverse the X velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.x = prevX;
-                rock.dx *= static_cast<f32>( - 0.4);
+                rock.dx *= ( - 0.4);
                 rock.currBounce++;
 
                 // Play the collision sound
-                AudioManager::PlayAudio("Collide", 0.8f, 1.0f, 0);
+                AudioManager::PlayAudio("Collide", 0.4f, 1.0f, 0);
             }
 
             // --- Process Y Movement ---
@@ -202,11 +202,11 @@ namespace rock {
                 // If collision on Y axis, revert Y and reverse the Y velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.y = prevY;
-                rock.dy *= static_cast<f32>( - 0.4);
+                rock.dy *= ( - 0.4);
                 rock.currBounce++;
 
                 // Play the collision sound
-                AudioManager::PlayAudio("Collide", 0.8f, 1.0f, 0);
+                AudioManager::PlayAudio("Collide", 0.4f, 1.0f, 0);
             }
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {

@@ -1,5 +1,7 @@
 #pragma once
 #include "AEEngine.h"
+#include <string>
+#include <unordered_map>
 
 // ==========================================================
 // For main menu
@@ -23,3 +25,19 @@ void DrawTexturedButton(AEGfxVertexList* pMesh,
 // For game preview
 // ==========================================================
 AEGfxVertexList* TextureMesh();
+
+// ==========================================================
+// Font Management
+// ==========================================================
+
+namespace FontManager {
+    // Initializes and loads all fonts needed in the game.
+    void InitializeFonts();
+
+    // Retrieves a previously loaded font by a unique key (e.g., "NunitoBold70").
+    // Returns the font handle, or -1 if not found.
+    s8 GetFont(const std::string& key);
+
+    // Unloads all fonts and clears the cache. Call this at game shutdown.
+    void ShutdownFonts();
+}

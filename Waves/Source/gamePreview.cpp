@@ -16,17 +16,14 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "gamePreview.h"
-#include "mainMenu.h"
-#include "game1.h"
-#include "AEEngine.h"
-#include "Player.h"
 
 gamePreview::gamePreview() : goGame(false), previewFont(-1), maze1(nullptr), maze1_mesh(nullptr), okButtonMesh(nullptr) {}
 
 void gamePreview::Load() {
     AEGfxSetBackgroundColor(0.3f, 0.3f, 0.3f);
 
-    previewFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 70);
+    //previewFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+    previewFont = FontManager::GetFont("NunitoBold70");
 
     maze1 = AEGfxTextureLoad("Assets/Maze1.png");
 
@@ -119,10 +116,10 @@ void gamePreview::Free() {
 }
 
 void gamePreview::Unload() {
-	if (previewFont != -1) {
+	/*if (previewFont != -1) {
 		AEGfxDestroyFont(previewFont);
 		previewFont = -1;
-	}
+	}*/
 	if (maze1) {
 		AEGfxTextureUnload(maze1);
 		maze1 = nullptr;

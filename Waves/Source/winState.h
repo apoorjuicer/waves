@@ -20,11 +20,14 @@ Technology is prohibited.
 #include "AEEngine.h"
 #include "mainMenu.h"
 #include "Audio.h"
+#include "utility.h"
 
 class WinState : public BaseState {
 private:
     bool goNext;       // Flag to trigger transition
     s8 winFont;
+	s8 buttonFont;
+    AEGfxVertexList* okButtonMesh = nullptr;
 public:
     WinState();
     void Load() override;

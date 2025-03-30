@@ -27,10 +27,10 @@ namespace {
 
     const f32 kButtonW = 300.0f;
     const f32 kButtonH = 100.0f;
-    const f32 kResumeY = -200.0f;
-    const f32 kResumeX = -300.0f;
-    const f32 kMainMenuY = -200.0f;
-    const f32 kMainMenuX = 300.0f;
+    const f32 kResumeY = -120.0f;
+    const f32 kResumeX = 0.0f;
+    const f32 kMainMenuY = -250.0f;
+    const f32 kMainMenuX = 0.0f;
     const f32 pauseMenuX = 1000.0f;
     const f32 pauseMenuY = 700.0f;
 }
@@ -39,11 +39,16 @@ namespace PauseOverlay {
     void Init() {
         sPaused = false;
         sExitToMenu = false;
-        sFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 50);
-        mFont = AEGfxCreateFont("Assets/liberation-mono.ttf", 100);
+
+        /*sFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 50);
+        mFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 100);*/
+
+        sFont = FontManager::GetFont("NunitoBold50");
+        mFont = FontManager::GetFont("NunitoBold100");
+
         pauseScreenMesh = CreateButtonMesh(0xFF404040);
-        sResumeMesh = CreateButtonMesh(0xFF202020);
-        sMainMenuMesh = CreateButtonMesh(0xFF202020);
+        sResumeMesh = CreateButtonMesh(0xFF606060);
+        sMainMenuMesh = CreateButtonMesh(0xFF606060);
     }
 
     void Update() {
@@ -51,12 +56,10 @@ namespace PauseOverlay {
         if (AEInputCheckTriggered(AEVK_LBUTTON)) {
             if (IsMouseInsideButton(kResumeX, kResumeY, kButtonW, kButtonH)) {
                 sPaused = false;
-                AEInputReset();
             }
             else if (IsMouseInsideButton(kMainMenuX, kMainMenuY, kButtonW, kButtonH)) {
                 sExitToMenu = true;
                 sPaused = false;
-                AEInputReset();
             }
         }
     }
@@ -81,25 +84,25 @@ namespace PauseOverlay {
         float textWidth, textHeight;
 
         // Get text dimensions (normalized units) for "Game Paused":
-        AEGfxGetPrintSize(mFont, "Game Paused", 1.0f, &textWidth, &textHeight);
+        AEGfxGetPrintSize(mFont, "GAME PAUSED", 1.0f, &textWidth, &textHeight);
 
         // Center the text horizontally and vertically (normalized coordinates)
         float centerX = -textWidth * 0.5f;
         float centerY = textHeight * 0.5f;
-        AEGfxPrint(mFont, "Game Paused", centerX, centerY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        AEGfxPrint(mFont, "GAME PAUSED", centerX, centerY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
         // --- Draw the Resume Button using DrawButton() ---
-        DrawButton(sResumeMesh, player.x + kResumeX, player.y + kResumeY, "Resume", sFont, 300.0f, 100.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        DrawButton(sResumeMesh, player.x + kResumeX, player.y + kResumeY, "Resume", sFont, 300.0f, 100.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
         // --- Draw the Main Menu Button using DrawButton() ---
-        DrawButton(sMainMenuMesh, player.x + kMainMenuX, player.y + kMainMenuY, "Main Menu", sFont, 300.0f, 100.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+        DrawButton(sMainMenuMesh, player.x + kMainMenuX, player.y + kMainMenuY, "Main Menu", sFont, 300.0f, 100.0f, 1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     void Free() {
         if (pauseScreenMesh) { AEGfxMeshFree(pauseScreenMesh); sResumeMesh = nullptr; }
         if (sResumeMesh) { AEGfxMeshFree(sResumeMesh); sResumeMesh = nullptr; }
         if (sMainMenuMesh) { AEGfxMeshFree(sMainMenuMesh); sMainMenuMesh = nullptr; }
-        if (sFont != -1) { AEGfxDestroyFont(sFont); sFont = -1; }
+        //if (sFont != -1) { AEGfxDestroyFont(sFont); sFont = -1; }
     }
 
     bool IsPaused() { return sPaused; }

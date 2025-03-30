@@ -25,15 +25,11 @@ void MainMenuState::Load() {
     AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
 
     // Use relative path instead of absolute path
-    menuFont = AEGfxCreateFont("Assets/Fonts/Nosifer-Regular.ttf", 150);
-    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-SemiBoldItalic.ttf", 70);
+    //menuFont = AEGfxCreateFont("Assets/Fonts/Nosifer-Regular.ttf", 150);
+    //buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-SemiBoldItalic.ttf", 70);
 
-    if (menuFont == -1) {
-        printf("ERROR: Failed to load font\n");
-    }
-    if (buttonFont == -1) {
-        printf("ERROR: Failed to load font\n");
-    }
+    menuFont = FontManager::GetFont("NosiferRegular150");
+    buttonFont = FontManager::GetFont("NunitoSemiBoldItalic70");
 
     playButtonMesh = CreateButtonMesh(0xFFFFFFFF);
     guideButtonMesh = CreateButtonMesh(0xFFFFFFFF);
@@ -49,6 +45,7 @@ void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
     menu = false;
+    waitingForMouseRelease = true;
     AEGfxSetCamPosition(0.0f, 0.0f);
     AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
 }
@@ -60,6 +57,14 @@ void MainMenuState::Update(f32 deltaTime) {
         AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
     }
     
+	// Prevent multiple clicks
+    if (waitingForMouseRelease) {
+        if (!AEInputCheckCurr(AEVK_LBUTTON)) {
+            waitingForMouseRelease = false;
+        }
+        return;
+    }
+
     // Only check clicks when the left mouse button is triggered.
     if (AEInputCheckTriggered(AEVK_LBUTTON))
     {
@@ -294,14 +299,14 @@ void MainMenuState::Free() {
 }
 
 void MainMenuState::Unload() {
-    if (menuFont != -1) {
+    /*if (menuFont != -1) {
         AEGfxDestroyFont(menuFont);
         menuFont = -1;
     }
     if (buttonFont != -1) {
         AEGfxDestroyFont(buttonFont);
         buttonFont = -1;
-    }
+    }*/
     AudioManager::UnloadAudio("MainMenu");
 
 }
