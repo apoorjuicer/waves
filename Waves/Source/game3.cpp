@@ -34,7 +34,7 @@ void GameState3::Load() {
         std::cerr << "Error: Failed to load maze file Assets/Maze3.txt. Quitting game.\n";
     }
 
-    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
+    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
@@ -102,7 +102,7 @@ void GameState3::Update(f32 deltaTime) {
         return;
     }
 
-    AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
+    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
     f32 speed = 200.0f;
