@@ -122,7 +122,7 @@ struct Enemy {
 
 		//std::cout << "moving Enemy\n";
 		if (path.empty()) {
-			std::cout << "path is empty\n";
+			//std::cout << "path is empty\n";
 			return;
 		}
 
@@ -160,7 +160,7 @@ struct Enemy {
 				pathIndex++;  // Move to the next step in path
 			}
 
-			std::cout << "Moving to: (" << nextPos.first << ", " << nextPos.second << ")\n";
+			//std::cout << "Moving to: (" << nextPos.first << ", " << nextPos.second << ")\n";
 		}
 		
 		updateGridPosition();

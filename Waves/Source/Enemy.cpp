@@ -111,9 +111,9 @@ namespace {// Utility Functions
 		path.push_back({ j,i });
 		std::reverse(path.begin(), path.end());
 		// print path
-		for (const Pair& p : path) {
+		/*for (const Pair& p : path) {
 			std::cout << ":[" << p.first << ", " << p.second << "] ";
-		}
+		}*/
 
 	}//end of reconstructPath
 
