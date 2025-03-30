@@ -150,4 +150,6 @@ AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int nu
 AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegments);
 AEGfxVertexList* Create_LineMesh();
 
+
+void PrintMapData();
 #endif

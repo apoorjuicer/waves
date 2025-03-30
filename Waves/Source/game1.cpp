@@ -36,7 +36,7 @@ void GameState1::Load() {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
     }
 
-    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
+    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
@@ -122,7 +122,7 @@ void GameState1::Update(f32 deltaTime) {
         return;
     }
 
-    AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
+
     //debug
     if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;
@@ -140,6 +140,8 @@ void GameState1::Update(f32 deltaTime) {
         enemy1.state = PURSUIT_ROCK;
         std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
     }
+    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
+
     // Player movement
     f32 speed = 200.0f;
     if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
