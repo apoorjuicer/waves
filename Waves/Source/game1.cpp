@@ -28,7 +28,9 @@ namespace {
 GameState1::GameState1() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
-goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1){}
+goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundPlayed (false),
+gameWinSoundPlayed(false)// Declare this outside the game loop
+{}
 
 void GameState1::Load() {
     worldItems.clear();
@@ -196,18 +198,21 @@ void GameState1::Update(f32 deltaTime) {
 
     CheckItem(player, maze, tilesize, 0.0f, 0); 
 
-   // dead = PlayerEnemyCollision(player, enemy1, tilesize);
-    //if (dead)
-    //{
-    //    AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
+    dead = PlayerEnemyCollision(player, enemy1, tilesize);
 
-    //}
+    // Inside your game loop:
+    if (dead && !gameOverSoundPlayed)
+    {
+        AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, 0);
+        gameOverSoundPlayed = true;  // Ensure it doesn't play again
+    }
 
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
-    //if (winGame)
-    //{
-    //    AudioManager::PlayAudio("Win", 3.0f, 1.0f, -1);
-    //}
+    if (winGame && !gameWinSoundPlayed)
+    {
+        AudioManager::PlayAudio("Win", 1.0f, 1.0f, 0);
+        gameWinSoundPlayed = true;  // Ensure it doesn't play again
+    }
     
    // std::cout << "playerpos " << player.x << "," << player.y << "\n";
 
@@ -286,8 +291,8 @@ void GameState1::Unload() {
 	AudioManager::UnloadAudio("Waves");
 	AudioManager::UnloadAudio("Rock Throw");
 	AudioManager::UnloadAudio("Collide");
-	AudioManager::UnloadAudio("GameOver");
-	AudioManager::UnloadAudio("Win");
+	//AudioManager::UnloadAudio("GameOver");
+	//AudioManager::UnloadAudio("Win");
 	AudioManager::UnloadAudio("Collect");
 }
 

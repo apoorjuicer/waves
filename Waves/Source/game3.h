@@ -49,6 +49,8 @@ private:
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
     int prevDestX = -1;
     int prevDestY = -1;
+    bool gameOverSoundPlayed = false;
+    bool gameWinSoundPlayed = false;
 
     Wave wave[MAX_NUM_WAVES];
     Wave enemy_wave[MAX_NUM_WAVES];

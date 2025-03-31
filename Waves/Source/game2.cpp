@@ -26,7 +26,8 @@ namespace {
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
-goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1) {}
+goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
+gameWinSoundPlayed(false) {}
 
 void GameState2::Load() {
     worldItems.clear();
@@ -159,6 +160,17 @@ void GameState2::Update(f32 deltaTime) {
     CheckItem(player, maze, tilesize, 0.0f, 0);
     dead = PlayerEnemyCollision(player, enemy2, tilesize);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
+    if (dead && !gameOverSoundPlayed)
+    {
+        AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, 0);
+        gameOverSoundPlayed = true;  // Ensure it doesn't play again
+    }
+
+    if (winGame && !gameWinSoundPlayed)
+    {
+        AudioManager::PlayAudio("Win", 1.0f, 1.0f, 0);
+        gameWinSoundPlayed = true;  // Ensure it doesn't play again
+    }
 }
 
 void GameState2::Draw() {
@@ -233,8 +245,8 @@ void GameState2::Unload() {
     AudioManager::UnloadAudio("Waves");
     AudioManager::UnloadAudio("Rock Throw");
     AudioManager::UnloadAudio("Collide");
-    AudioManager::UnloadAudio("GameOver");
-    AudioManager::UnloadAudio("Win");
+    //AudioManager::UnloadAudio("GameOver");
+    //AudioManager::UnloadAudio("Win");
 	AudioManager::UnloadAudio("Collect");
 }
 
