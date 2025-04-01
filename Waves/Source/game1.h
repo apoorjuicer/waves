@@ -50,6 +50,9 @@ private:
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
     int prevDestX = -1;
     int prevDestY = -1;
+    bool gameOverSoundPlayed = false;  // Declare this outside the game loop
+    bool gameWinSoundPlayed = false;  // Declare this outside the game loop
+
 
     DirectionalWave dir_wave;
     Wave wave[MAX_NUM_WAVES];

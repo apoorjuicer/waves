@@ -28,7 +28,9 @@ namespace {
 GameState1::GameState1() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
-goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1){}
+goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundPlayed (false),
+gameWinSoundPlayed(false)// Declare this outside the game loop
+{}
 
 void GameState1::Load() {
     worldItems.clear();
@@ -53,26 +55,43 @@ void GameState1::Load() {
     wave_meshes[2] = Create_LineMesh();
     createWorldItems(tilesize);
 
+    setEnemyPatrol(enemy1, maze);
+
+    //debug print maze
+  /*  for (int i = 0;i < MAX_ROW;i++) {
+        for (int j = 0;j < MAX_COL;j++) {
+            std::cout << maze[i][j] << ',';
+        }
+        std::cout << "\n";
+    }*/
+
+    //for (size_t i = 0; i < enemy1.patrolPath.size(); i++) {
+    //    std::cout << "Patrol Point " << i << ": ("
+    //        << enemy1.patrolPath[i].second << ", "
+    //        << enemy1.patrolPath[i].first << ")\n";
+    //}
 }
 
 void GameState1::Initialize() {
     exitGame = false;
     dead = false;
     winGame = false;
-    player.x = 100.f;
+    player.x = 300.f;
     player.y = -100.f;
     
     player.inventory[0] = ROCK;
-    enemy1.x = 100.f;
-    enemy1.y = -700.f;
-    enemy1.startPatrol = { 1,7 };
-    enemy1.endPatrol = { 8,7 };
-   // enemy1.state = PATROL;
-    enemy1.state = IDLE;
-    //enemy1.state = IDLE;
-   // enemy1.state = PURSUIT_ROCK;
-    
-    enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
+    //enemy1.x = 100.f;
+    //enemy1.y = -700.f;
+  
+    enemy1.startPatrol = enemy1.patrolPath.front();
+    enemy1.endPatrol = enemy1.patrolPath.back();
+    enemy1.x = enemy1.startPatrol.first * TILE_SIZE;
+    enemy1.y = enemy1.startPatrol.second * -TILE_SIZE;
+    //enemy1.x = 1 * TILE_SIZE;
+    //enemy1.y = 1 * -TILE_SIZE;
+    //enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
+    enemy1.state = PATROL;
+    enemy1.previousState = PATROL;
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
 	AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
@@ -105,6 +124,24 @@ void GameState1::Update(f32 deltaTime) {
         return;
     }
 
+
+    //debug
+    if (AEInputCheckCurr(AEVK_1)) {
+        enemy1.state = IDLE;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
+    if (AEInputCheckCurr(AEVK_2)) {
+        enemy1.state = PATROL;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
+    if (AEInputCheckCurr(AEVK_3)) {
+        enemy1.state = PURSUIT_PLAYER;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
+    if (AEInputCheckCurr(AEVK_4)) {
+        enemy1.state = PURSUIT_ROCK;
+        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+    }
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
@@ -166,17 +203,23 @@ void GameState1::Update(f32 deltaTime) {
     CheckItem(player, maze, tilesize, 0.0f, 0); 
 
     dead = PlayerEnemyCollision(player, enemy1, tilesize);
-    //if (dead)
-    //{
-    //    AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, -1);
 
-    //}
+    // Inside your game loop:
+    if (dead && !gameOverSoundPlayed)
+    {
+        AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, 0);
+        gameOverSoundPlayed = true;  // Ensure it doesn't play again
+    }
 
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
-    //if (winGame)
-    //{
-    //    AudioManager::PlayAudio("Win", 3.0f, 1.0f, -1);
-    //}
+    if (winGame && !gameWinSoundPlayed)
+    {
+        AudioManager::PlayAudio("Win", 1.0f, 1.0f, 0);
+        gameWinSoundPlayed = true;  // Ensure it doesn't play again
+    }
+    
+   // std::cout << "playerpos " << player.x << "," << player.y << "\n";
+
 }
 
 void GameState1::Draw() {
@@ -189,8 +232,8 @@ void GameState1::Draw() {
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     //(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-    dir_wave.draw();
+   //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    
     for (Wave& w : wave) {
         if (w.is_active) {
             w.draw();
@@ -252,8 +295,8 @@ void GameState1::Unload() {
 	AudioManager::UnloadAudio("Waves");
 	AudioManager::UnloadAudio("Rock Throw");
 	AudioManager::UnloadAudio("Collide");
-	AudioManager::UnloadAudio("GameOver");
-	AudioManager::UnloadAudio("Win");
+	//AudioManager::UnloadAudio("GameOver");
+	//AudioManager::UnloadAudio("Win");
 	AudioManager::UnloadAudio("Collect");
 }
 
