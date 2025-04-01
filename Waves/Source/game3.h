@@ -52,6 +52,7 @@ private:
     bool gameOverSoundPlayed = false;
     bool gameWinSoundPlayed = false;
 
+    DirectionalWave dir_wave;
     Wave wave[MAX_NUM_WAVES];
     Wave enemy_wave[MAX_NUM_WAVES];
     Wave reflections[MAX_NUM_REFLECTIONS];

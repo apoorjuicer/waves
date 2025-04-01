@@ -124,7 +124,9 @@ public:
 
 	void spawn(AEVec2 pos_in, AEGfxVertexList** mesh_in, f32 max_in, DIRECTION = DIR_NULL, f32 grow_r = GROWTH_R);
 	void check_collide();
-	//void echolocation();
+
+	void reset_corner();
+	void echolocation(f32 tilesize, Outline(&outlines)[MAX_NUM_OUTLINES]);
 
 	void update() override;
 	void draw() override;
@@ -168,6 +170,4 @@ AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int nu
 AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegments);
 AEGfxVertexList* Create_LineMesh();
 
-
-void PrintMapData();
 #endif

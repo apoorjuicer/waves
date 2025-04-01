@@ -200,4 +200,19 @@ AEGfxVertexList* CreateSquareMesh(float size, u32 color)
     return AEGfxMeshEnd();
 }
 
+void PrintMapData() {
+    std::cout << "ROW: " << activeRow << '\n'
+        << "COL: " << activeCol << '\n';
+
+    for (int i{}; i < activeRow; ++i) {
+        for (int j{}; j < activeCol; ++j) {
+            std::cout << maze[i][j] << ' ';
+
+            if (j == (activeCol - 1)) {
+                std::cout << '\n';
+            }
+        }
+    }
+}
+
 

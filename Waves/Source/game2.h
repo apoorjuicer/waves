@@ -52,7 +52,7 @@ private:
     bool gameOverSoundPlayed = false;  // Declare this outside the game loop
     bool gameWinSoundPlayed = false;  // Declare this outside the game loop
 
-
+    DirectionalWave dir_wave;
     Wave wave[MAX_NUM_WAVES];
     Wave enemy_wave[MAX_NUM_WAVES];
     Wave reflections[MAX_NUM_REFLECTIONS];

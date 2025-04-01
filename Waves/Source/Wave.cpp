@@ -211,6 +211,7 @@ DIRECTION operator-(DIRECTION& dir) {
 
 	return dir;
 }
+// TO PRINT DIRECTIONS TO STD::COUT FOR DEBUGGING;
 //static std::ostream& operator<<(std::ostream& os, DIRECTION& dir) {
 //
 //	switch (dir) {
@@ -315,8 +316,8 @@ void Wave::draw() {
 // update collision check array in Wave object; spawns reflections;
 void Wave::echolocation(f32 tilesize, Wave(&reflections)[MAX_NUM_REFLECTIONS], Outline(&outlines)[MAX_NUM_OUTLINES]) {
 
-	for (int y{}; y < MAX_ROW; ++y) {
-		for (int x{}; x < MAX_COL; ++x) {
+	for (int y{}; y < activeRow; ++y) {
+		for (int x{}; x < activeCol; ++x) {
 
 			// location of current tile;
 			AEVec2 wpos{ (x * tilesize), tilesize - ((y + 1) * tilesize) };
@@ -530,7 +531,7 @@ void DirectionalWave::spawn(AEVec2 pos_in, AEGfxVertexList** mesh_in, f32 max_in
 
 	// Wave variables;
 	max_size = max_in;
-	growth_rate = grow_r;
+	growth_rate = grow_r * 2.f;
 
 	// DirWave unique;
 	direction = dir_in;
@@ -540,7 +541,48 @@ void DirectionalWave::spawn(AEVec2 pos_in, AEGfxVertexList** mesh_in, f32 max_in
 	return;
 }
 
+// reset corner collisions when gap;
+void DirectionalWave::reset_corner() {
+	std::pair<int, int> windex = find_wave_index(pos);
+
+	if (direction == DIR_LEFT) {
+		// bottom left;
+		if (maze[clamp(windex.second + 1, 0, MAX_ROW)][windex.first] != 1) { r_collision[6] = 0; }
+		// top left;
+		if (maze[clamp(windex.second - 1, 0, MAX_ROW)][windex.first] != 1) { r_collision[4] = 0; }
+	}
+	else if (direction == DIR_RIGHT) {
+		// bottom right;
+		if (maze[clamp(windex.second - 1, 0, MAX_ROW)][windex.first] != 1) { r_collision[7] = 0; }
+		// top right;
+		if (maze[clamp(windex.second - 1, 0, MAX_ROW)][windex.first] != 1) { r_collision[5] = 0; }
+	}
+	else if (direction == DIR_UP) {
+		// top left;
+		if (maze[windex.second][clamp(windex.first - 1, 0, MAX_COL)] != 1) { r_collision[4] = 0; }
+		// top right;
+		if (maze[windex.second][clamp(windex.first + 1, 0, MAX_COL)] != 1) { r_collision[5] = 0; }
+	}
+	else if (direction == DIR_DOWN) {
+		// bottom left;
+		if (maze[windex.second][clamp(windex.first - 1, 0, MAX_COL)] != 1) { r_collision[6] = 0; }
+		// bottom right;
+		if (maze[windex.second][clamp(windex.first + 1, 0, MAX_COL)] != 1) { r_collision[7] = 0; }
+	}
+}
+
+// despawns directional wave when it hits a wall head-on;
 void DirectionalWave::check_collide() {
+
+	if (!is_active) {
+		return;
+	}
+
+	std::pair<int, int> windex = find_wave_index(pos);
+	if (maze[windex.second][windex.first] == 1) {
+		is_active = false;
+	}
+
 	AEVec2 tmp = pos;
 
 	switch (direction) {
@@ -551,30 +593,314 @@ void DirectionalWave::check_collide() {
 		tmp.x = tmp.x + (0.3f * scale.x);
 		break;
 	case DIR_DOWN:
-		tmp.y = tmp.y - (0.3f * scale.y);
+		tmp.y = tmp.y - (0.8f * scale.y);
 		break;
 	case DIR_UP:
 		tmp.y = tmp.y + (0.3f * scale.y);
 		break;
 	}
 
-	std::pair<int, int> windex = find_wave_index(tmp);
+	windex = find_wave_index(tmp);
 	if (maze[windex.second][windex.first] == 1) {
 		is_active = false;
+		scale.x = 0.f;
+		growth_rate = GROWTH_R * 2.f;
+
+		for (short& i : r_collision) {
+			i = 0;
+		}
+		lifetime = 0.f;
+		return;
 	}
 }
 
+// echolocation override specific to directional wave;
+void DirectionalWave::echolocation(f32 tilesize, Outline(&outlines)[MAX_NUM_OUTLINES]){
+
+	for (int y{}; y < activeRow; ++y) {
+		for (int x{}; x < activeCol; ++x) {
+
+			// location of current tile;
+			AEVec2 wpos{ (x * tilesize), tilesize - ((y + 1) * tilesize) };
+			// if wall is active && wave is colliding with current wall;
+			if (maze[y][x] == 1 && circle_square_collision(pos, scale.x, wpos, tilesize)) {
+
+				f32 dir_wave_max = 350.f;
+				reset_corner();
+
+				// boundary of wall;
+				f32 wall_left = wpos.x - (tilesize / 2.f);
+				f32 wall_right = wpos.x + (tilesize / 2.f);
+				f32 wall_top = wpos.y + (tilesize / 2.f);
+				f32 wall_bot = wpos.y - (tilesize / 2.f);
+
+				// distance of wave position from wall position;
+				f32 dist_x{ abs(pos.x - wpos.x) }, dist_y{ abs(pos.y - wpos.y) };
+
+				std::pair<int, int> wave_index = find_wave_index(pos);
+
+				// variables for creating reflections;
+				AEGfxVertexList** r_mesh{ nullptr };
+				AEVec2 rpos{};
+				f32 r_max{}, r_scale{};
+				bool r_change{ false };
+
+				// variables for creating pairs of outlines;
+				std::pair<DIRECTION, DIRECTION> l_dir{};
+				AEVec2 l_maxlen{}, l_temp{}, l_pos{};
+
+				// ================================================================================================
+				// EARLY SKIP IF NOT IN DIRECTION;
+				// ================================================================================================
+				DIRECTION wall_dir = find_direction(AEVec2{ dist_x, dist_y }, wpos, pos);
+
+				// skip opposites;
+				if (direction == DIR_LEFT && wall_dir == DIR_RIGHT) { continue; }
+				if (direction == DIR_RIGHT && wall_dir == DIR_LEFT) { continue; }
+				if (direction == DIR_UP && wall_dir == DIR_DOWN) { continue; }
+				if (direction == DIR_DOWN && wall_dir == DIR_UP) { continue; }
+
+				// ================================================================================================
+				// CALCULATE REFLECTIONS & OUTLINES
+				// ================================================================================================
+				// DIRECT COLLISIONS ------------------------------------------------------------------------------
+				if ((pos.x >= wall_left && pos.x <= wall_right)
+					|| (pos.y >= wall_bot && pos.y <= wall_top)) {
+
+					// reflection init specific to direct collisions;
+					rpos = locate_reflection(pos, wpos, tilesize);
+					r_mesh = mesh + 1;
+					r_max = REFLECTIONS_MAX_SIZE; r_scale = scale.x * 0.8f;
+
+					if (dist_x > dist_y) {
+
+						// directions for each line components;
+						l_dir = { DIR_UP, DIR_DOWN }; l_pos.y = pos.y;
+
+						// initialize max length of each line component;
+						l_maxlen.x = (wall_top - pos.y);
+						l_maxlen.y = (pos.y - wall_bot);
+
+						// wave left of wall;
+						if (pos.x < wall_left && maze[y][clamp(x - 1, 0, MAX_COL)] != 1 && r_collision[0] < 2) {
+
+							// set outline to slightly left of wall;
+							l_pos.x = wall_left - 1;
+							// update wave collision check array;
+							r_collision[0] += 1;
+							r_change = true;
+						}
+						// wave right of wall;
+						if (pos.x > wall_right && maze[y][clamp(x + 1, 0, MAX_COL)] != 1 && r_collision[1] < 2) {
+
+							// set outline to slightly right of wall;
+							l_pos.x = wall_right + 1;
+							// update wave collision check array;
+							r_collision[1] += 1;
+							r_change = true;
+						}
+
+						// extending line until either: end of wall; wave path is blocked;
+						l_temp.x = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.x, tilesize, l_dir.first);
+						l_temp.y = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.y, tilesize, l_dir.second);
+						
+						// limit the maximum length of outline to WAVES_SIZE;
+						if (direction == DIR_UP || direction == DIR_DOWN) {
+							l_maxlen.x = (l_temp.x > dir_wave_max) ? dir_wave_max : l_maxlen.x;
+							l_maxlen.y = (l_temp.y > dir_wave_max) ? dir_wave_max : l_maxlen.y;
+						}
+
+						switch (direction) {
+						case DIR_DOWN:
+							l_maxlen.x = (wall_top - pos.y);
+							break;
+						case DIR_UP:
+							l_maxlen.y = (pos.y - wall_bot);
+							break;
+						}
+					}
+					else if (dist_x < dist_y) {
+
+						// directions for each line components;
+						l_dir = { DIR_LEFT, DIR_RIGHT }; l_pos.x = pos.x;
+
+						// initialize max length of each line component;
+						l_maxlen.x = (pos.x - wall_left);
+						l_maxlen.y = (wall_right - pos.x);
+
+						// wave above wall;
+						if (pos.y > wall_top && maze[clamp(y - 1, 0, MAX_ROW)][x] != 1 && r_collision[2] < 2) {
+
+							// set outline to slightly above wall;
+							l_pos.y = wall_top + 1;
+							// update wave collision check array;
+							r_collision[2] += 1;
+							r_change = true;
+
+						}
+						// wave below wall;
+						else if (pos.y < wall_bot && maze[clamp(y + 1, 0, MAX_ROW)][x] != 1 && r_collision[3] < 2) {
+
+							// set outline to slightly below wall;
+							l_pos.y = wall_bot - 1;
+							// update wave collision check array;
+							r_collision[3] += 1;
+							r_change = true;
+
+						}
+
+						// extending line until either: end of wall; wave path is blocked;
+						l_temp.x = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.x, tilesize, l_dir.first);
+						l_temp.y = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.y, tilesize, l_dir.second);
+
+						// limit the maximum length of outline to WAVES_SIZE;
+						if (direction == DIR_LEFT || direction == DIR_RIGHT) {
+							l_maxlen.x = (l_temp.x > dir_wave_max) ? dir_wave_max : l_maxlen.x;
+							l_maxlen.y = (l_temp.y > dir_wave_max) ? dir_wave_max : l_maxlen.y;
+						}
+
+						switch (direction) {
+						case DIR_RIGHT:
+							l_maxlen.x = (pos.x - wall_left);
+							break;
+						case DIR_LEFT:
+							l_maxlen.y = (wall_right - pos.x);
+							break;
+						}
+					}
+				}
+				// CORNER COLLISIONS -----------------------------------------------------------------------------
+				if ((pos.x < wall_left || pos.x > wall_right)
+					&& (pos.y < wall_bot || pos.y > wall_top)) {
+
+					// reflection init specific to corner collisions;
+					r_mesh = mesh;
+					r_max = REFLECTIONS_MAX_SIZE / 2.f; r_scale = scale.x / 8.f;
+
+					l_maxlen.x = l_maxlen.y = tilesize;
+
+					if (pos.y >= wall_top && maze[clamp(y - 1, 0, MAX_ROW)][x] != 1 && direction != DIR_UP) {
+						// TOP LEFT CORNER ------------
+						if (pos.x <= wall_left && maze[y][clamp(x - 1, 0, MAX_COL)] != 1 && r_collision[4] < 2 && direction != DIR_LEFT) {
+
+							// directions for each line components;
+							l_dir = { DIR_DOWN, DIR_RIGHT };
+							l_pos.x = wall_left - 1; l_pos.y = wall_top + 1;
+
+							r_collision[4] += 1;
+							r_change = true;
+							rpos = { wall_left, wall_top };
+
+							// extending line until either: end of wall; wave path is blocked;
+							if (direction == DIR_RIGHT) {
+								l_temp.y = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.y, tilesize, l_dir.second);
+							}
+							else { l_temp.y = max_size / 8.f; }
+
+						}
+						// TOP RIGHT CORNER -----------
+						if (pos.x >= wall_right && maze[y][clamp(x + 1, 0, MAX_COL)] != 1 && r_collision[5] < 2 && direction != DIR_RIGHT) {
+
+							// directions for each line components;
+							l_dir = { DIR_DOWN, DIR_LEFT };
+							l_pos.x = wall_right + 1; l_pos.y = wall_top + 1;
+
+							r_collision[5] += 1;
+							r_change = true;
+							rpos = { wall_right, wall_top };
+
+							// extending line until either: end of wall; wave path is blocked;
+							if (direction == DIR_LEFT) {
+								l_temp.y = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.y, tilesize, l_dir.second);
+							}
+							else { l_temp.y = max_size / 8.f; }
+						}
+
+						if (direction == DIR_DOWN) {
+							l_temp.x = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.x, tilesize, l_dir.first);
+						}
+						else { l_temp.x = max_size / 8.f; }
+
+					}
+					if (pos.y <= wall_bot && maze[clamp(y + 1, 0, MAX_ROW)][x] != 1 && direction != DIR_DOWN) {
+						// BOT LEFT CORNER ------------
+						if (pos.x <= wall_left && maze[y][clamp(x - 1, 0, MAX_COL)] != 1 && r_collision[6] < 2 && direction != DIR_LEFT) {
+
+							// directions for each line components;
+							l_dir = { DIR_UP, DIR_RIGHT };
+							l_pos.x = wall_left - 1; l_pos.y = wall_bot - 1;
+
+							r_collision[6] += 1;
+							r_change = true;
+							rpos = { wall_left, wall_bot };
+
+							// extending line until either: end of wall; wave path is blocked;
+							if (direction == DIR_RIGHT) {
+								l_temp.y = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.y, tilesize, l_dir.second);
+							}
+							else { l_temp.y = max_size / 8.f; }
+						}
+						// BOT RIGHT CORNER -----------
+						if (pos.x >= wall_right && maze[y][clamp(x + 1, 0, MAX_COL)] != 1 && r_collision[7] < 2 && direction != DIR_RIGHT) {
+
+							// directions for each line components;
+							l_dir = { DIR_UP, DIR_LEFT };
+							l_pos.x = wall_right + 1; l_pos.y = wall_bot - 1;
+
+							r_collision[7] += 1;
+							r_change = true;
+							rpos = { wall_right, wall_bot };
+
+							// extending line until either: end of wall; wave path is blocked;
+							if (direction == DIR_LEFT) {
+								l_temp.y = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.y, tilesize, l_dir.second);
+							}
+							else { l_temp.y = max_size / 8.f; }
+						}
+
+						if (direction == DIR_UP) {
+							l_temp.x = outline_maxlen(wave_index, std::pair<int, int>{x, y}, l_maxlen.x, tilesize, l_dir.first);
+						}
+						else { l_temp.x = max_size / 8.f; }
+					}
+
+					// limit the maximum length of outline to WAVES_SIZE;
+					l_maxlen.x = (l_temp.x > dir_wave_max) ? dir_wave_max : l_maxlen.x;
+					l_maxlen.y = (l_temp.y > dir_wave_max) ? dir_wave_max : l_maxlen.y;
+				}
+
+				// ================================================================================================
+				// CREATE REFLECTIONS & OUTLINES
+				// ================================================================================================
+				DIRECTION dir{ DIR_LEFT };
+				// iterate through directions
+				for (int i{}; i < 8; ++i, ++dir) {
+
+					// only spawn 1 time and if r_collision_check array has been updated;
+					if (1 == r_collision[i] && r_change) {
+						// create outline;
+						create_two_outlines(outlines, l_pos, l_maxlen, l_dir, mesh + 2, growth_rate);
+
+						r_collision[i] += 1;
+					}
+				}		
+			}
+		}
+	}
+}
+
+// update loop for directional wave;
 void DirectionalWave::update() {
 	// quick exit for non-active wave;
 	if (!is_active) {
 		return;
 	}
 
-	if (lifetime > 1.f) {
+	if (lifetime > 0.8f) {
 		is_active = false;
 
 		scale.x = 0.f;
-		growth_rate = GROWTH_R;
+		growth_rate = GROWTH_R * 2.f;
 
 		for (short& i : r_collision) {
 			i = 0;
@@ -620,7 +946,7 @@ void DirectionalWave::update() {
 
 	return;
 }
-
+// draw directional wave;
 void DirectionalWave::draw() {
 	// quick exit for non-active wave;
 	if (!is_active) {
@@ -705,22 +1031,6 @@ void Outline::draw() {
 	AEGfxMeshDraw(*mesh, AE_GFX_MDM_TRIANGLES);
 
 	return;
-}
-
-
-void PrintMapData() {
-	std::cout << "ROW: " << activeRow << '\n'
-		<< "COL: " << activeCol << '\n';
-
-	for (int i{}; i < activeRow; ++i) {
-		for (int j{}; j < activeCol; ++j) {
-			std::cout << maze[i][j] << ' ';
-
-			if (j == (activeCol - 1)) {
-				std::cout << '\n';
-			}
-		}
-	}
 }
 
 //==================================================================================================================
@@ -927,33 +1237,3 @@ AEGfxVertexList* Create_LineMesh() {
 	return AEGfxMeshEnd();
 
 }
-
-
-#if 0
-
-// direct reflections;
-if ((wave.pos.x >= wpos.x - tilesize / 2.f && wave.pos.x <= wpos.x + tilesize / 2.f)
-	|| (wave.pos.y >= wpos.y - tilesize / 2.f && wave.pos.y <= wpos.y + tilesize / 2.f)) {
-}
-
-for (Wave& i : wavearray) {
-	if (i.is_active) {
-		i.update();
-
-		for (int y{}; y < MAZE_HEIGHT; ++y) {
-			for (int x{}; x < MAZE_WIDTH; ++x) {
-
-				// position of current tile;
-				AEVec2 wpos{ (x * tilesize), tilesize - ((y + 1) * tilesize) };
-
-				if (maze[y][x] && circle_square_collision(wave.pos, wave.scale.x, wpos, tilesize)) {
-					WM_collision_check(i, maze, tilesize);
-					AEVec2 r_pos = locate_reflection(i.pos);
-				}
-			}
-		}
-	}
-}
-
-
-#endif

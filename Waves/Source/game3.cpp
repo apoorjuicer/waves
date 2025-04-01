@@ -48,7 +48,7 @@ void GameState3::Load() {
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
-    wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 2);
+    wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
     wave_meshes[2] = Create_LineMesh();
     createWorldItems(tilesize);
 }
@@ -113,7 +113,8 @@ void GameState3::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
 
     if (AEInputCheckTriggered(AEVK_SPACE)) {
-        spawn_wave(wave, player.x, player.y, wave_meshes);
+        // spawn a directional wave towards player mouse;
+        spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
     }
 
@@ -128,6 +129,10 @@ void GameState3::Update(f32 deltaTime) {
     UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
     //enemy1.enemy_wave(enemy_wave, wave_meshes);
 
+    // UPDATE WAVES-----------------------------------------------------
+    dir_wave.update();
+    dir_wave.check_collide();
+    dir_wave.echolocation(tilesize, outlines);
     for (Wave& w : wave) {
         if (w.is_active) {
             // update wave size;
@@ -135,7 +140,6 @@ void GameState3::Update(f32 deltaTime) {
             w.echolocation(tilesize, reflections, outlines);
         }
     }
-
     for (Wave& w : enemy_wave) {
         if (w.is_active) {
             w.update();
@@ -143,7 +147,6 @@ void GameState3::Update(f32 deltaTime) {
         }
 
     }
-
     for (Wave& r : reflections) {
         if (r.is_active) {
             r.update();
@@ -154,6 +157,7 @@ void GameState3::Update(f32 deltaTime) {
             l.update();
         }
     }
+    // -----------------------------------------------------------------
 
     CheckItem(player, maze, tilesize, 0.0f, 0);
 
@@ -185,12 +189,13 @@ void GameState3::Draw() {
 
     //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
+    // DRAW WAVES-----------------------------------------
+    dir_wave.draw();
     for (Wave& w : wave) {
         if (w.is_active) {
             w.draw();
         }
     }
-
     for (Wave& w : enemy_wave) {
         if (w.is_active) {
             w.draw();
@@ -206,6 +211,7 @@ void GameState3::Draw() {
             l.draw();
         }
     }
+    // ---------------------------------------------------
     RenderPlayer(player, PlayerMesh);
 
     DrawInventory(player, boxMesh, keyMesh, rockMesh);
