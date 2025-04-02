@@ -30,6 +30,8 @@ goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundP
 gameWinSoundPlayed(false) {}
 
 void GameState3::Load() {
+    ClearMazeData(); // Ensure old maze is wiped
+
     worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze3.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze3.txt. Quitting game.\n";

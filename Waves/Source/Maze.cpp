@@ -90,27 +90,20 @@ bool ImportMapDataFromFile(const std::string& filename) {
     return true;
 }
 
-//void Import_MapData(void) {
-//    // Reset active maze values if desired.
-//    activeRow = 0;
-//    activeCol = 0;
-//
-//    std::string filePath;
-//    // Example decision based on game state.
-//    // (Assume you have an enum or similar defined for your game states;
-//    // here we use a sample condition based on your GSM-managed current state.)
-//    // For instance, if your current state is of type GameState (platform level):
-//    //    if (dynamic_cast<GameState*>(gsm.currentState) != nullptr)
-//    // For this sample, we'll choose Maze1.
-//    filePath = "Assets/Maze2.txt";
-//
-//    // Import maze data. If it fails, log an error and update the GSM to quit.
-//    if (!ImportMapDataFromFile(filePath)) {
-//        std::cerr << "Error: Failed to load map file " << filePath << ". Quitting game.\n";
-//        // Assuming your GSM handles transitions, you might set the next state to a quit state:
-//        // e.g., gsm.SetState(new QuitState());
-//    }
-//}
+void ClearMazeData()
+{
+    for (int i = 0; i < MAX_ROW; ++i)
+    {
+        for (int j = 0; j < MAX_COL; ++j)
+        {
+            maze[i][j] = 0; // Or your default tile ID
+        }
+    }
+
+    // Optionally reset active dimensions too
+    activeRow = 0;
+    activeCol = 0;
+}
 
 void createWorldItems(f32 tileSize) {
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)

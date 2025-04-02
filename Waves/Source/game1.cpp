@@ -33,6 +33,8 @@ gameWinSoundPlayed(false)// Declare this outside the game loop
 {}
 
 void GameState1::Load() {
+    ClearMazeData(); // Ensure old maze is wiped
+
     worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze1.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
