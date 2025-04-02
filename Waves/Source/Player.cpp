@@ -112,35 +112,52 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
 
 
 bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
-    // Convert world-space coordinates to grid indices
-    int gridX = static_cast<int>((x - mazeStartX + (tileSize / 2)) / tileSize);
-    int gridY = static_cast<int>(((tileSize / 2) - mazeStartY - y) / tileSize); // Flip Y-axis for top-down rendering
+    // Define the radius (world units) that must be walkable
+    const f32 radius = 7.0f;
 
-    //std::cout << "World Position: (" << x << ", " << y << ")\n";
-    //std::cout << "Grid Coordinates: (" << gridX << ", " << gridY << ")\n";
+    // Compute the bounding box of the circle centered at (x,y)
+    f32 minWorldX = x - radius;
+    f32 maxWorldX = x + radius;
+    f32 minWorldY = y - radius;
+    f32 maxWorldY = y + radius;
 
-    // Check for out-of-bounds
-    if (gridX < 0 || gridX >= MAX_ROW || gridY < 0 || gridY >= MAX_COL) {
-        //std::cout << "Out of Bounds\n";
+    // Lambda functions to convert a world coordinate to a grid index.
+    auto convertX = [tileSize, mazeStartX](f32 worldX) -> int {
+        return static_cast<int>((worldX - mazeStartX + (tileSize / 2)) / tileSize);
+        };
+    auto convertY = [tileSize, mazeStartY](f32 worldY) -> int {
+        return static_cast<int>(((tileSize / 2) - mazeStartY - worldY) / tileSize);
+        };
+
+    // Convert the four edges of the bounding box to grid indices.
+    int gridX1 = convertX(minWorldX);
+    int gridX2 = convertX(maxWorldX);
+    int gridY1 = convertY(minWorldY);
+    int gridY2 = convertY(maxWorldY);
+
+    // Determine the min and max grid indices (in case conversion inverts order).
+    int minGridX = (gridX1 < gridX2) ? gridX1 : gridX2;
+    int maxGridX = (gridX1 > gridX2) ? gridX1 : gridX2;
+    int minGridY = (gridY1 < gridY2) ? gridY1 : gridY2;
+    int maxGridY = (gridY1 > gridY2) ? gridY1 : gridY2;
+
+    // Check if any part of the bounding box is out-of-bounds.
+    if (minGridX < 0 || maxGridX >= MAX_ROW || minGridY < 0 || maxGridY >= MAX_COL) {
         return false;
     }
 
-    // Check if the grid cell is walkable
-    if (maze1[gridY][gridX] != 1) {
-        //std::cout << "Walkable\n";
-        //if (AEInputCheckCurr(AEVK_E) && maze[gridY][gridX] == 3) {
-        //    std::cout << maze[gridY][gridX];
-        //    maze[gridY][gridX] = 0;
-        //    key = 1;
-        //}
-        return true;
+    // Check every grid cell in the bounding box.
+    // (A more refined test might check only cells actually intersecting the circle.)
+    for (int gy = minGridY; gy <= maxGridY; ++gy) {
+        for (int gx = minGridX; gx <= maxGridX; ++gx) {
+            if (maze1[gy][gx] == 1) { // assuming 1 means blocked
+                return false;
+            }
+        }
     }
-    else {
-        //std::cout << "Blocked\n";
-        return false;
-    }
-
+    return true;
 }
+
 
 //void addItemToInventory(Player& player1, InventoryItemType item) {
 //    for (int i{}; i < INVENTORY_SIZE; ++i) {
