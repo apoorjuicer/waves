@@ -167,8 +167,6 @@ void CheckItem(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 m
     UNREFERENCED_PARAMETER(maze1);
 
     if (AEInputCheckTriggered(AEVK_E)) {
-        AudioManager::PlayAudio("Collect", 0.2f, 1.0f, 0);
-
         f32 playerMinX = player1.x - player1.rad;
         f32 playerMaxX = player1.x + player1.rad;
         f32 playerMinY = player1.y - player1.rad;
@@ -178,6 +176,8 @@ void CheckItem(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 m
             if (!item.collected &&
                 item.x + player1.rad >= playerMinX && item.x - player1.rad <= playerMaxX &&
                 item.y + player1.rad >= playerMinY && item.y - player1.rad <= playerMaxY) {
+
+                AudioManager::PlayAudio("Collect", 0.2f, 1.0f, 0);
 
                 // Pick up the item (add it to the player's inventory)
                 player1.PickUpItem(item.type);
