@@ -26,7 +26,7 @@ namespace {
 GameState3::GameState3() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
-goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundPlayed(false),
+goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {}
 
 void GameState3::Load() {
@@ -46,6 +46,8 @@ void GameState3::Load() {
     keyMesh = rock::Rock_Mesh(48, 0xFFFFD700, 10.0f);
     rockMesh = rock::Rock_Mesh(48, 0x8B4513FF, 10.0f);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
+    this->keyTexture = AEGfxTextureLoad("Assets/key.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
@@ -184,7 +186,7 @@ void GameState3::Draw() {
 	}
     RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
 
-    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
+    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh, keyTexture, rockTexture);
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
@@ -214,7 +216,7 @@ void GameState3::Draw() {
     // ---------------------------------------------------
     RenderPlayer(player, PlayerMesh);
 
-    DrawInventory(player, boxMesh, keyMesh, rockMesh);
+    DrawInventory(player, boxMesh, keyMesh, rockMesh, keyTexture, rockTexture);
 
     // If paused, overlay the pause menu on top
     if (PauseOverlay::IsPaused()) {

@@ -244,7 +244,9 @@ AEGfxVertexList* CreateBoxMesh(u32 color) {
     return AEGfxMeshEnd();
 }
 
-void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh,
+    AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh,
+    AEGfxTexture* keyTexture, AEGfxTexture* rockTexture) {
 
     f32 worldScreenLeft = player1.x - (AEGfxGetWindowWidth() / 2);
     f32 worldScreenBottom = player1.y - (AEGfxGetWindowHeight() / 2);
@@ -254,37 +256,50 @@ void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh, AEGfxVertexL
     f32 boxSize = 80.0f;
     f32 spacing = 20.0f;
 
-    for (int i = { INVENTORY_SIZE - 1 };i >=0 ;--i) {
-        //std::cout << "Item in :" << i << " is " << player.inventory[i] << std::endl;
+    for (int i = INVENTORY_SIZE - 1; i >= 0; --i) {
         f32 x = worldScreenLeft + offsetX + i * (boxSize + spacing);
         f32 y = worldScreenBottom + offsetY;
 
-        AEMtx33 transform;
-        AEMtx33Identity(&transform);
-        AEMtx33Scale(&transform, boxSize, boxSize);
-        AEMtx33TransApply(&transform, &transform, x, y);
-        AEGfxSetTransform(transform.m);
-
+        // Draw inventory slot (box) - No Texture
+        AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+        AEMtx33 boxTransform;
+        AEMtx33Identity(&boxTransform);
+        AEMtx33Scale(&boxTransform, boxSize, boxSize);
+        AEMtx33TransApply(&boxTransform, &boxTransform, x, y);
+        AEGfxSetTransform(boxTransform.m);
         AEGfxMeshDraw(boxMesh, AE_GFX_MDM_TRIANGLES);
 
+        //  Draw inventory item (if exists)
+        AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+        AEGfxSetBlendMode(AE_GFX_BM_BLEND); // Enable transparency
+
+        AEGfxVertexList* itemMesh = nullptr;
+        AEGfxTexture* itemTexture = nullptr;
+
         if (player1.inventory[i] == KEY) {
-            AEMtx33 rockTransform;
-            AEMtx33Identity(&rockTransform);
-            AEMtx33TransApply(&rockTransform, &rockTransform, x, y);
-            AEGfxSetTransform(rockTransform.m);
-            AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
+            itemMesh = keyMesh;
+            itemTexture = keyTexture;
         }
-        if (player1.inventory[i] == ROCK) {
-            AEMtx33 rockTransform;
-            AEMtx33Identity(&rockTransform);
-            AEMtx33TransApply(&rockTransform, &rockTransform, x, y);
-            AEGfxSetTransform(rockTransform.m);
-            AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
+        else if (player1.inventory[i] == ROCK) {
+            itemMesh = rockMesh;
+            itemTexture = rockTexture;
+        }
+
+        if (itemMesh && itemTexture) {
+            AEGfxTextureSet(itemTexture, 0, 0);
+
+            AEMtx33 itemTransform;
+            AEMtx33Identity(&itemTransform);
+            //AEMtx33Scale(&itemTransform, boxSize * 0.8f, boxSize * 0.8f);
+            AEMtx33TransApply(&itemTransform, &itemTransform, x, y);
+            AEGfxSetTransform(itemTransform.m);
+            AEGfxMeshDraw(itemMesh, AE_GFX_MDM_TRIANGLES);
         }
     }
-
-
 }
+
+
+
  
 bool PlayerEnemyCollision(Player& player1, Enemy& enemy, f32 tilesize) {
     // Assuming enemy.x, enemy.y is the center of the enemy rectangle.

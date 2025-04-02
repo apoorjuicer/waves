@@ -135,7 +135,8 @@ void createWorldItems(f32 tileSize) {
     }
 }
 
-void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture,
+    AEGfxTexture* rockTexture) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
@@ -173,11 +174,16 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wall
             AEMtx33 transform = { 0 };
             AEMtx33Trans(&transform, item.x, item.y);
             AEGfxSetTransform(transform.m);
+            
+            AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+            AEGfxSetBlendMode(AE_GFX_BM_BLEND); // Enable transparency
 
             if (item.type == KEY) {
+                AEGfxTextureSet(rockTexture, 0, 0);
                 AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
             }
             else if (item.type == ROCK) {
+                AEGfxTextureSet(rockTexture, 0, 0);
                 AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
             }
         }
