@@ -49,7 +49,7 @@ void GameState2::Load() {
     rockMesh = rock::Rock_Mesh(48, 0x8B4513FF, 10.0f);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
-    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);

@@ -67,6 +67,9 @@ namespace PauseOverlay {
     void Draw() {
         if (!sPaused) return;
 
+        // Reset any lingering texture from previous draws
+        AEGfxTextureSet(nullptr, 0, 0);
+
         AEMtx33 t, scaleMtx, finalMtx;
 
         // Draw pause screen background (using player's world position as base)

@@ -159,24 +159,6 @@ bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 maz
 }
 
 
-//void addItemToInventory(Player& player1, InventoryItemType item) {
-//    for (int i{}; i < INVENTORY_SIZE; ++i) {
-//        if (player1.inventory[i] == NOTHING) {
-//            player1.inventory[i] = item;
-//            return;
-//         }
-//    }
-//}
-
-//bool isInventoryFull(const Player& player1) {
-//    for (int i = 0; i < INVENTORY_SIZE; ++i) {
-//        if (player1.inventory[i] == NOTHING) {
-//            return false;  // Found an empty slot
-//        }
-//    }
-//    return true;  // No empty slots, inventory is full
-//}
-
 void CheckItem(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     UNREFERENCED_PARAMETER(tileSize);
     UNREFERENCED_PARAMETER(mazeStartX);
@@ -313,6 +295,7 @@ void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh,
             AEGfxMeshDraw(itemMesh, AE_GFX_MDM_TRIANGLES);
         }
     }
+        AEGfxTextureSet(nullptr, 0, 0);
 }
 
 

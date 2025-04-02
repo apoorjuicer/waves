@@ -55,7 +55,7 @@ void GameState1::Load() {
     if (!this->keyTexture) {
         std::cerr << "Error: Failed to load key texture!" << std::endl;
     }
-    this->rockTexture = AEGfxTextureLoad("Assets/key.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
     if (!this->rockTexture) {
         std::cerr << "Error: Failed to load rock texture!" << std::endl;
     }
@@ -274,6 +274,11 @@ void GameState1::Draw() {
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh, keyTexture, rockTexture);
     DrawInventory(player, boxMesh, keyMesh, rockMesh, keyTexture, rockTexture);
 
+    AEMtx33 identityMtx;
+    AEMtx33Identity(&identityMtx);
+    AEGfxSetTransform(identityMtx.m);
+    AEGfxTextureSet(nullptr, 0, 0);
+        // Explicitly reset the texture after the loop finishes
     // If paused, overlay the pause menu on top
     if (PauseOverlay::IsPaused()) {
         PauseOverlay::Draw();
