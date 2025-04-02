@@ -78,8 +78,8 @@ void GameState3::Initialize() {
     AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
     AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, RockThrow);
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
-    AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
-    AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+    //AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
+    //AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
     AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
@@ -118,9 +118,6 @@ void GameState3::Update(f32 deltaTime) {
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
     }
 
-    // Reset the flag when SPACE is released
-    if (!AEInputCheckCurr(AEVK_SPACE)) {
-    }
     //debug
    /* if (AEInputCheckTriggered(AEVK_SPACE)) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
@@ -171,7 +168,7 @@ void GameState3::Update(f32 deltaTime) {
 
     if (winGame && !gameWinSoundPlayed)
     {
-        AudioManager::PlayAudio("Win", 10.0f, 1.0f, 0);
+        AudioManager::PlayAudio("Win", 1.0f, 1.0f, 0);
         gameWinSoundPlayed = true;  // Ensure it doesn't play again
     }
 }
