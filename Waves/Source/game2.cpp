@@ -80,8 +80,8 @@ void GameState2::Initialize() {
     AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
     AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, RockThrow);
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
-    AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
-    AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+    //AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
+    //AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
     AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
@@ -118,11 +118,9 @@ void GameState2::Update(f32 deltaTime) {
     if (AEInputCheckTriggered(AEVK_SPACE)) {
         // spawn a directional wave towards player mouse;
         spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
-    }
-    // Reset the flag when SPACE is released
-    if (!AEInputCheckCurr(AEVK_SPACE)) {
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
     }
+
     //debug
    /* if (AEInputCheckTriggered(AEVK_SPACE)) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
