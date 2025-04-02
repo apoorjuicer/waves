@@ -49,6 +49,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	// Initialize fonts globally
 	FontManager::InitializeFonts();
 
+	AEAudioGroup keyAudio = AEAudioCreateGroup();  // For background music
+	AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, keyAudio);
+	AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, keyAudio);
+
 	GameStateManager gameStateManager;
 	gameStateManager.SetGameRunningPtr(&gGameRunning); // Provide the pointer to GSM
 
@@ -82,8 +86,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		AESysFrameEnd();
 	}
 
-	// Shutdown and free fonts
+	// Shutdown audio and free fonts
 	FontManager::ShutdownFonts();
+	AudioManager::ShutdownAllAudio();
 
 	// free the system
 	AESysExit();

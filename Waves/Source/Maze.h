@@ -49,8 +49,10 @@ constexpr float TILE_SIZE = 100.0f;
 //    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
 //};
 
-// File I/O function prototypes:
+// File I/O data reading:
 bool ImportMapDataFromFile(const std::string& filename);
+// File I/O clearing data
+void ClearMazeData();
 // void Import_MapData(void);
 void createWorldItems(f32 tileSize);
 // print maze to std::cout;

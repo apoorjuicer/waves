@@ -33,6 +33,8 @@ gameWinSoundPlayed(false)// Declare this outside the game loop
 {}
 
 void GameState1::Load() {
+    ClearMazeData(); // Ensure old maze is wiped
+
     worldItems.clear();
     if (!ImportMapDataFromFile("Assets/Maze1.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
@@ -107,8 +109,8 @@ void GameState1::Initialize() {
     AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
     AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, RockThrow);
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
-    AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
-    AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
+    //AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
+    //AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
 	AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     PauseOverlay::Init();
