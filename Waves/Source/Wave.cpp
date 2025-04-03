@@ -919,7 +919,7 @@ void DirectionalWave::update() {
 
 	// check if wave has grown to max_size;
 	if (scale.x >= max_size || scale.y >= max_size) {
-		f32 move = (growth_rate / GROWTH_R - 1.f) * 0.8;
+		f32 move = (growth_rate / GROWTH_R - 1.f) * 0.8f;
 
 		switch (direction) {
 		case DIR_LEFT:
@@ -947,8 +947,8 @@ void DirectionalWave::update() {
 		scale.y += growth_rate * dt;
 	}
 	else {
-		scale.x += growth_rate * dt * 0.1;
-		scale.y += growth_rate * dt * 0.1;
+		scale.x += growth_rate * dt * 0.1f;
+		scale.y += growth_rate * dt * 0.1f;
 	}
 	growth_rate *= 1.05f;
 
