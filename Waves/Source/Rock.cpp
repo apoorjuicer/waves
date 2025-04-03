@@ -97,12 +97,12 @@ namespace rock {
     f32 rockThrowSoundTimer = 0.0f; // Timer for the rock throw sound
     const f32 rockThrowSoundDuration = 0.3f; // Duration to play the sound (in seconds)
 
-    void drawRock(Player& rplayer, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock1) {
+    void drawRock(Player& rplayer, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock1, AEGfxVertexList* rockMesh, AEGfxTexture* rockTexture) {
         f32 rockRad = 10.0f;
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
         AEVec2 mouseWorld{ 0.0f, 0.0f };
-        static AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
+        //AEGfxVertexList* RockMesh = Rock_Mesh(48, 0xFFFFFFFF, 10.0f);
 
         // Check if the player has a rock in their inventory
         bool hasRock = false;
@@ -220,8 +220,11 @@ namespace rock {
             // Draw the rock at its current position
             AEMtx33 transform = { 0 };
             AEMtx33Trans(&transform, rock.x, rock.y);
+            AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
             AEGfxSetTransform(transform.m);
-            AEGfxMeshDraw(RockMesh, AE_GFX_MDM_TRIANGLES);
+            AEGfxTextureSet(rockTexture, 0, 0);
+            AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
+            AEGfxTextureSet(nullptr, 0, 0);
         }
     }
 

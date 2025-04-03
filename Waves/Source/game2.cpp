@@ -26,7 +26,7 @@ namespace {
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
-goalMesh(nullptr), boxMesh(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
+goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {}
 
 void GameState2::Load() {
@@ -45,9 +45,11 @@ void GameState2::Load() {
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     enemyMesh = createEnemyMesh(0xFFFF0000);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
-    keyMesh = rock::Rock_Mesh(48, 0xFFFFD700, 10.0f);
-    rockMesh = rock::Rock_Mesh(48, 0x8B4513FF, 10.0f);
+    keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
+    rockMesh = CreateSquareMesh(30.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
+    this->keyTexture = AEGfxTextureLoad("Assets/key.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
@@ -187,14 +189,14 @@ void GameState2::Update(f32 deltaTime) {
 void GameState2::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     if (!PauseOverlay::IsPaused()) {
-        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
+        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
     }
     RenderMesh(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
 
-    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh);
+    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh, keyTexture, rockTexture);
     RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();
@@ -221,7 +223,7 @@ void GameState2::Draw() {
     // ---------------------------------------------------
     RenderPlayer(player, PlayerMesh);
 
-    DrawInventory(player, boxMesh, keyMesh, rockMesh);
+    DrawInventory(player, boxMesh, keyMesh, rockMesh, keyTexture, rockTexture);
 
     // If paused, overlay the pause menu on top
     if (PauseOverlay::IsPaused()) {
@@ -245,6 +247,8 @@ void GameState2::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
+    AEGfxTextureUnload(keyTexture);
+    AEGfxTextureUnload(rockTexture);
     worldItems.clear();
 
     for (int i{};i < INVENTORY_SIZE;++i) {

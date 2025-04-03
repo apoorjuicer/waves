@@ -128,16 +128,14 @@ void createWorldItems(f32 tileSize) {
     }
 }
 
-void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh) {
+void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize,
+    AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh,
+    AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture,
+    AEGfxTexture* rockTexture) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
-
-    //for (int i = 0; i < INVENTORY_SIZE; ++i) {
-    //    std::cout << player.inventory[i] << " ";  // Output each item type in the inventory
-    //}
-    //std::cout << std::endl;
 
     for (int y = 0; y < MAX_ROW; ++y) {
         for (int x = 0; x < MAX_COL; ++x) {
@@ -147,6 +145,7 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wall
 
             AEMtx33 transform = { 0 };
             AEMtx33Trans(&transform, posX, posY);
+            AEGfxSetRenderMode(AE_GFX_RM_COLOR);
             AEGfxSetTransform(transform.m);
             // Draw walls or paths
             if (maze1[y][x] == 1) {
@@ -158,24 +157,35 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wall
         }
     }
 
-    //std::cout << "World items info: ";
-    //    int i{ 1 };
+    f32 time = static_cast<f32>(AEGetTime(nullptr));
+
     for (const auto& item : worldItems) {
-        //std::cout << i++ << "." << item.type << ", x:" << item.x << ", y:" << item.y<<", collected?"<< item.collected << std::endl;
+        std::cout << "." << item.type << ", x:" << item.x << ", y:" << item.y<<", collected?"<< item.collected << std::endl;
         if (!item.collected) {
+            f32 bobbingOffset = (item.type == KEY) ? sin(time * 2.0f) * 5.0f : 0.0f;
+
             AEMtx33 transform = { 0 };
-            AEMtx33Trans(&transform, item.x, item.y);
+            AEMtx33Trans(&transform, item.x, item.y + bobbingOffset);
+            AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
             AEGfxSetTransform(transform.m);
 
             if (item.type == KEY) {
+                AEGfxTextureSet(keyTexture, 0, 0);
                 AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
             }
             else if (item.type == ROCK) {
+                AEGfxTextureSet(rockTexture, 0, 0);
                 AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
             }
+            // Reset state to prevent carry-over
+            AEMtx33Identity(&transform);
+            AEGfxSetTransform(transform.m);
+            AEGfxTextureSet(nullptr, 0, 0);
         }
     }
+
 }
+
 
 AEGfxVertexList* CreateSquareMesh(float size, u32 color)
 {

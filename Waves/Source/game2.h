@@ -47,6 +47,8 @@ private:
     AEGfxVertexList* goalMesh = nullptr;
     AEGfxVertexList* boxMesh = nullptr;
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
+    AEGfxTexture* keyTexture;
+    AEGfxTexture* rockTexture;
     int prevDestX = -1;
     int prevDestY = -1;
     bool gameOverSoundPlayed = false;  // Declare this outside the game loop
