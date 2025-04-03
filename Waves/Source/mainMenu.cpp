@@ -18,7 +18,7 @@ Technology is prohibited.
 #include "mainMenu.h"
 
 MainMenuState::MainMenuState()
-    : startGame(false), menu(false), pGameRunning(nullptr), menuFont(-1), buttonFont(-1),
+    : startGame(false), guide(false), setting(false), pGameRunning(nullptr), menuFont(-1), buttonFont(-1),
     playButtonMesh(nullptr), guideButtonMesh(nullptr), exitButtonMesh(nullptr), creditButtonMesh(nullptr), settingButtonMesh(nullptr) {}
 
 void MainMenuState::Load() {
@@ -44,10 +44,13 @@ void MainMenuState::Load() {
 void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
-    menu = false;
+    guide = false;
+	setting = false;
     waitingForMouseRelease = true;
     AEGfxSetCamPosition(0.0f, 0.0f);
     AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
+
+    SettingsOverlay::Init();
 }
 
 void MainMenuState::Update(f32 deltaTime) {
@@ -63,6 +66,11 @@ void MainMenuState::Update(f32 deltaTime) {
             waitingForMouseRelease = false;
         }
         return;
+    }
+
+    if (SettingsOverlay::IsVisible()) {
+        SettingsOverlay::Update();
+        return; // Don't continue menu logic when settings are open
     }
 
     // Only check clicks when the left mouse button is triggered.
@@ -98,7 +106,7 @@ void MainMenuState::Update(f32 deltaTime) {
 
             if (IsMouseInsideButtonNDC(centerX_NDC, centerY_NDC, textW, textH))
             {
-                menu = true;
+                guide = true;
             }
         }
 
@@ -133,6 +141,8 @@ void MainMenuState::Update(f32 deltaTime) {
             {
                 // Trigger the Settings state here, for example:
                 // currentState = SETTINGS_STATE;
+                SettingsOverlay::Toggle();
+				setting = true;
             }
         }
 
@@ -273,6 +283,8 @@ void MainMenuState::Draw() {
         f32 ExitTextY_NDC = ExitCenterY_NDC - (ExitTextHeightNDC * 0.5f);
         AEGfxPrint(buttonFont, "Exit Game", ExitTextX_NDC, ExitTextY_NDC, 1.0f, Exit_r, Exit_g, Exit_b, 1.0f);
     }
+
+    SettingsOverlay::Draw();
 }
 
 void MainMenuState::Free() {
@@ -296,6 +308,7 @@ void MainMenuState::Free() {
         AEGfxMeshFree(exitButtonMesh);
         exitButtonMesh = nullptr;
     }
+    SettingsOverlay::Free();
 }
 
 void MainMenuState::Unload() {
@@ -317,7 +330,7 @@ BaseState* MainMenuState::GetNextState() {
         //return new GameState1();
         //return new gamePreview();
     }
-    if (menu) {
+    if (guide) {
         return new instructionState();
     }
     return nullptr;
