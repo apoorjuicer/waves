@@ -709,6 +709,10 @@ void DirectionalWave::echolocation(f32 tilesize, Outline(&outlines)[MAX_NUM_OUTL
 							l_maxlen.x = (l_temp.x > dir_wave_max) ? dir_wave_max : l_maxlen.x;
 							l_maxlen.y = (l_temp.y > dir_wave_max) ? dir_wave_max : l_maxlen.y;
 						}
+						else {
+							l_maxlen.x = (l_temp.x > max_size) ? max_size : l_maxlen.x;
+							l_maxlen.y = (l_temp.y > max_size) ? max_size : l_maxlen.y;
+						}
 
 						switch (direction) {
 						case DIR_DOWN:
@@ -757,6 +761,10 @@ void DirectionalWave::echolocation(f32 tilesize, Outline(&outlines)[MAX_NUM_OUTL
 						if (direction == DIR_LEFT || direction == DIR_RIGHT) {
 							l_maxlen.x = (l_temp.x > dir_wave_max) ? dir_wave_max : l_maxlen.x;
 							l_maxlen.y = (l_temp.y > dir_wave_max) ? dir_wave_max : l_maxlen.y;
+						}
+						else {
+							l_maxlen.x = (l_temp.x > max_size) ? max_size : l_maxlen.x;
+							l_maxlen.y = (l_temp.y > max_size) ? max_size : l_maxlen.y;
 						}
 
 						switch (direction) {
