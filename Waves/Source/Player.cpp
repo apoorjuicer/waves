@@ -303,7 +303,7 @@ void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh, AEGfxVertexL
 
 }
  
-bool PlayerEnemyCollision(Player& player1, Enemy& enemy, f32 tilesize) {
+bool PlayerEnemyCollision(Player& player1,Enemy& enemy, f32 tilesize) {
     // Assuming enemy.x, enemy.y is the center of the enemy rectangle.
     f32 halfWidth = tilesize * 0.5f;
     f32 halfHeight = tilesize * 0.5f;

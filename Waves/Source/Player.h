@@ -37,7 +37,10 @@ struct WorldItem {
 
 const int INVENTORY_SIZE = 3;
 
-struct Enemy;
+//struct Enemy;
+
+class Enemy;
+
 
 struct Player {
     f32 x, y, rad=10.0f;  // Position in world space

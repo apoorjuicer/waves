@@ -21,7 +21,7 @@ Technology is prohibited.
 bool waveSpawned = false;  // Flag to track if the wave has been spawned
 std::vector<WorldItem> worldItems;
 
-namespace {
+namespace{
     Enemy enemy1;
 }
 
@@ -57,7 +57,9 @@ void GameState1::Load() {
     wave_meshes[2] = Create_LineMesh();
     createWorldItems(tilesize);
 
-    setEnemyPatrol(enemy1, maze);
+    //setEnemyPatrol(enemy,1maze);
+    enemy1.setEnemyPatrol(maze);
+
 
     //debug print maze
   /*  for (int i = 0;i < MAX_ROW;i++) {
@@ -128,22 +130,22 @@ void GameState1::Update(f32 deltaTime) {
 
 
     //debug
-    print_debug(enemy1);
+    //enemy1.print_debug();
     if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;
-        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+        std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
     }
     if (AEInputCheckCurr(AEVK_2)) {
         enemy1.state = PATROL;
-        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+        std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
     }
     if (AEInputCheckCurr(AEVK_3)) {
         enemy1.state = PURSUIT_PLAYER;
-        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+        std::cout << "state changed to :" << enemy1. GetEnemyStateName() << "\n";
     }
     if (AEInputCheckCurr(AEVK_4)) {
         enemy1.state = PURSUIT_ROCK;
-        std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
+        std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
     }
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
@@ -171,8 +173,7 @@ void GameState1::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    UpdateEnemystate(enemy1, deltaTime, enemy_wave,wave_meshes);
-    //enemy1.enemy_wave(enemy_wave, wave_meshes);
+    enemy1.UpdateEnemystate(deltaTime, enemy_wave,wave_meshes);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();

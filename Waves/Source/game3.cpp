@@ -20,7 +20,7 @@ Technology is prohibited.
 #include "game3.h"
 
 namespace {
-    Enemy enemy3;
+   Enemy enemy3;
 }
 
 GameState3::GameState3() : exitGame(false), winGame(false), tilesize(100.0f),
@@ -53,6 +53,9 @@ void GameState3::Load() {
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
     wave_meshes[2] = Create_LineMesh();
     createWorldItems(tilesize);
+
+
+    enemy3.setEnemyPatrol(maze);
 }
 
 void GameState3::Initialize() {
@@ -63,16 +66,23 @@ void GameState3::Initialize() {
     player.y = -100.f;
 
     player.inventory[0] = ROCK;
-    enemy3.x = 100.f;
-    enemy3.y = -700.f;
-    enemy3.startPatrol = { 1,7 };
-    enemy3.endPatrol = { 8,7 };
+    //enemy3.x = 100.f;
+    //enemy3.y = -700.f;
+    //enemy3.startPatrol = { 1,7 };
+    //enemy3.endPatrol = { 8,7 };
+
+    enemy3.startPatrol = enemy3.patrolPath.front();
+    enemy3.endPatrol = enemy3.patrolPath.back();
+    enemy3.x = enemy3.startPatrol.first * TILE_SIZE;
+    enemy3.y = enemy3.startPatrol.second * -TILE_SIZE;
+
     // enemy1.state = PATROL;
-    enemy3.state = IDLE;
+    enemy3.state = PATROL;
+    enemy3.previousState = PATROL;
     //enemy1.state = IDLE;
    // enemy1.state = PURSUIT_ROCK;
 
-    enemy3.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
+   // enemy3.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
     enemy3.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
     AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
@@ -125,8 +135,8 @@ void GameState3::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
-    //enemy1.enemy_wave(enemy_wave, wave_meshes);
+    //UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
+    enemy3.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
