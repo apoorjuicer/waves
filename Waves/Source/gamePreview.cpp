@@ -158,5 +158,7 @@ BaseState* gamePreview::GetNextState() {
         return goGame ? new GameState2() : nullptr;
     case 3:
         return goGame ? new GameState3() : nullptr;
+	default:
+        return nullptr;
     }
 }
