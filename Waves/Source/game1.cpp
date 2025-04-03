@@ -237,7 +237,7 @@ void GameState1::Update(f32 deltaTime) {
 void GameState1::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
 	if (!PauseOverlay::IsPaused()) {
-		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
+		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
 	}
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 

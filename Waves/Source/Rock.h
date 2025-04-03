@@ -35,13 +35,13 @@ Technology is prohibited.
 #include "Maze.h"
 #include "Audio.h"
 #include <cmath>      // for std::floor
-#include <iostream>   // for std::cout
+#include <iostream>   // for std::couts
 struct Rock {
     float x, y, dx, dy;  // Position in world space
     int currBounce, maxBounce;
 };
 
 namespace rock {
-	void drawRock(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave (&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock);
+	void drawRock(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave (&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock, AEGfxVertexList* rockMesh, AEGfxTexture* rockTexture);
     AEGfxVertexList* Rock_Mesh(int NumOfSlices, u32 colour, f32 radius);
 }

@@ -45,8 +45,8 @@ void GameState2::Load() {
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     enemyMesh = createEnemyMesh(0xFFFF0000);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
-    keyMesh = rock::Rock_Mesh(48, 0xFFFFD700, 10.0f);
-    rockMesh = rock::Rock_Mesh(48, 0x8B4513FF, 10.0f);
+    keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
+    rockMesh = CreateSquareMesh(30.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
     this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
@@ -182,7 +182,7 @@ void GameState2::Update(f32 deltaTime) {
 void GameState2::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     if (!PauseOverlay::IsPaused()) {
-        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
+        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
     }
     RenderMesh(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
 
@@ -240,6 +240,8 @@ void GameState2::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
+    AEGfxTextureUnload(keyTexture);
+    AEGfxTextureUnload(rockTexture);
     worldItems.clear();
 
     for (int i{};i < INVENTORY_SIZE;++i) {

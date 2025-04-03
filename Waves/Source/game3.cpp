@@ -45,11 +45,17 @@ void GameState3::Load() {
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     enemyMesh = createEnemyMesh(0xFFFF0000);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
-    keyMesh = rock::Rock_Mesh(48, 0xFFFFD700, 10.0f);
-    rockMesh = rock::Rock_Mesh(48, 0x8B4513FF, 10.0f);
+    keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
+    rockMesh = CreateSquareMesh(30.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
-    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
+    if (!this->keyTexture) {
+        std::cerr << "Error: Failed to load key texture!" << std::endl;
+    }
+    this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
+    if (!this->rockTexture) {
+        std::cerr << "Error: Failed to load rock texture!" << std::endl;
+    }
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
@@ -181,7 +187,7 @@ void GameState3::Update(f32 deltaTime) {
 void GameState3::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     if (!PauseOverlay::IsPaused()) {
-        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock);
+        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
 	}
     RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
 
@@ -239,6 +245,8 @@ void GameState3::Free() {
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);
     AEGfxMeshFree(boxMesh);
+    AEGfxTextureUnload(keyTexture);
+    AEGfxTextureUnload(rockTexture);
     worldItems.clear();
 
     for (int i{};i < INVENTORY_SIZE;++i) {

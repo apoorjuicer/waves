@@ -145,6 +145,7 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize,
 
             AEMtx33 transform = { 0 };
             AEMtx33Trans(&transform, posX, posY);
+            AEGfxSetRenderMode(AE_GFX_RM_COLOR);
             AEGfxSetTransform(transform.m);
             // Draw walls or paths
             if (maze1[y][x] == 1) {
@@ -161,8 +162,10 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize,
     for (const auto& item : worldItems) {
         std::cout << "." << item.type << ", x:" << item.x << ", y:" << item.y<<", collected?"<< item.collected << std::endl;
         if (!item.collected) {
+            f32 bobbingOffset = (item.type == KEY) ? sin(time * 2.0f) * 5.0f : 0.0f;
+
             AEMtx33 transform = { 0 };
-            AEMtx33Trans(&transform, item.x, item.y);
+            AEMtx33Trans(&transform, item.x, item.y + bobbingOffset);
             AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
             AEGfxSetTransform(transform.m);
 

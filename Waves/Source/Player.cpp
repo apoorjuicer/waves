@@ -86,6 +86,7 @@ void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32
     AEMtx33Concat(&transformDonut, &translateDonut, &transformDonut);
 
     // Apply the transform and draw the mesh
+    AEGfxSetRenderMode(AE_GFX_RM_COLOR);
     AEGfxSetTransform(transformDonut.m);
     AEGfxMeshDraw(NameOfMesh, AE_GFX_MDM_TRIANGLES);
 }
