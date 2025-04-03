@@ -154,7 +154,7 @@ namespace {// Utility Functions
 		//std::cout << "Enemy Grid Pos is : [" << enemyIndex.first << "," << enemyIndex.second << "]\n";
 		//astarsearch(maze, enemyIndex, e.startPatrol, e.path);
 		if (astarsearch(maze, enemyIndex, e.startPatrol, e.path) == Path::NO_PATH) {
-			//std::cout << "Path find Error MovetoPatrolpoint\n";
+			std::cout << "Path find Error MovetoPatrolpoint\n";
 			for (Pair p : e.patrolPath) {
 				//std::cout << ": [" << p.first << "," << p.second<< "]\n";
 			}
@@ -408,7 +408,7 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 
 			//astarsearch(maze, src, dest, e.path);
 			if (astarsearch(maze, src, dest, e.path) == Path::NO_PATH) {
-				//std::cout << "No path pursuit_rock";
+				std::cout << "No path pursuit_rock";
 			}
 
 			// Update previous destination
@@ -417,12 +417,18 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 		}
 		// Move enemy if enough time has passed
 		if (accumulatedTime >= updateInterval) {
-			if (e.pathIndex < e.path.size()) {
+			//if (e.pathIndex < e.path.size()) {
+			if (!e.path.empty() && e.pathIndex < e.path.size()) {
+				//std::cout << "move this enemy";
 				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
-				//e.printPosition();
+				e.printPosition();
 			}
 			accumulatedTime = 0.0f;
 		}
+
+		//std::cout << accumulatedTime<<"\n";
+
+		//std::cout << updateInterval << "\n";
 		break;
 
 	}
@@ -436,6 +442,16 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 			<< " to " << GetEnemyStateName(e.state) << "\n";*/
 		e.path.clear();      // Clear old path when switching states
 		e.pathIndex = 0;     // Reset path index
+
+		//// Reset timer on state change
+		//switch (e.state) {
+		//case IDLE:          e.stateTimer = e.idle_timer; break;
+		//case PATROL:        e.stateTimer = e.patrol_timer; break;
+		//case PURSUIT_PLAYER:
+		//case PURSUIT_ROCK:  e.stateTimer = e.pursuit_timer; break;
+		//}
+
+
 		e.previousState = e.state;  // Update previous state
 	}
 
@@ -445,20 +461,20 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 	int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 	e.enemy_wave(MainWaves, mesh);
 
-	//const float IDLE_TIME = 2.0f;       // Time to stay idle
-	//const float PATROL_TIME = 20.0f;     // Time to stay patrol 
-	//const float PURSUIT_TIME = 3.0f;    // Time to pursue rock
+	const float IDLE_TIME = e.idle_timer;       // Time to stay idle
+	const float PATROL_TIME = e.patrol_timer;     // Time to stay patrol 
+	const float PURSUIT_TIME = e.pursuit_timer;    // Time to pursue rock
 
-	 float IDLE_TIME = e.idle_timer;       // Time to stay idle
-	 float PATROL_TIME = e.patrol_timer;     // Time to stay patrol 
-	 float PURSUIT_TIME = e.pursuit_timer;    // Time to pursue rock
+	// float IDLE_TIME = e.idle_timer;       // Time to stay idle
+	 //float PATROL_TIME = e.patrol_timer;     // Time to stay patrol 
+	 //float PURSUIT_TIME = e.pursuit_timer;    // Time to pursue rock
 
 	e.stateTimer -= dt;
 
 	switch (e.state) {
 	case IDLE:
-	
-			if (seeRock(e, sightRangeRock)) {
+
+			if (seeRock(e, sightRangeRock) && e.state != PURSUIT_ROCK) {
 				e.state = PURSUIT_ROCK;
 				e.stateTimer = PURSUIT_TIME;
 			}
@@ -474,14 +490,13 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 		
 		break;
 	case PATROL:
-	
-			if (seeRock(e, sightRangeRock)) {
+			if (seeRock(e, sightRangeRock) && e.state != PURSUIT_ROCK) {
 				e.state = PURSUIT_ROCK;
 				e.stateTimer = PURSUIT_TIME;
 			}
 			else if (seePlayer(e, sightRangePlayer)) {
 				e.state = PURSUIT_PLAYER;
-				//e.stateTimer = PURSUIT_TIME;
+				e.stateTimer = PURSUIT_TIME;
 			}
 			else if (e.stateTimer <= 0.0f) { //idle
 				e.state = IDLE;
@@ -493,22 +508,19 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 
 			break;
 	case PURSUIT_PLAYER:
-	
-			if (seeRock(e, sightRangeRock)) {
+			if (seeRock(e, sightRangeRock) && e.state!=PURSUIT_ROCK) {
 				e.state = PURSUIT_ROCK;
-				e.stateTimer = PURSUIT_TIME;
+				
 			}
 			else if (!seePlayer(e, sightRangePlayer) && (e.stateTimer <= 0.0f)) { //player zao alr
 				e.state = PATROL;
-				e.stateTimer = PATROL_TIME;
 			}
 			
 		break;
 	case PURSUIT_ROCK:
-
 			if (e.gridX == destX && e.gridY == destY) {
 				//std::cout << "Enemy reached the rock!\n";
-				if (seePlayer(e, sightRangePlayer)) {
+				if (seePlayer(e, sightRangePlayer) && e.state != PURSUIT_PLAYER) {
 					e.state = PURSUIT_PLAYER;
 					e.stateTimer = PURSUIT_TIME;
 					//std::cout << "Switching to PURSUIT_PLAYER.\n";
@@ -518,11 +530,11 @@ void UpdateEnemystate(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxV
 					e.stateTimer = IDLE_TIME;
 				}
 			}
-			else if (seePlayer(e, sightRangePlayer)) {
+			else if (seePlayer(e, sightRangePlayer) && e.state != PURSUIT_PLAYER) {
 				e.state = PURSUIT_PLAYER;
 				e.stateTimer = PURSUIT_TIME;
 			}
-			else if (!seePlayer(e, sightRangePlayer) && (e.stateTimer <= 0.0f)) { //player zao alr
+			else if (!seePlayer(e, sightRangePlayer) && e.stateTimer <= 0.0f) { //player zao alr
 				e.state = PATROL;
 				e.stateTimer = PATROL_TIME;
 
@@ -584,4 +596,10 @@ std::string GetEnemyStateName(Enemy_State state) {
 	case PURSUIT_ROCK: return "PURSUIT_ROCK";
 	default: return "UNKNOWN_STATE,error";
 	}
+}
+
+void print_debug(Enemy& e) {
+	std::cout << GetEnemyStateName(e.state) << "\n";
+	//e.printPosition();
+	std::cout << "state timer:" << e.stateTimer << "\n";
 }
