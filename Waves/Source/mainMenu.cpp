@@ -18,7 +18,7 @@ Technology is prohibited.
 #include "mainMenu.h"
 
 MainMenuState::MainMenuState()
-    : startGame(false), guide(false), setting(false), pGameRunning(nullptr), menuFont(-1), buttonFont(-1),
+    : startGame(false), guide(false), credit(false), setting(false), pGameRunning(nullptr), menuFont(-1), buttonFont(-1),
     playButtonMesh(nullptr), guideButtonMesh(nullptr), exitButtonMesh(nullptr), creditButtonMesh(nullptr), settingButtonMesh(nullptr) {}
 
 void MainMenuState::Load() {
@@ -45,6 +45,7 @@ void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
     guide = false;
+	credit = false;
 	setting = false;
     waitingForMouseRelease = true;
     AEGfxSetCamPosition(0.0f, 0.0f);
@@ -124,6 +125,7 @@ void MainMenuState::Update(f32 deltaTime) {
             {
                 // Trigger the Credit state here, for example:
                 // currentState = CREDIT_STATE;
+				credit = true;
             }
         }
 
@@ -321,17 +323,17 @@ void MainMenuState::Unload() {
         buttonFont = -1;
     }*/
     AudioManager::UnloadAudio("MainMenu");
-
 }
 
 BaseState* MainMenuState::GetNextState() {
     if (startGame) {
         return new LevelSelectState();
-        //return new GameState1();
-        //return new gamePreview();
     }
     if (guide) {
         return new instructionState();
+    }
+    if (credit) {
+        return new creditState();
     }
     return nullptr;
 }

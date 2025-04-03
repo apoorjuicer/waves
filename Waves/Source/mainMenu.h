@@ -26,11 +26,13 @@ Technology is prohibited.
 #include "Player.h"
 #include "utility.h"
 #include "settingsOverlay.h"
+#include "credits.h"
 
 class MainMenuState : public BaseState {
 private:
     bool startGame = false;
     bool guide = false;
+	bool credit = false;
 	bool setting = false;
     int* pGameRunning; // <-- Pointer to gGameRunning
     s8 menuFont;
