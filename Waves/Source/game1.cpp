@@ -314,7 +314,7 @@ BaseState* GameState1::GetNextState() {
         return new LoseState();
     }
     if (winGame) {
-        return new gameTransition(new GameState2());
+        return new gameTransition(new gamePreview(2));
     }
     return nullptr;  // Stay in the current state if nothing changes
 }

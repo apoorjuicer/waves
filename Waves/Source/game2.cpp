@@ -264,7 +264,7 @@ BaseState* GameState2::GetNextState() {
         return new LoseState();
     }
     if (winGame) {
-        return new gameTransition(new GameState3());
+        return new gameTransition(new gamePreview(3));
     }
     return nullptr;
 }

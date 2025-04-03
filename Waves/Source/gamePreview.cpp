@@ -18,19 +18,15 @@ Technology is prohibited.
 
 #include "gamePreview.h"
 
-gamePreview::gamePreview(int i) : goGame(false), previewFont(-1), maze1(nullptr), maze1_mesh(nullptr), okButtonMesh(nullptr), level_num{ i } {}
+gamePreview::gamePreview(int i) : goGame(false), previewFont(-1), maze1_mesh(nullptr), okButtonMesh(nullptr), level_num{ i } {}
 
 void gamePreview::Load() {
+    AEGfxSetCamPosition(0, 0);
+
     AEGfxSetBackgroundColor(0.3f, 0.3f, 0.3f);
 
     //previewFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
     previewFont = FontManager::GetFont("NunitoBold70");
-
-    maze1 = AEGfxTextureLoad("Assets/Maze1.png");
-
-    if (maze1 == NULL) {
-        printf("ERROR: Failed to load texture 'Assets/Maze1.png'\n");
-    }
 
     maze1_mesh = TextureMesh();
 
@@ -151,10 +147,6 @@ void gamePreview::Unload() {
 		AEGfxDestroyFont(previewFont);
 		previewFont = -1;
 	}*/
-	if (maze1) {
-		AEGfxTextureUnload(maze1);
-		maze1 = nullptr;
-	}
 }
 
 BaseState* gamePreview::GetNextState() {
