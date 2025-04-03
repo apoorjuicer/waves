@@ -315,7 +315,7 @@ BaseState* MainMenuState::GetNextState() {
     if (startGame) {
         return new LevelSelectState();
         //return new GameState1();
-        // return new gamePreview();
+        //return new gamePreview();
     }
     if (menu) {
         return new instructionState();

@@ -136,6 +136,7 @@ void GameState1::Update(f32 deltaTime) {
 
 
     //debug
+   // print_debug(enemy1);
     if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;
         std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";
@@ -329,7 +330,7 @@ BaseState* GameState1::GetNextState() {
         return new LoseState();
     }
     if (winGame) {
-        return new gameTransition(new GameState2());
+        return new gameTransition(new gamePreview(2));
     }
     return nullptr;  // Stay in the current state if nothing changes
 }

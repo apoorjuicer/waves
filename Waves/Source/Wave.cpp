@@ -709,6 +709,10 @@ void DirectionalWave::echolocation(f32 tilesize, Outline(&outlines)[MAX_NUM_OUTL
 							l_maxlen.x = (l_temp.x > dir_wave_max) ? dir_wave_max : l_maxlen.x;
 							l_maxlen.y = (l_temp.y > dir_wave_max) ? dir_wave_max : l_maxlen.y;
 						}
+						else {
+							l_maxlen.x = (l_temp.x > max_size) ? max_size : l_maxlen.x;
+							l_maxlen.y = (l_temp.y > max_size) ? max_size : l_maxlen.y;
+						}
 
 						switch (direction) {
 						case DIR_DOWN:
@@ -757,6 +761,10 @@ void DirectionalWave::echolocation(f32 tilesize, Outline(&outlines)[MAX_NUM_OUTL
 						if (direction == DIR_LEFT || direction == DIR_RIGHT) {
 							l_maxlen.x = (l_temp.x > dir_wave_max) ? dir_wave_max : l_maxlen.x;
 							l_maxlen.y = (l_temp.y > dir_wave_max) ? dir_wave_max : l_maxlen.y;
+						}
+						else {
+							l_maxlen.x = (l_temp.x > max_size) ? max_size : l_maxlen.x;
+							l_maxlen.y = (l_temp.y > max_size) ? max_size : l_maxlen.y;
 						}
 
 						switch (direction) {
@@ -1168,14 +1176,14 @@ AEGfxVertexList* Create_SemiCircle_Mesh(f32 outerRadius, f32 innerRadius, int nu
 
 		// Add two triangles to form a quad between the inner and outer rings
 		AEGfxTriAdd(
-			x1_inner, y1_inner, 0xFF888888, 0.0f, 1.0f,  // Inner vertex 1
+			x1_inner, y1_inner, 0xFFFFFFFF, 0.0f, 1.0f,  // Inner vertex 1
 			x2_outer, y2_outer, 0xFFFFFFFF, 1.0f, 0.0f,  // Outer vertex 2
 			x1_outer, y1_outer, 0xFFFFFFFF, 0.0f, 0.0f   // Outer vertex 1
 		);
 
 		AEGfxTriAdd(
-			x1_inner, y1_inner, 0xFF888888, 0.0f, 1.0f,  // Inner vertex 1
-			x2_inner, y2_inner, 0xFF888888, 1.0f, 1.0f,  // Inner vertex 2
+			x1_inner, y1_inner, 0xFFFFFFFF, 0.0f, 1.0f,  // Inner vertex 1
+			x2_inner, y2_inner, 0xFFFFFFFF, 1.0f, 1.0f,  // Inner vertex 2
 			x2_outer, y2_outer, 0xFFFFFFFF, 1.0f, 0.0f   // Outer vertex 2
 		);
 	}
@@ -1209,14 +1217,14 @@ AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegment
 
 		// Add two triangles to form a quad between the inner and outer rings
 		AEGfxTriAdd(
-			x1_inner, y1_inner, 0xFF888888, 0.0f, 1.0f,  // Inner vertex 1
+			x1_inner, y1_inner, 0xFFFFFFFF, 0.0f, 1.0f,  // Inner vertex 1
 			x2_outer, y2_outer, 0xFFFFFFFF, 1.0f, 0.0f,  // Outer vertex 2
 			x1_outer, y1_outer, 0xFFFFFFFF, 0.0f, 0.0f   // Outer vertex 1
 		);
 
 		AEGfxTriAdd(
-			x1_inner, y1_inner, 0xFF888888, 0.0f, 1.0f,  // Inner vertex 1
-			x2_inner, y2_inner, 0xFF888888, 1.0f, 1.0f,  // Inner vertex 2
+			x1_inner, y1_inner, 0xFFFFFFFF, 0.0f, 1.0f,  // Inner vertex 1
+			x2_inner, y2_inner, 0xFFFFFFFF, 1.0f, 1.0f,  // Inner vertex 2
 			x2_outer, y2_outer, 0xFFFFFFFF, 1.0f, 0.0f   // Outer vertex 2
 		);
 	}
@@ -1227,13 +1235,13 @@ AEGfxVertexList* CreateWaveMesh(f32 outerRadius, f32 innerRadius, int numSegment
 AEGfxVertexList* Create_LineMesh() {
 
 	// skewed square;
-	AEGfxTriAdd(-0.5f, 0.0f, 0xFFFF0000, 0.0f, 1.0f,
-		-0.5f, 1.0f, 0xFFFF0000, 1.0f, 1.0f,
-		0.5f, 0.0f, 0xFFFF0000, 0.0f, 0.0f);		// bottom left aligned triangle;
+	AEGfxTriAdd(-0.5f, 0.0f, 0xFFFFFFFF, 0.0f, 1.0f,
+		-0.5f, 1.0f, 0xFFFFFFFF, 1.0f, 1.0f,
+		0.5f, 0.0f, 0xFFFFFFFF, 0.0f, 0.0f);		// bottom left aligned triangle;
 
-	AEGfxTriAdd(-0.5f, 1.0f, 0xFFFF0000, 1.0f, 1.0f,
-		0.5f, 1.0f, 0xFFFF0000, 1.0f, 0.0f,
-		0.5f, 0.0f, 0xFFFF0000, 0.0f, 0.0f);		// top right aligned triangle;
+	AEGfxTriAdd(-0.5f, 1.0f, 0xFFFFFFFF, 1.0f, 1.0f,
+		0.5f, 1.0f, 0xFFFFFFFF, 1.0f, 0.0f,
+		0.5f, 0.0f, 0xFFFFFFFF, 0.0f, 0.0f);		// top right aligned triangle;
 	return AEGfxMeshEnd();
 
 }

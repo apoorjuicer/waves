@@ -99,7 +99,7 @@ struct Enemy {
 	float stateTimer = 0;
 	float idle_timer = 3.f;
 	float patrol_timer =  10.f;
-	float pursuit_timer = 3.f;
+	float pursuit_timer = 4.f;
 	// Constructor initializes all members
 	Enemy() : x{ 100.f }, y{ -200.f }, gridX{ 1 }, gridY{ 1 }, w{ 50.f }, h{ 50.f }, state{ IDLE }
 		, previousState{IDLE} {}
@@ -164,7 +164,6 @@ struct Enemy {
 		}
 		
 		updateGridPosition();
-		//printPosition();
 	}
 	void updateGridPosition() {
 		/*gridX = static_cast<int>(round(x / TILE_SIZE));
@@ -194,6 +193,7 @@ std::vector<Pair> findPatrolPoints(int grid[MAX_ROW][MAX_COL]);
 void setEnemyPatrol(Enemy& enemy, int grid[MAX_ROW][MAX_COL]);
 std::string GetEnemyStateName(Enemy_State state);
 void printEnemyPatrolpoints(Enemy& e, int grid[MAX_ROW][MAX_COL]);
+void print_debug(Enemy& e);
 //class Enemy {
 //public:
 //	f32 x, y; //x y pos

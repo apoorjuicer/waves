@@ -159,13 +159,16 @@ void LevelSelectState::Unload() {
 BaseState* LevelSelectState::GetNextState() 
 {
     if (game1) {
-        return new GameState1();
+        //return new GameState1();
+        return new gamePreview(1);
     }
     if (game2) {
-        return new GameState2();
+        //return new GameState2();
+        return new gamePreview(2);
     }
     if (game3) {
-        return new GameState3();
+        //return new GameState3();
+        return new gamePreview(3);
     }
     if (back2main) {
         return new MainMenuState();
