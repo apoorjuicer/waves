@@ -128,7 +128,7 @@ void GameState1::Update(f32 deltaTime) {
 
 
     //debug
-   // print_debug(enemy1);
+    print_debug(enemy1);
     if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;
         std::cout << "state changed to :" << GetEnemyStateName(enemy1.state) << "\n";

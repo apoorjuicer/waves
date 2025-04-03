@@ -312,8 +312,16 @@ Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dst, std::vector<Pai
 		}
 	}//end of openlist check
 
+	//if (!path.empty()) {
+	//	std::cout << "Astar found path" << "\n";
+	//	return Path::PATH_FOUND;
+	//}
+	//else {
+	//	std::cout << "Astar NO path" << "\n";
+	//	return Path::NO_PATH;
+	//}
 
-	//printf("Pathfinding failed");
+	
 	return Path::NO_PATH;
 }
 
@@ -384,9 +392,7 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 		// Move enemy if enough time has passed
 		if (accumulatedTime >= updateInterval) {
 			if (!e.path.empty() && e.pathIndex < e.path.size()) {
-				//e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
-					e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
-			
+				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
 			}
 			accumulatedTime = 0.0f;
 		}
@@ -397,29 +403,27 @@ void EnemyState(Enemy& e,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexL
 		// If the destination (rock's position) has changed, recalculate the path
 		if (destX != prevDestX || destY != prevDestY) {
 			//std::cout << "Rock moved! Stopping enemy & recalculating path...\n";
-
 			e.path.clear();   // Clear old path
 			e.pathIndex = 0;  // Reset path index
 			e.x = srcX * TILE_SIZE;  // Stop enemy at current position
 			e.y = -srcY * TILE_SIZE; // Stop enemy at current position
-
 			Pair src = { srcX, srcY };
 			Pair dest = { destX, destY };
-
 			//astarsearch(maze, src, dest, e.path);
 			if (astarsearch(maze, src, dest, e.path) == Path::NO_PATH) {
 				std::cout << "No path pursuit_rock";
 			}
-
 			// Update previous destination
 			prevDestX = destX;
 			prevDestY = destY;
 		}
+			
+		std::cout << "Is path empty?" << e.path.empty() << "\n";
 		// Move enemy if enough time has passed
 		if (accumulatedTime >= updateInterval) {
 			//if (e.pathIndex < e.path.size()) {
 			if (!e.path.empty() && e.pathIndex < e.path.size()) {
-				//std::cout << "move this enemy";
+				std::cout << "move this enemy";
 				e.moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
 				e.printPosition();
 			}
