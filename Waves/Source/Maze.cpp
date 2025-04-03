@@ -128,7 +128,9 @@ void createWorldItems(f32 tileSize) {
     }
 }
 
-void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture,
+void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize,
+    AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh,
+    AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture,
     AEGfxTexture* rockTexture) {
     (void)pathMesh;
     // Calculate the top-left corner of the maze
@@ -154,46 +156,30 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wall
         }
     }
 
-    for (auto& item : worldItems) {
-        std::cout << "Item Type: " << item.type
-            << " | Position: (" << item.x << ", " << item.y << ")"
-            << " | Collected: " << (item.collected ? "Yes" : "No")
-            << std::endl;
+    f32 time = static_cast<f32>(AEGetTime(nullptr));
 
-        if (!item.collected) { // Only draw items that are not picked up
-
-            // Reset any lingering texture state
-            AEGfxTextureSet(nullptr, 0, 0);
-
-            // Build a clean transform from identity then apply translation.
-            AEMtx33 transform;
-            AEMtx33Identity(&transform);
-            AEMtx33TransApply(&transform, &transform, item.x, item.y);
+    for (const auto& item : worldItems) {
+        std::cout << "." << item.type << ", x:" << item.x << ", y:" << item.y<<", collected?"<< item.collected << std::endl;
+        if (!item.collected) {
+            AEMtx33 transform = { 0 };
+            AEMtx33Trans(&transform, item.x, item.y);
+            AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
             AEGfxSetTransform(transform.m);
 
-            // Debug: print transform matrix
-            std::cout << "Transform for item: "
-                << transform.m[0][0] << " " << transform.m[0][1] << " " << transform.m[0][2] << " | "
-                << transform.m[1][0] << " " << transform.m[1][1] << " " << transform.m[1][2] << " | "
-                << transform.m[2][0] << " " << transform.m[2][1] << " " << transform.m[2][2]
-                << std::endl;
-
-            // Set render settings for textured drawing.
-            AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-            AEGfxSetBlendMode(AE_GFX_BM_BLEND);
-
-            // Draw the item once.
             if (item.type == KEY) {
-                std::cout << "Drawing KEY at (" << item.x << ", " << item.y << ")" << std::endl;
+                AEGfxTextureSet(keyTexture, 0, 0);
                 AEGfxMeshDraw(keyMesh, AE_GFX_MDM_TRIANGLES);
             }
             else if (item.type == ROCK) {
-                std::cout << "Drawing ROCK at (" << item.x << ", " << item.y << ")" << std::endl;
+                AEGfxTextureSet(rockTexture, 0, 0);
                 AEGfxMeshDraw(rockMesh, AE_GFX_MDM_TRIANGLES);
             }
+            // Reset state to prevent carry-over
+            AEMtx33Identity(&transform);
+            AEGfxSetTransform(transform.m);
+            AEGfxTextureSet(nullptr, 0, 0);
         }
     }
-
 
 }
 
