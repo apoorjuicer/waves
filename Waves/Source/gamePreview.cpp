@@ -2,6 +2,7 @@
 /*!
 \file		gamePreview.cpp
 \author		Henrey Hu
+\co-author  Chewn Thing Kwan
 \email		zhihenghenrey.hu@digipen.edu
 
 \brief      This file defines the gamePreview class, which represents a preview state before entering the main game. 
@@ -17,7 +18,7 @@ Technology is prohibited.
 
 #include "gamePreview.h"
 
-gamePreview::gamePreview() : goGame(false), previewFont(-1), maze1(nullptr), maze1_mesh(nullptr), okButtonMesh(nullptr) {}
+gamePreview::gamePreview(int i) : goGame(false), previewFont(-1), maze1(nullptr), maze1_mesh(nullptr), okButtonMesh(nullptr), level_num{ i } {}
 
 void gamePreview::Load() {
     AEGfxSetBackgroundColor(0.3f, 0.3f, 0.3f);
@@ -34,6 +35,25 @@ void gamePreview::Load() {
     maze1_mesh = TextureMesh();
 
     okButtonMesh = CreateButtonMesh(0xFFFFFFFF);
+
+    // read file depending on which level selected;
+    switch (level_num) {
+    case 1:
+        if (!ImportMapDataFromFile("Assets/Maze1.txt")) {
+            std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
+        }
+        break;
+    case 2:
+        if (!ImportMapDataFromFile("Assets/Maze2.txt")) {
+            std::cerr << "Error: Failed to load maze file Assets/Maze2.txt. Quitting game.\n";
+        }
+        break;
+    case 3:
+        if (!ImportMapDataFromFile("Assets/Maze3.txt")) {
+            std::cerr << "Error: Failed to load maze file Assets/Maze3.txt. Quitting game.\n";
+        }
+        break;
+    }
 }
 
 void gamePreview::Initialize() {
@@ -57,48 +77,59 @@ void gamePreview::Update(f32 deltaTime) {
 }
 
 void gamePreview::Draw() {
-    AEGfxPrint(previewFont, "Maze Layout", -0.25f, 0.7f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+    // ======================================================================
+    // RENDER MAP PREVIEW
+    // ======================================================================
+    // find scale of each pixel depending on height of maze;
+    const f32 p_scale = (900.f - 400.f) / activeRow;
+    // find position of first pixel;
+    AEVec2 start_pos{};
+    start_pos.x = -((p_scale * activeCol / 2.f) - (p_scale / 2.f));
+    start_pos.y = (p_scale * activeRow / 2.f) - (p_scale / 2.f);
 
-    // Tell the Alpha Engine to get ready to draw something with texture.
-    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-
-    // Set the the color to multiply to white, so that the sprite can 
-    // display the full range of colors (default is black).
-    AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
-
-    // Set the color to add to nothing, so that we don't alter the sprite's color
-    AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
-
-    // Set blend mode to AE_GFX_BM_BLEND, which will allow transparency.
-    AEGfxSetBlendMode(AE_GFX_BM_BLEND);
-    AEGfxSetTransparency(1.0f);
-
-    // Tell Alpha Engine to use the texture stored in pTex
-    AEGfxTextureSet(maze1, 0, 0);
-
-    // Create a 3x3 transformation matrix
-    AEMtx33 transform;
-    AEMtx33Identity(&transform);
-
-    // Scale up the sprite (e.g., 2x in both dimensions)
-    AEMtx33Scale(&transform, 500.0f, 500.0f);
-
-    // Optionally, translate to reposition
-    AEMtx33TransApply(&transform, &transform, 40.0f, 0.f);
-
-    // Apply the transformation
-    AEGfxSetTransform(transform.m);
-
-    // Tell Alpha Engine to draw the mesh with the above settings.
-    AEGfxMeshDraw(maze1_mesh, AE_GFX_MDM_TRIANGLES);
-
-    //RenderMesh(maze1_mesh, 0.0f, 0.0f, 1.0f, 1.0f, 0.0f); Works to render sprite
-
-    if (!okButtonMesh) return;
-
-    // Switch to color render mode
+    // switch to color render mode;
     AEGfxSetRenderMode(AE_GFX_RM_COLOR);
 
+    for (int y{}; y < activeRow; ++y) {
+        for (int x{}; x < activeCol; ++x) {
+            
+            // set color depending on maze tile; if tile is not wall or goal, skip tile;
+            switch (maze[y][x]) {
+            case 1:
+                AEGfxSetColorToMultiply(0.0f, 0.0f, 0.0f, 1.0f);
+                break;
+            case 2:
+                AEGfxSetColorToMultiply(0.0f, 1.0f, 0.0f, 1.0f);
+                break;
+            default:
+                AEGfxSetColorToMultiply(0.2f, 0.2f, 0.2f, 0.2f);
+            }
+
+            // apply transform for current tile;
+            // create a 3x3 transformation matrix;
+            AEMtx33 transform{}, scale{}, trans{};
+            AEMtx33Scale(&scale, p_scale, p_scale);
+            AEMtx33Trans(&trans, start_pos.x, start_pos.y);
+            // set transform;
+            AEMtx33Concat(&transform, &trans, &scale);
+            AEGfxSetTransform(transform.m);
+            // draw;
+            AEGfxMeshDraw(maze1_mesh, AE_GFX_MDM_TRIANGLES);
+
+            // update position of next pixel;
+            start_pos.x += p_scale;
+            AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+        }
+        // update position of next pixel after ending row;
+        start_pos.x = -((p_scale * activeCol / 2.f) - (p_scale / 2.f));
+        start_pos.y -= p_scale;
+    }
+    
+    // print text;
+    AEGfxPrint(previewFont, "Maze Layout", -0.25f, 0.7f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+
+    if (!okButtonMesh) return;
+    
     RenderMesh(okButtonMesh, 0.0f, -300.0f, 1.0f, 1.0f, 0.0f);
     AEGfxPrint(previewFont, "OK", -0.055f, -0.72f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 }
@@ -128,5 +159,12 @@ void gamePreview::Unload() {
 
 BaseState* gamePreview::GetNextState() {
     // If goMenu is true, transition to main menu
-    return goGame ? new GameState1() : nullptr;
+    switch (level_num) {
+    case 1:
+        return goGame ? new GameState1() : nullptr;
+    case 2:
+        return goGame ? new GameState2() : nullptr;
+    case 3:
+        return goGame ? new GameState3() : nullptr;
+    }
 }
