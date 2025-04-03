@@ -25,11 +25,13 @@ Technology is prohibited.
 #include "Audio.h"
 #include "Player.h"
 #include "utility.h"
+#include "settingsOverlay.h"
 
 class MainMenuState : public BaseState {
 private:
     bool startGame = false;
-    bool menu = false;
+    bool guide = false;
+	bool setting = false;
     int* pGameRunning; // <-- Pointer to gGameRunning
     s8 menuFont;
     s8 buttonFont;

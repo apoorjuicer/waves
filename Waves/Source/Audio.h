@@ -22,8 +22,13 @@ public:
     static void SetVolume(const std::string& name, float volume);
     static void ShutdownAllAudio();
 
+    static void SetMasterVolume(float volume);
+    static float GetMasterVolume();
+    static void UpdateAllVolumes();
+
 private:
     static std::unordered_map<std::string, Audio> audioFiles;
+    static f32 masterVolume;
 };
 
 #endif // AUDIO_MANAGER_H

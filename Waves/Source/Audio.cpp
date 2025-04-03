@@ -1,34 +1,29 @@
 #include "Audio.h"
-#include <iostream>
-#include <unordered_map>
 
 // Initialize static audio storage
 std::unordered_map<std::string, Audio> AudioManager::audioFiles;
+f32 AudioManager::masterVolume = 1.0f;
 
 void AudioManager::LoadAudio(const std::string& name, const std::string& filepath, bool isMusic, AEAudioGroup group) {
-    if (audioFiles.find(name) != audioFiles.end()) {
-        //std::cout << "Audio already loaded: " << name << std::endl;
-        return; // Prevent duplicate loading
-    }
+    if (audioFiles.find(name) != audioFiles.end())
+        return;
 
-    // If no valid group is provided, create a dedicated group.
     if (!AEAudioIsValidGroup(group)) {
         group = AEAudioCreateGroup();
-        if (!AEAudioIsValidGroup(group)) {
-            //std::cerr << "Failed to create audio group for: " << name << std::endl;
+        if (!AEAudioIsValidGroup(group))
             return;
-        }
     }
 
     AEAudio sound = isMusic ? AEAudioLoadMusic(filepath.c_str()) : AEAudioLoadSound(filepath.c_str());
-    if (!AEAudioIsValidAudio(sound)) {
-        //std::cerr << "Failed to load audio: " << filepath << std::endl;
+    if (!AEAudioIsValidAudio(sound))
         return;
-    }
+
+    // Immediately apply master volume to the group
+    AEAudioSetGroupVolume(group, masterVolume);
 
     audioFiles[name] = { sound, group, false };
-    //std::cout << "Loaded audio: " << name << std::endl;
 }
+
 
 void AudioManager::UnloadAudio(const std::string& name) {
     auto it = audioFiles.find(name);
@@ -95,5 +90,23 @@ void AudioManager::ShutdownAllAudio() {
         AEAudioUnloadAudioGroup(it->second.group);
         //std::cout << "Shutting down audio: " << it->first << std::endl;
         it = audioFiles.erase(it);
+    }
+}
+
+// Master volume functions
+void AudioManager::SetMasterVolume(float volume) {
+    masterVolume = volume;
+    //std::cout << "Master volume set to: " << masterVolume << std::endl;
+    // Optionally update all currently playing audio groups
+    UpdateAllVolumes();
+}
+
+float AudioManager::GetMasterVolume() {
+    return masterVolume;
+}
+
+void AudioManager::UpdateAllVolumes() {
+    for (auto& kv : audioFiles) {
+        AEAudioSetGroupVolume(kv.second.group, masterVolume);
     }
 }
