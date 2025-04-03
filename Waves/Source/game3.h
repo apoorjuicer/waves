@@ -49,6 +49,7 @@ private:
     AEGfxVertexList* wave_meshes[NUM_WAVE_MESHES] = {};
     AEGfxTexture* keyTexture;
     AEGfxTexture* rockTexture;
+    AEGfxTexture* playerTexture;
     int prevDestX = -1;
     int prevDestY = -1;
     bool gameOverSoundPlayed = false;

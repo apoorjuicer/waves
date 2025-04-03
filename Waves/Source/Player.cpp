@@ -352,9 +352,12 @@ bool checkGoal(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 m
 
 
 
-void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh) {
+void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh,AEGfxTexture* playerTexture) {
     AEMtx33 transform = { 0 };
     AEMtx33Trans(&transform, pplayer.x, pplayer.y); // Adjust for screen space
+    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
     AEGfxSetTransform(transform.m);
+    AEGfxTextureSet(playerTexture, 0, 0);
     AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
+    AEGfxTextureSet(nullptr, 0, 0);
 }

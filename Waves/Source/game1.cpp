@@ -28,7 +28,7 @@ namespace{
 GameState1::GameState1() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
-goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
+goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
 gameWinSoundPlayed(false)// Declare this outside the game loop
 {}
 
@@ -43,22 +43,23 @@ void GameState1::Load() {
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
-    PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
+    PlayerMesh = CreateSquareMesh(50.0f, 0xFFFFFFFF);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     enemyMesh = createEnemyMesh(0xFFFF0000);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
     keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
-    rockMesh = CreateSquareMesh(30.0f, 0x8B4513FF);
+    rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
     if (!this->keyTexture) {
         std::cerr << "Error: Failed to load key texture!" << std::endl;
     }
-    this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
     if (!this->rockTexture) {
         std::cerr << "Error: Failed to load rock texture!" << std::endl;
     }
+    this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
@@ -242,7 +243,7 @@ void GameState1::Draw() {
 	}
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
-    RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    /*RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);*/
     //(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 
    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
@@ -271,7 +272,7 @@ void GameState1::Draw() {
         }
     }
     // ---------------------------------------------------
-    RenderPlayer(player, PlayerMesh);
+    RenderPlayer(player, PlayerMesh, playerTexture);
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh, keyTexture, rockTexture);
     DrawInventory(player, boxMesh, keyMesh, rockMesh, keyTexture, rockTexture);

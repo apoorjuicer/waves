@@ -26,7 +26,7 @@ namespace {
 GameState3::GameState3() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
-goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundPlayed(false),
+goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {}
 
 void GameState3::Load() {
@@ -56,6 +56,7 @@ void GameState3::Load() {
     if (!this->rockTexture) {
         std::cerr << "Error: Failed to load rock texture!" << std::endl;
     }
+    this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
@@ -229,7 +230,7 @@ void GameState3::Draw() {
         }
     }
     // ---------------------------------------------------
-    RenderPlayer(player, PlayerMesh);
+    RenderPlayer(player, PlayerMesh, playerTexture);
 
     DrawInventory(player, boxMesh, keyMesh, rockMesh, keyTexture, rockTexture);
 
