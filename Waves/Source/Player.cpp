@@ -21,8 +21,135 @@ Technology is prohibited.
 #include<iostream>
 #include "Audio.h"
 
-extern Player player = { 100.0f, -100.0f };
-extern Player lastRock = { 0.0f, 0.0f };
+//extern Player player = { 100.0f, -100.0f };
+//extern Player lastRock = { 0.0f, 0.0f };
+
+void Player::move() {
+    f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+    state = IS_IDLE;
+    
+    if (AEInputCheckCurr(AEVK_W)) {
+        state = IS_MOVING;
+        y += speed * dt;
+    }
+    else if (AEInputCheckCurr(AEVK_S)) {
+        state = IS_MOVING;
+        y -= speed * dt;
+    }
+    if (AEInputCheckCurr(AEVK_A)) {
+        state = IS_MOVING;
+        x -= speed * dt;
+
+        dir = FACING_LEFT;
+    }
+    else if (AEInputCheckCurr(AEVK_D)) {
+        state = IS_MOVING;
+        x += speed * dt;
+        
+        dir = FACING_RIGHT;
+    }
+}
+
+void Player::draw() const {
+
+    f32 current_sprite_uv_offset_x = 0.f;   // 0.2f offsets;
+    f32 current_sprite_uv_offset_y = 0.f;   // 0.5f offset;
+
+    if (state == IS_IDLE) {
+        current_sprite_uv_offset_x = 0.f;
+        current_sprite_uv_offset_y = 0.f;
+    }
+    else if (state == IS_MOVING) {
+        if (dir == FACING_RIGHT) {
+            current_sprite_uv_offset_y = 0.f;
+        }
+        else if (dir == FACING_LEFT) {
+            current_sprite_uv_offset_y = 0.5f;
+        }
+
+        // animation speed;
+        const f32 animation_duration_per_frame = 0.1f;
+        static f32 animation_timer = 0.f;
+        static u32 sprite_index = 0;
+
+        // Update the animation timer.
+        animation_timer += (f32)AEFrameRateControllerGetFrameTime();
+
+        if (animation_timer >= animation_duration_per_frame) {
+            // Reset the timer.
+            animation_timer = 0;
+
+            switch (sprite_index) {
+            case 0:
+                current_sprite_uv_offset_x = 0.2f;
+            case 1:
+                current_sprite_uv_offset_x = 0.4f;
+            case 2:
+                current_sprite_uv_offset_x = 0.6f;
+            case 3:
+                current_sprite_uv_offset_x = 0.8f;
+            }
+            // increment anim frame;
+            ++sprite_index;
+            // reset if anim goes over last frame;
+            if (sprite_index >= 4) { sprite_index = 0; }
+        }
+    }
+    // render settings;
+    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+    AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+    AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Set the texture to pTex
+    AEGfxTextureSet(texture, current_sprite_uv_offset_x, current_sprite_uv_offset_y);
+
+    AEMtx33 scale = { 0 };
+    AEMtx33Scale(&scale, 50.0f, 50.0f);
+
+    // Choose the transform to use
+    AEGfxSetTransform(scale.m);
+
+    // Actually drawing the mesh 
+    AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
+}
+
+AEGfxVertexList* CreateTextureMesh(int spritesheet_cols, int spritesheet_rows) {
+
+    const f32 sprite_uv_width = 1.f / spritesheet_cols;
+    const f32 sprite_uv_height = 1.f / spritesheet_rows;
+
+    AEGfxVertexList* pMesh;
+
+    AEGfxMeshStart();
+
+    AEGfxTriAdd(
+        -0.5f, -0.5f, 0xFFFFFFFF, 0.0f, sprite_uv_height, // bottom left
+        0.5f, -0.5f, 0xFFFFFFFF, sprite_uv_width, sprite_uv_height, // bottom right 
+        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);  // top left
+
+    AEGfxTriAdd(
+        0.5f, -0.5f, 0xFFFFFFFF, sprite_uv_width, sprite_uv_height, // bottom right 
+        0.5f, 0.5f, 0xFFFFFFFF, sprite_uv_width, 0.0f,   // top right
+        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);  // bottom left
+
+    // Saving the mesh (list of triangles) in pMesh
+    pMesh = AEGfxMeshEnd();
+    return pMesh;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)
@@ -113,7 +240,6 @@ AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
     return AEGfxMeshEnd();
 }
 
-
 bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Define the radius (world units) that must be walkable
     const f32 radius = 7.0f;
@@ -161,8 +287,7 @@ bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 maz
     return true;
 }
 
-
-void CheckItem(Player& player1) {
+void CheckItem(Player& player1, std::vector<WorldItem> worldItems) {
 
     if (AEInputCheckTriggered(AEVK_E)) {
         f32 playerMinX = player1.x - player1.rad;
@@ -207,9 +332,6 @@ void Player::DropItem(f32 dropX, f32 dropY) {
         }
     }
 }
-
-
-
 
 void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
     //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
@@ -303,31 +425,31 @@ void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh,
 
 
  
-bool PlayerEnemyCollision(Player& player1,Enemy& enemy, f32 tilesize) {
-    // Assuming enemy.x, enemy.y is the center of the enemy rectangle.
-    f32 halfWidth = tilesize * 0.5f;
-    f32 halfHeight = tilesize * 0.5f;
-    /*f32 halfWidth = enemy.w * 0.5f;
-    f32 halfHeight = enemy.h * 0.5f;*/
-
-    // Calculate the bounds of the enemy rectangle.
-    f32 left = enemy.x - halfWidth;
-    f32 right = enemy.x + halfWidth;
-    f32 top = enemy.y - halfHeight;
-    f32 bottom = enemy.y + halfHeight;
-
-    // Clamp the player's center to the enemy's bounds.
-    f32 closestX = (player1.x < left) ? left : (player1.x > right ? right : player1.x);
-    f32 closestY = (player1.y < top) ? top : (player1.y > bottom ? bottom : player1.y);
-
-    // Compute the distance between the player's center and the closest point.
-    f32 dx = player1.x - closestX;
-    f32 dy = player1.y - closestY;
-    f32 distanceSquared = dx * dx + dy * dy;
-
-    // A collision occurs if the distance is less than or equal to the player's radius.
-    return distanceSquared <= (player1.rad * player1.rad);
-};
+//bool PlayerEnemyCollision(Player& player1,Enemy& enemy, f32 tilesize) {
+//    // Assuming enemy.x, enemy.y is the center of the enemy rectangle.
+//    f32 halfWidth = tilesize * 0.5f;
+//    f32 halfHeight = tilesize * 0.5f;
+//    /*f32 halfWidth = enemy.w * 0.5f;
+//    f32 halfHeight = enemy.h * 0.5f;*/
+//
+//    // Calculate the bounds of the enemy rectangle.
+//    f32 left = enemy.x - halfWidth;
+//    f32 right = enemy.x + halfWidth;
+//    f32 top = enemy.y - halfHeight;
+//    f32 bottom = enemy.y + halfHeight;
+//
+//    // Clamp the player's center to the enemy's bounds.
+//    f32 closestX = (player1.x < left) ? left : (player1.x > right ? right : player1.x);
+//    f32 closestY = (player1.y < top) ? top : (player1.y > bottom ? bottom : player1.y);
+//
+//    // Compute the distance between the player's center and the closest point.
+//    f32 dx = player1.x - closestX;
+//    f32 dy = player1.y - closestY;
+//    f32 distanceSquared = dx * dx + dy * dy;
+//
+//    // A collision occurs if the distance is less than or equal to the player's radius.
+//    return distanceSquared <= (player1.rad * player1.rad);
+//};
 
 bool checkGoal(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Convert player position to grid indices

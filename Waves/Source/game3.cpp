@@ -19,13 +19,9 @@ Technology is prohibited.
 
 #include "game3.h"
 
-namespace {
-   Enemy enemy3;
-}
-
 GameState3::GameState3() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
+pathMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
 goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), prevDestX(-1), prevDestY(-1),gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {}
 
@@ -37,34 +33,25 @@ void GameState3::Load() {
         std::cerr << "Error: Failed to load maze file Assets/Maze3.txt. Quitting game.\n";
     }
 
-    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
+    player.texture = AEGfxTextureLoad("Assets/Textures/Texture_Player.png");
+    player.mesh = CreateTextureMesh(4, 2);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = CreateSquareMesh(50.0f, 0xFFFFFFFF);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
-    enemyMesh = createEnemyMesh(0xFFFF0000);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
     keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
     rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
-    if (!this->keyTexture) {
-        std::cerr << "Error: Failed to load key texture!" << std::endl;
-    }
     this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
-    if (!this->rockTexture) {
-        std::cerr << "Error: Failed to load rock texture!" << std::endl;
-    }
     this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
     wave_meshes[2] = Create_LineMesh();
     createWorldItems(tilesize);
-
-
-    enemy3.setEnemyPatrol(maze);
 }
 
 void GameState3::Initialize() {
@@ -75,24 +62,7 @@ void GameState3::Initialize() {
     player.y = -100.f;
 
     player.inventory[0] = ROCK;
-    //enemy3.x = 100.f;
-    //enemy3.y = -700.f;
-    //enemy3.startPatrol = { 1,7 };
-    //enemy3.endPatrol = { 8,7 };
 
-    enemy3.startPatrol = enemy3.patrolPath.front();
-    enemy3.endPatrol = enemy3.patrolPath.back();
-    enemy3.x = enemy3.startPatrol.first * TILE_SIZE;
-    enemy3.y = enemy3.startPatrol.second * -TILE_SIZE;
-
-    // enemy1.state = PATROL;
-    enemy3.state = PATROL;
-    enemy3.previousState = PATROL;
-    //enemy1.state = IDLE;
-   // enemy1.state = PURSUIT_ROCK;
-
-   // enemy3.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
-    enemy3.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
     AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
     AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, InGame);
@@ -124,28 +94,14 @@ void GameState3::Update(f32 deltaTime) {
         return;
     }
 
-    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
-
-    // Player movement
-    f32 speed = 200.0f;
-    if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
-    if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
-    if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
-    if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
+    // PLAYER INPUT-----------------------------------------------------
+    player.move();
 
     if (AEInputCheckTriggered(AEVK_SPACE)) {
         // spawn a directional wave towards player mouse;
         spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
     }
-
-    //debug
-   /* if (AEInputCheckTriggered(AEVK_SPACE)) {
-        spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
-    }*/
-
-    //UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
-    enemy3.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes, dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
@@ -161,9 +117,7 @@ void GameState3::Update(f32 deltaTime) {
     for (Wave& w : enemy_wave) {
         if (w.is_active) {
             w.update();
-
         }
-
     }
     for (Wave& r : reflections) {
         if (r.is_active) {
@@ -179,14 +133,14 @@ void GameState3::Update(f32 deltaTime) {
 
     CheckItem(player);
 
-    dead = PlayerEnemyCollision(player, enemy3, tilesize);
-    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
+    //dead = PlayerEnemyCollision(player, enemy3, tilesize);
     if (dead && !gameOverSoundPlayed)
     {
         AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, 0);
         gameOverSoundPlayed = true;  // Ensure it doesn't play again
     }
 
+    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
     if (winGame && !gameWinSoundPlayed)
     {
         AudioManager::PlayAudio("Win", 1.0f, 1.0f, 0);
@@ -200,12 +154,11 @@ void GameState3::Draw() {
     if (!PauseOverlay::IsPaused()) {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
 	}
-
     // render maze elements;
     RenderBackground(tilesize, pathMesh, goalMesh);
     RenderItems(keyMesh, rockMesh, keyTexture, rockTexture);
     // render enemy;
-    RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
+    //RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
     // vision radius;
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
@@ -247,11 +200,13 @@ void GameState3::Free() {
         }
     }
 
+    AEGfxMeshFree(player.mesh);
+    AEGfxTextureUnload(player.texture);
+
     AEGfxMeshFree(pDonutMesh);
     AEGfxMeshFree(PlayerMesh);
     AEGfxMeshFree(wallMesh);
     AEGfxMeshFree(pathMesh);
-    AEGfxMeshFree(enemyMesh);
     AEGfxMeshFree(goalMesh);
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);

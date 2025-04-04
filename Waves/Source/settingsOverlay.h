@@ -1,9 +1,8 @@
 #pragma once
 
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "Audio.h"
-#include "utility.h"      // For CreateButtonMesh(), etc.
-#include <cstdio>         // For sprintf
 
 namespace SettingsOverlay {
     void Init();

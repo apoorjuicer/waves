@@ -14,13 +14,8 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 #pragma once
-#include "AEEngine.h"
-#include "GSM.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
 
+#include "pch.h"
 
 constexpr int MAX_ROW = 20;
 constexpr int MAX_COL = 20;
@@ -54,13 +49,11 @@ bool ImportMapDataFromFile(const std::string& filename);
 // File I/O clearing data
 void ClearMazeData();
 // void Import_MapData(void);
-void createWorldItems(f32 tileSize);
 // print maze to std::cout;
 void PrintMapData();
 
-void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);
+//void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);
 
-void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh);
 void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh);
-void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);
+void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh/*, AEGfxTexture* pathTexture, AEGfxTexture* goalTexture*/);

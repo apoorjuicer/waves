@@ -4,7 +4,7 @@
 \author     Chewn Thing Kwan
 \email      kwan.c@digipen.edu
 
-\brief      This header file declares functions that are necessary for dealing with
+\brief      This source file defines functions that are necessary for dealing with
 			echolocation waves.
 
 			Functionality includes spawning and destroying waves, reflection waves and
@@ -18,7 +18,6 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "Wave.h"
-#include <iostream>
 
 namespace {
 

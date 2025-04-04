@@ -29,13 +29,13 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "Player.h"
 #include "Wave.h"
 #include "Maze.h"
 #include "Audio.h"
-#include <cmath>      // for std::floor
-#include <iostream>   // for std::couts
+
 struct Rock {
     float x, y, dx, dy;  // Position in world space
     int currBounce, maxBounce;

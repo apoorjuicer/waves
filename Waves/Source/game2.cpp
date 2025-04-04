@@ -25,7 +25,7 @@ namespace {
 
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
-pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr), 
+pathMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
 goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {}
 
@@ -37,13 +37,13 @@ void GameState2::Load() {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
     }
 
-    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
+    player.texture = AEGfxTextureLoad("Assets/Textures/Texture_Player.png");
+    player.mesh = CreateTextureMesh(4, 2);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = CreateSquareMesh(50.0f, 0xFFFFFFFF);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
-    enemyMesh = createEnemyMesh(0xFFFF0000);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
     keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
     rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
@@ -57,8 +57,6 @@ void GameState2::Load() {
     wave_meshes[2] = Create_LineMesh();
 
     createWorldItems(tilesize);
-    //setEnemyPatrol(enemy2, maze);
-    enemy2.setEnemyPatrol(maze);
 }
 
 void GameState2::Initialize() {
@@ -69,23 +67,6 @@ void GameState2::Initialize() {
     player.y = -100.f;
     player.inventory[0] = ROCK;
 
-    //enemy2.x = 100.f;
-    //enemy2.y = -700.f;
-    //enemy2.startPatrol = { 2,7 };
-    //enemy2.endPatrol = { 10,10 };
-    //enemy2.x = enemy2.startPatrol.first * TILE_SIZE;
-    //enemy2.y = enemy2.startPatrol.second * -TILE_SIZE;
-
-    enemy2.startPatrol = enemy2.patrolPath.front();
-    enemy2.endPatrol = enemy2.patrolPath.back();
-    enemy2.x = enemy2.startPatrol.first * TILE_SIZE;
-    enemy2.y = enemy2.startPatrol.second * -TILE_SIZE;
-    enemy2.state = PATROL;
-    enemy2.previousState =PATROL;
-    //enemy2.idle_timer = 3.f;
-    enemy2.patrol_timer = 20.f;
-    //enemy2.pursuit_timer = 3.f;
-    enemy2.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
     AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
     AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, InGame);
@@ -117,29 +98,19 @@ void GameState2::Update(f32 deltaTime) {
         return;
     }
 
-    AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
+    player.move();
 
-    // Player movement
-    f32 speed = 200.0f;
-    if (AEInputCheckCurr(AEVK_W)) MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
-    if (AEInputCheckCurr(AEVK_S)) MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
-    if (AEInputCheckCurr(AEVK_A)) MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
-    if (AEInputCheckCurr(AEVK_D)) MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
-
-
-    if (AEInputCheckTriggered(AEVK_SPACE)) {
+    if (AEInputCheckTriggered(AEVK_SPACE) && !waveSpawned) {
         // spawn a directional wave towards player mouse;
         spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
+
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
+        waveSpawned = true; // Set flag to prevent further triggers
     }
-
-    //debug
-   /* if (AEInputCheckTriggered(AEVK_SPACE)) {
-        spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
-    }*/
-
-    enemy2.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes, dir_wave);
-    //enemy1.enemy_wave(enemy_wave, wave_meshes);
+    // Reset the flag when SPACE is released
+    if (!AEInputCheckCurr(AEVK_SPACE)) {
+        waveSpawned = false;
+    }
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
@@ -170,14 +141,14 @@ void GameState2::Update(f32 deltaTime) {
     // -----------------------------------------------------------------
 
     CheckItem(player);
-    dead = PlayerEnemyCollision(player, enemy2, tilesize);
-    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
+    //dead = PlayerEnemyCollision(player, enemy2, tilesize);
     if (dead && !gameOverSoundPlayed)
     {
         AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, 0);
         gameOverSoundPlayed = true;  // Ensure it doesn't play again
     }
 
+    winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
     if (winGame && !gameWinSoundPlayed)
     {
         AudioManager::PlayAudio("Win", 1.0f, 1.0f, 0);
@@ -195,7 +166,7 @@ void GameState2::Draw() {
     RenderBackground(tilesize, pathMesh, goalMesh);
     RenderItems(keyMesh, rockMesh, keyTexture, rockTexture);
     // render enemy;
-    RenderMesh(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
+    //(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
     // vision radius;
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
@@ -237,11 +208,14 @@ void GameState2::Free() {
         }
     }
 
+    AEGfxMeshFree(player.mesh);
+    AEGfxTextureUnload(player.texture);
+
     AEGfxMeshFree(pDonutMesh);
     AEGfxMeshFree(PlayerMesh);
     AEGfxMeshFree(wallMesh);
     AEGfxMeshFree(pathMesh);
-    AEGfxMeshFree(enemyMesh);
+    //AEGfxMeshFree(enemyMesh);
     AEGfxMeshFree(goalMesh);
     AEGfxMeshFree(keyMesh);
     AEGfxMeshFree(rockMesh);

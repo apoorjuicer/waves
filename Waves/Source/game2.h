@@ -18,13 +18,11 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "baseStates.h"
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "Player.h"
 #include "Maze.h"
 #include "Rock.h"
-#include "Wave.h"
-#include "Enemy.h"
 #include "mainMenu.h"
 #include "winState.h"
 #include "loseState.h"
@@ -41,7 +39,6 @@ private:
     AEGfxVertexList* PlayerMesh = nullptr;
     AEGfxVertexList* wallMesh = nullptr;
     AEGfxVertexList* pathMesh = nullptr;
-    AEGfxVertexList* enemyMesh = nullptr;
     AEGfxVertexList* keyMesh = nullptr;
     AEGfxVertexList* rockMesh = nullptr;
     AEGfxVertexList* goalMesh = nullptr;
@@ -61,6 +58,8 @@ private:
     Wave reflections[MAX_NUM_REFLECTIONS];
     Outline outlines[MAX_NUM_OUTLINES];
 
+    Player player;
+
 public:
     GameState2();
     void Load() override;
@@ -70,5 +69,9 @@ public:
     void Free() override;
     void Unload() override;
     BaseState* GetNextState() override;
-};
 
+    bool waveSpawned = false;  // Flag to track if the wave has been spawned
+    std::vector<WorldItem> worldItems;
+
+    Player player;
+};

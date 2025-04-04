@@ -16,11 +16,10 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "baseStates.h"
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "mainMenu.h"
 #include "Audio.h"
-#include "utility.h"
 
 class WinState : public BaseState {
 private:
@@ -38,3 +37,5 @@ public:
     void Unload() override;
     BaseState* GetNextState() override;
 };
+
+extern AEVec2 GlobalCenter;

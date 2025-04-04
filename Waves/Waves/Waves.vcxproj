@@ -103,7 +103,6 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     <ClCompile Include="..\Source\Audio.cpp" />
     <ClCompile Include="..\Source\credits.cpp" />
     <ClCompile Include="..\Source\draw_map.cpp" />
-    <ClCompile Include="..\Source\Enemy.cpp" />
     <ClCompile Include="..\Source\exitOverlay.cpp" />
     <ClCompile Include="..\Source\game1.cpp" />
     <ClCompile Include="..\Source\game2.cpp" />
@@ -124,39 +123,39 @@ xcopy "$(SolutionDir)Extern\AlphaEngine\lib\fmod.dll" "$(OutDir)" /s /r /y /q</C
     <ClCompile Include="..\Source\winState.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\Audio.h" />
-    <ClInclude Include="..\Source\baseStates.h" />
-    <ClInclude Include="..\Source\credits.h" />
-    <ClInclude Include="..\Source\Enemy.h" />
-    <ClInclude Include="..\Source\exitOverlay.h" />
-    <ClInclude Include="..\Source\game1.h" />
-    <ClInclude Include="..\Source\game2.h" />
-    <ClInclude Include="..\Source\game3.h" />
-    <ClInclude Include="..\Source\gamePreview.h" />
-    <ClInclude Include="..\Source\gameTransition.h" />
-    <ClInclude Include="..\Source\GSM.h" />
-    <ClInclude Include="..\Source\instructions.h" />
-    <ClInclude Include="..\Source\loseState.h" />
-    <ClInclude Include="..\Source\mainMenu.h" />
-    <ClInclude Include="..\Source\pauseOverlay.h" />
-    <ClInclude Include="..\Source\select.h" />
-    <ClInclude Include="..\Source\settingsOverlay.h" />
-    <ClInclude Include="..\Source\sonar.hpp" />
     <ClCompile Include="..\Source\Player.cpp" />
     <ClCompile Include="..\Source\Rock.cpp" />
-    <ClInclude Include="..\Source\splash.h" />
-    <ClInclude Include="..\Source\utility.h" />
-    <ClInclude Include="..\Source\Wave.h" />
-    <ClInclude Include="..\Source\winState.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\draw_map.h" />
     <ClCompile Include="..\Source\Maze.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Source\Maze.h" />
-    <ClInclude Include="..\Source\Player.h" />
-    <ClInclude Include="..\Source\Rock.h" />
+    <ClInclude Include="..\Include\Audio.h" />
+    <ClInclude Include="..\Include\baseStates.h" />
+    <ClInclude Include="..\Include\credits.h" />
+    <ClInclude Include="..\Include\draw_map.h" />
+    <ClInclude Include="..\Include\exitOverlay.h" />
+    <ClInclude Include="..\Include\game1.h" />
+    <ClInclude Include="..\Include\game2.h" />
+    <ClInclude Include="..\Include\game3.h" />
+    <ClInclude Include="..\Include\gamePreview.h" />
+    <ClInclude Include="..\Include\gameTransition.h" />
+    <ClInclude Include="..\Include\GSM.h" />
+    <ClInclude Include="..\Include\instructions.h" />
+    <ClInclude Include="..\Include\loseState.h" />
+    <ClInclude Include="..\Include\mainMenu.h" />
+    <ClInclude Include="..\Include\Maze.h" />
+    <ClInclude Include="..\Include\Monster.h" />
+    <ClInclude Include="..\Include\pauseOverlay.h" />
+    <ClInclude Include="..\Include\pch.h" />
+    <ClInclude Include="..\Include\Player.h" />
+    <ClInclude Include="..\Include\Rock.h" />
+    <ClInclude Include="..\Include\select.h" />
+    <ClInclude Include="..\Include\settingsOverlay.h" />
+    <ClInclude Include="..\Include\splash.h" />
+    <ClInclude Include="..\Include\utility.h" />
+    <ClInclude Include="..\Include\Wave.h" />
+    <ClInclude Include="..\Include\winState.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

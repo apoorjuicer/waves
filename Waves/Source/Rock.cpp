@@ -29,10 +29,7 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-
 #include "Rock.h"
-
-// #include "sonar.hpp"
 
 namespace rock {
 

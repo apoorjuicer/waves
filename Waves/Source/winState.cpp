@@ -64,7 +64,7 @@ void WinState::Draw() {
 
     AEGfxPrint(winFont, "YOU WIN", centeredX, centeredY, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
 
-    DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
+    DrawButton(okButtonMesh, kokX + GlobalCenter.x, kokY + GlobalCenter.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
 void WinState::Free() {
