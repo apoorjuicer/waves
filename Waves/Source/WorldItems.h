@@ -1,6 +1,7 @@
 #pragma once
 
 #include "pch.h"
+#include "maze.h"
 
 enum InventoryItemType {
     NOTHING = 0,
@@ -17,4 +18,4 @@ struct WorldItem {
 };
 
 std::vector<WorldItem> createWorldItems(f32 tileSize);
-void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture, std::vector<WorldItem> worldItems);
+void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture, std::vector<WorldItem> const& worldItems);

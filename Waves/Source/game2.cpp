@@ -19,10 +19,6 @@ Technology is prohibited.
 
 #include "game2.h"
 
-namespace {
-    Enemy enemy2;
-}
-
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
@@ -56,7 +52,7 @@ void GameState2::Load() {
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
     wave_meshes[2] = Create_LineMesh();
 
-    createWorldItems(tilesize);
+    worldItems = createWorldItems(tilesize);
 }
 
 void GameState2::Initialize() {
@@ -100,7 +96,7 @@ void GameState2::Update(f32 deltaTime) {
 
     player.move();
 
-    if (AEInputCheckTriggered(AEVK_SPACE) && !waveSpawned) {
+    if (AEInputCheckTriggered(AEVK_SPACE) && !dir_wave.is_active && !waveSpawned) {
         // spawn a directional wave towards player mouse;
         spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
 
@@ -140,7 +136,7 @@ void GameState2::Update(f32 deltaTime) {
     }
     // -----------------------------------------------------------------
 
-    CheckItem(player);
+    CheckItem(player, worldItems);
     //dead = PlayerEnemyCollision(player, enemy2, tilesize);
     if (dead && !gameOverSoundPlayed)
     {
@@ -157,14 +153,14 @@ void GameState2::Update(f32 deltaTime) {
 }
 
 void GameState2::Draw() {
-    AEGfxSetCamPosition(player.x, player.y);
+    AEGfxSetCamPosition(GlobalCenter.x, GlobalCenter.y);
     if (!PauseOverlay::IsPaused()) {
-        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
+        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture, worldItems);
     }
 
     // render maze elements;
     RenderBackground(tilesize, pathMesh, goalMesh);
-    RenderItems(keyMesh, rockMesh, keyTexture, rockTexture);
+    RenderItems(keyMesh, rockMesh, keyTexture, rockTexture, worldItems);
     // render enemy;
     //(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
     // vision radius;
@@ -189,7 +185,8 @@ void GameState2::Draw() {
     }
     // ---------------------------------------------------
     // render player;
-    RenderPlayer(player, PlayerMesh, playerTexture);
+    //RenderPlayer(player, PlayerMesh, playerTexture);
+    player.draw();
     // render walls;
     RenderWalls(tilesize, wallMesh);
 
@@ -212,7 +209,7 @@ void GameState2::Free() {
     AEGfxTextureUnload(player.texture);
 
     AEGfxMeshFree(pDonutMesh);
-    AEGfxMeshFree(PlayerMesh);
+    //AEGfxMeshFree(PlayerMesh);
     AEGfxMeshFree(wallMesh);
     AEGfxMeshFree(pathMesh);
     //AEGfxMeshFree(enemyMesh);

@@ -51,7 +51,7 @@ void GameState1::Load() {
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
     wave_meshes[2] = Create_LineMesh();
-    createWorldItems(tilesize);
+    worldItems = createWorldItems(tilesize);
 }
 
 void GameState1::Initialize() {
@@ -97,7 +97,7 @@ void GameState1::Update(f32 deltaTime) {
     // PLAYER INPUT-----------------------------------------------------
     player.move();
 
-    if (AEInputCheckTriggered(AEVK_SPACE) && !waveSpawned) {
+    if (AEInputCheckTriggered(AEVK_SPACE) && !dir_wave.is_active && !waveSpawned) {
         // spawn a directional wave towards player mouse;
         spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
 
@@ -137,7 +137,7 @@ void GameState1::Update(f32 deltaTime) {
     }
     // -----------------------------------------------------------------
 
-    CheckItem(player); 
+    CheckItem(player, worldItems); 
     //dead = PlayerEnemyCollision(player, enemy1, tilesize);
     // Inside your game loop:
     if (dead && !gameOverSoundPlayed)
@@ -156,13 +156,13 @@ void GameState1::Update(f32 deltaTime) {
 }
 
 void GameState1::Draw() {
-    AEGfxSetCamPosition(player.x, player.y);
+    AEGfxSetCamPosition(GlobalCenter.x, GlobalCenter.y);
 	if (!PauseOverlay::IsPaused()) {
-		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
+		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture, worldItems);
 	}
     // render maze elements;
     RenderBackground(tilesize, pathMesh, goalMesh);
-    RenderItems(keyMesh, rockMesh, keyTexture, rockTexture);
+    RenderItems(keyMesh, rockMesh, keyTexture, rockTexture, worldItems);
     // render enemy;
     //RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
     // vision radius;
@@ -187,7 +187,8 @@ void GameState1::Draw() {
     }
     // ---------------------------------------------------
     // render player;
-    RenderPlayer(player, PlayerMesh, playerTexture);
+    //RenderPlayer(player, PlayerMesh, playerTexture);
+    player.draw();
     // render walls;
     RenderWalls(tilesize, wallMesh);
 
@@ -210,7 +211,7 @@ void GameState1::Free() {
     AEGfxTextureUnload(player.texture);
 
     AEGfxMeshFree(pDonutMesh);
-    AEGfxMeshFree(PlayerMesh);
+    //AEGfxMeshFree(PlayerMesh);
     AEGfxMeshFree(wallMesh);
     AEGfxMeshFree(pathMesh);
     //AEGfxMeshFree(enemyMesh);

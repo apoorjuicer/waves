@@ -542,6 +542,10 @@ void DirectionalWave::spawn(AEVec2 pos_in, AEGfxVertexList** mesh_in, f32 max_in
 	// DirWave unique;
 	direction = dir_in;
 	prevp = pos = pos_in;
+
+	for (short& i : r_collision) {
+		i = 0;
+	}
 	lifetime = 0.f;
 
 	return;

@@ -36,8 +36,8 @@ struct Player {
 
     InventoryItemType inventory[3] = { ROCK, NOTHING, NOTHING };
 
-    void PickUpItem(InventoryItemType itemType);
-    void DropItem(f32 dropX, f32 dropY);
+    bool PickUpItem(InventoryItemType itemType);
+    void DropItem(f32 dropX, f32 dropY, std::vector<WorldItem>& worldItems);
 
     Player() : x{}, y{}, texture{nullptr}, mesh{nullptr} {}
     //Player(AEGfxTexture* tex, AEGfxVertexList* mesh) : x{ 300.f }, y{ -100.f }, texture{ tex }, mesh{ mesh } {}
@@ -50,13 +50,15 @@ AEGfxVertexList* CreateTextureMesh(int spritesheet_cols, int spritesheet_rows);
 
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color);
 void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
-AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
-bool IsWalkable(f32 x, f32 y, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
-void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[MAX_ROW][MAX_COL], f32 tileSize);
+//AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
+//bool IsWalkable(f32 x, f32 y, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
+//void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[MAX_ROW][MAX_COL], f32 tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh, AEGfxTexture* playerTexture);
-void CheckItem(Player& player);
+void CheckItem(Player& player, std::vector<WorldItem>&);
 //bool PlayerCollision(Player &player, Enemy &enemy, f32 tilesize);
 bool checkGoal(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
 AEGfxVertexList* CreateBoxMesh(u32 color);
 void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh,AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh,AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);
 //bool PlayerEnemyCollision(Player &player, Enemy &enemy);
+
+extern AEVec2 GlobalCenter;

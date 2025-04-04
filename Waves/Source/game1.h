@@ -61,6 +61,13 @@ private:
     Outline outlines[MAX_NUM_OUTLINES];
 
 
+    bool waveSpawned = false;  // Flag to track if the wave has been spawned
+
+    Player player;
+    Player lastRock;
+
+    std::vector<WorldItem> worldItems;
+
 public:
     GameState1();
     void Load() override;
@@ -70,10 +77,6 @@ public:
     void Free() override;
     void Unload() override;
     BaseState* GetNextState() override;
-    
-    bool waveSpawned = false;  // Flag to track if the wave has been spawned
-    std::vector<WorldItem> worldItems;
-    
-    Player player;
+
 };
 

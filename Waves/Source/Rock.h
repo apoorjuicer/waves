@@ -42,6 +42,6 @@ struct Rock {
 };
 
 namespace rock {
-	void drawRock(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave (&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock, AEGfxVertexList* rockMesh, AEGfxTexture* rockTexture);
+	void drawRock(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave (&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock, AEGfxVertexList* rockMesh, AEGfxTexture* rockTexture, std::vector<WorldItem>&);
     AEGfxVertexList* Rock_Mesh(int NumOfSlices, u32 colour, f32 radius);
 }

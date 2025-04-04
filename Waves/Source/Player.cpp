@@ -15,19 +15,66 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-#include "AEEngine.h"
 #include "Player.h"
-#include "Maze.h"
-#include<iostream>
-#include "Audio.h"
+#include "audio.h"
 
-//extern Player player = { 100.0f, -100.0f };
-//extern Player lastRock = { 0.0f, 0.0f };
+namespace {
+    //Collision flags
+    const unsigned int	COLLISION_LEFT = 0x00000001;		//0001
+    const unsigned int	COLLISION_RIGHT = 0x00000002;		//0010
+    const unsigned int	COLLISION_TOP = 0x00000004;			//0100
+    const unsigned int	COLLISION_BOTTOM = 0x00000008;		//1000
+
+
+    void SnapToCell(float* Coordinate)
+    {
+        *Coordinate = static_cast<int>(*Coordinate) + 0.5f;
+    }
+
+    int CheckInstanceBinaryMapCollision(float PosX, float PosY, float scaleX, float scaleY)
+    {
+        int flag{};
+
+        // half intervals;
+        float xplusH = PosX + (scaleX / 2.0f), xminusH = PosX - (scaleX / 2.0f);
+        float yplusH = PosY + (scaleY / 2.0f), yminusH = PosY - (scaleY / 2.0f);
+        // quarter intervals;
+        float xplusQ = PosX + (scaleX / 4.0f), xminusQ = PosX - (scaleX / 4.0f);
+        float yplusQ = PosY + (scaleY / 4.0f), yminusQ = PosY - (scaleY / 4.0f);
+
+        // define hotspots for each collision side;
+        float hotspots[4][4] = {
+            {xminusH, yplusQ, xminusH, yminusQ},  // left side;
+            {xminusQ, yplusH, xplusQ,  yplusH},   // top side;
+            {xplusH,  yplusQ, xplusH,  yminusQ},  // right side;
+            {xminusQ, yminusH, xplusQ, yminusH}   // bottom side;
+        };
+
+        // iterate through the sides of the object;
+        for (int i{}; i < 4; ++i) {
+            int cellx1 = (int)(hotspots[i][0] / scaleX);
+            int celly1 = (int)(hotspots[i][1] / scaleY);
+            int cellx2 = (int)(hotspots[i][2] / scaleX);
+            int celly2 = (int)(hotspots[i][3] / scaleY);
+
+            // if either hotspot is colliding for the current side, set flag;
+            if (maze[celly1][cellx1] == 1 || maze[celly2][cellx2] == 1) {
+                if (i == 0) flag |= COLLISION_LEFT;
+                if (i == 1) flag |= COLLISION_TOP;
+                if (i == 2) flag |= COLLISION_RIGHT;
+                if (i == 3) flag |= COLLISION_BOTTOM;
+            }
+        }
+
+        return flag;
+    }
+}
 
 void Player::move() {
     f32 dt = (f32)AEFrameRateControllerGetFrameTime();
     state = IS_IDLE;
-    
+
+    // movement input
     if (AEInputCheckCurr(AEVK_W)) {
         state = IS_MOVING;
         y += speed * dt;
@@ -48,6 +95,17 @@ void Player::move() {
         
         dir = FACING_RIGHT;
     }
+
+    // snap if collide wall;
+    int col_flag = CheckInstanceBinaryMapCollision(x, y, 45.f, 45.f);
+
+    if (col_flag & COLLISION_BOTTOM || col_flag & COLLISION_TOP) {
+        SnapToCell(&y);
+    }
+    if (col_flag & COLLISION_LEFT || col_flag & COLLISION_RIGHT) {
+        SnapToCell(&x);
+    }
+    GlobalCenter.x = x; GlobalCenter.y = y;
 }
 
 void Player::draw() const {
@@ -137,20 +195,6 @@ AEGfxVertexList* CreateTextureMesh(int spritesheet_cols, int spritesheet_rows) {
     return pMesh;
 }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)
 {
@@ -220,80 +264,80 @@ void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32
     AEGfxMeshDraw(NameOfMesh, AE_GFX_MDM_TRIANGLES);
 }
 
-AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
-{
-    int slices = NumOfSlices;
-    f32 anglestep = 2.0f * PI / slices;
-    f32 centerX = 0.0f;
-    f32 centerY = 0.0f;
+//AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
+//{
+//    int slices = NumOfSlices;
+//    f32 anglestep = 2.0f * PI / slices;
+//    f32 centerX = 0.0f;
+//    f32 centerY = 0.0f;
+//
+//    for (int i = 0; i < slices; ++i)
+//    {
+//        f32 angle1 = i * anglestep;
+//        f32 angle2 = (i + 1) * anglestep;
+//        AEGfxTriAdd(
+//            centerX, centerY, colour, 0.5f, 0.5f,
+//            centerX + radius * cos(angle1), centerY + radius * sin(angle1), colour, 0.5f + 0.5f * cos(angle1), 0.5f - 0.5f * sin(angle1),
+//            centerX + radius * cos(angle2), centerY + radius * sin(angle2), colour, 0.5f + 0.5f * cos(angle2), 0.5f - 0.5f * sin(angle2)
+//        );
+//    }
+//    return AEGfxMeshEnd();
+//}
+//
+//bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+//    // Define the radius (world units) that must be walkable
+//    const f32 radius = 7.0f;
+//
+//    // Compute the bounding box of the circle centered at (x,y)
+//    f32 minWorldX = x - radius;
+//    f32 maxWorldX = x + radius;
+//    f32 minWorldY = y - radius;
+//    f32 maxWorldY = y + radius;
+//
+//    // Lambda functions to convert a world coordinate to a grid index.
+//    auto convertX = [tileSize, mazeStartX](f32 worldX) -> int {
+//        return static_cast<int>((worldX - mazeStartX + (tileSize / 2)) / tileSize);
+//        };
+//    auto convertY = [tileSize, mazeStartY](f32 worldY) -> int {
+//        return static_cast<int>(((tileSize / 2) - mazeStartY - worldY) / tileSize);
+//        };
+//
+//    // Convert the four edges of the bounding box to grid indices.
+//    int gridX1 = convertX(minWorldX);
+//    int gridX2 = convertX(maxWorldX);
+//    int gridY1 = convertY(minWorldY);
+//    int gridY2 = convertY(maxWorldY);
+//
+//    // Determine the min and max grid indices (in case conversion inverts order).
+//    int minGridX = (gridX1 < gridX2) ? gridX1 : gridX2;
+//    int maxGridX = (gridX1 > gridX2) ? gridX1 : gridX2;
+//    int minGridY = (gridY1 < gridY2) ? gridY1 : gridY2;
+//    int maxGridY = (gridY1 > gridY2) ? gridY1 : gridY2;
+//
+//    // Check if any part of the bounding box is out-of-bounds.
+//    if (minGridX < 0 || maxGridX >= MAX_ROW || minGridY < 0 || maxGridY >= MAX_COL) {
+//        return false;
+//    }
+//
+//    // Check every grid cell in the bounding box.
+//    // (A more refined test might check only cells actually intersecting the circle.)
+//    for (int gy = minGridY; gy <= maxGridY; ++gy) {
+//        for (int gx = minGridX; gx <= maxGridX; ++gx) {
+//            if (maze1[gy][gx] == 1) { // assuming 1 means blocked
+//                return false;
+//            }
+//        }
+//    }
+//    return true;
+//}
 
-    for (int i = 0; i < slices; ++i)
-    {
-        f32 angle1 = i * anglestep;
-        f32 angle2 = (i + 1) * anglestep;
-        AEGfxTriAdd(
-            centerX, centerY, colour, 0.5f, 0.5f,
-            centerX + radius * cos(angle1), centerY + radius * sin(angle1), colour, 0.5f + 0.5f * cos(angle1), 0.5f - 0.5f * sin(angle1),
-            centerX + radius * cos(angle2), centerY + radius * sin(angle2), colour, 0.5f + 0.5f * cos(angle2), 0.5f - 0.5f * sin(angle2)
-        );
-    }
-    return AEGfxMeshEnd();
-}
-
-bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
-    // Define the radius (world units) that must be walkable
-    const f32 radius = 7.0f;
-
-    // Compute the bounding box of the circle centered at (x,y)
-    f32 minWorldX = x - radius;
-    f32 maxWorldX = x + radius;
-    f32 minWorldY = y - radius;
-    f32 maxWorldY = y + radius;
-
-    // Lambda functions to convert a world coordinate to a grid index.
-    auto convertX = [tileSize, mazeStartX](f32 worldX) -> int {
-        return static_cast<int>((worldX - mazeStartX + (tileSize / 2)) / tileSize);
-        };
-    auto convertY = [tileSize, mazeStartY](f32 worldY) -> int {
-        return static_cast<int>(((tileSize / 2) - mazeStartY - worldY) / tileSize);
-        };
-
-    // Convert the four edges of the bounding box to grid indices.
-    int gridX1 = convertX(minWorldX);
-    int gridX2 = convertX(maxWorldX);
-    int gridY1 = convertY(minWorldY);
-    int gridY2 = convertY(maxWorldY);
-
-    // Determine the min and max grid indices (in case conversion inverts order).
-    int minGridX = (gridX1 < gridX2) ? gridX1 : gridX2;
-    int maxGridX = (gridX1 > gridX2) ? gridX1 : gridX2;
-    int minGridY = (gridY1 < gridY2) ? gridY1 : gridY2;
-    int maxGridY = (gridY1 > gridY2) ? gridY1 : gridY2;
-
-    // Check if any part of the bounding box is out-of-bounds.
-    if (minGridX < 0 || maxGridX >= MAX_ROW || minGridY < 0 || maxGridY >= MAX_COL) {
-        return false;
-    }
-
-    // Check every grid cell in the bounding box.
-    // (A more refined test might check only cells actually intersecting the circle.)
-    for (int gy = minGridY; gy <= maxGridY; ++gy) {
-        for (int gx = minGridX; gx <= maxGridX; ++gx) {
-            if (maze1[gy][gx] == 1) { // assuming 1 means blocked
-                return false;
-            }
-        }
-    }
-    return true;
-}
-
-void CheckItem(Player& player1, std::vector<WorldItem> worldItems) {
+void CheckItem(Player& player1, std::vector<WorldItem>& worldItems) {
 
     if (AEInputCheckTriggered(AEVK_E)) {
-        f32 playerMinX = player1.x - player1.rad;
-        f32 playerMaxX = player1.x + player1.rad;
-        f32 playerMinY = player1.y - player1.rad;
-        f32 playerMaxY = player1.y + player1.rad;
+        f32 playerMinX = player1.x - player1.rad - 30.f;
+        f32 playerMaxX = player1.x + player1.rad + 30.f;
+        f32 playerMinY = player1.y - player1.rad - 30.f;
+        f32 playerMaxY = player1.y + player1.rad + 30.f;
 
         for (auto& item : worldItems) {
             if (!item.collected &&
@@ -303,26 +347,26 @@ void CheckItem(Player& player1, std::vector<WorldItem> worldItems) {
                 AudioManager::PlayAudio("Collect", 0.2f, 1.0f, 0);
 
                 // Pick up the item (add it to the player's inventory)
-                player1.PickUpItem(item.type);
-
-                // Mark the item as collected
-                item.collected = true;
-                break;
+                item.collected = player1.PickUpItem(item.type);
+                if (item.collected) {
+                    break;
+                }
             }
         }
     }
 }
 
-void Player::PickUpItem(InventoryItemType itemType) {
+bool Player::PickUpItem(InventoryItemType itemType) {
     for (int i = 0; i < INVENTORY_SIZE; ++i) {
         if (inventory[i] == NOTHING) {
             inventory[i] = itemType;
-            return;
+            return true;
         }
     }
+    return false;
 }
 
-void Player::DropItem(f32 dropX, f32 dropY) {
+void Player::DropItem(f32 dropX, f32 dropY, std::vector<WorldItem>& worldItems) {
     for (int i = {INVENTORY_SIZE -1 }; i >=0; --i) {
         if (inventory[i] == ROCK) {
             // Drop the item and add it to worldItems
@@ -333,21 +377,21 @@ void Player::DropItem(f32 dropX, f32 dropY) {
     }
 }
 
-void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
-    //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
-
-    // Calculate the potential new position
-    f32 newX = pplayer.x + dx * speed * dt;
-    f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
-
-    // Check if the new position is walkable
-    if (IsWalkable(newX, pplayer.y, maze1, tileSize, 0.0f, 0)) {
-        pplayer.x = newX;
-    }
-    if (IsWalkable(pplayer.x, newY, maze1, tileSize, 0.0f, 0)) {
-        pplayer.y = newY;
-    }
-}
+//void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
+//    //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
+//
+//    // Calculate the potential new position
+//    f32 newX = pplayer.x + dx * speed * dt;
+//    f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
+//
+//    // Check if the new position is walkable
+//    if (IsWalkable(newX, pplayer.y, maze1, tileSize, 0.0f, 0)) {
+//        pplayer.x = newX;
+//    }
+//    if (IsWalkable(pplayer.x, newY, maze1, tileSize, 0.0f, 0)) {
+//        pplayer.y = newY;
+//    }
+//}
 
 AEGfxVertexList* CreateBoxMesh(u32 color) {
     AEGfxMeshStart();
@@ -474,13 +518,13 @@ bool checkGoal(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 m
 }
 
 
-
-void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh,AEGfxTexture* playerTexture) {
-    AEMtx33 transform = { 0 };
-    AEMtx33Trans(&transform, pplayer.x, pplayer.y); // Adjust for screen space
-    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-    AEGfxSetTransform(transform.m);
-    AEGfxTextureSet(playerTexture, 0, 0);
-    AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
-    AEGfxTextureSet(nullptr, 0, 0);
-}
+//
+//void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh,AEGfxTexture* playerTexture) {
+//    AEMtx33 transform = { 0 };
+//    AEMtx33Trans(&transform, pplayer.x, pplayer.y); // Adjust for screen space
+//    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+//    AEGfxSetTransform(transform.m);
+//    AEGfxTextureSet(playerTexture, 0, 0);
+//    AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
+//    AEGfxTextureSet(nullptr, 0, 0);
+//}

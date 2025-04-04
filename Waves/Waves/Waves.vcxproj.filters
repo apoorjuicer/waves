@@ -3,7 +3,6 @@
   <ItemGroup>
     <ClCompile Include="..\Source\Audio.cpp" />
     <ClCompile Include="..\Source\credits.cpp" />
-    <ClCompile Include="..\Source\draw_map.cpp" />
     <ClCompile Include="..\Source\exitOverlay.cpp" />
     <ClCompile Include="..\Source\game1.cpp" />
     <ClCompile Include="..\Source\game2.cpp" />
@@ -25,33 +24,34 @@
     <ClCompile Include="..\Source\Player.cpp" />
     <ClCompile Include="..\Source\Rock.cpp" />
     <ClCompile Include="..\Source\Maze.cpp" />
+    <ClCompile Include="..\Source\WorldItems.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="..\Include\Audio.h" />
-    <ClInclude Include="..\Include\baseStates.h" />
-    <ClInclude Include="..\Include\credits.h" />
-    <ClInclude Include="..\Include\draw_map.h" />
-    <ClInclude Include="..\Include\exitOverlay.h" />
-    <ClInclude Include="..\Include\game1.h" />
-    <ClInclude Include="..\Include\game2.h" />
-    <ClInclude Include="..\Include\game3.h" />
-    <ClInclude Include="..\Include\gamePreview.h" />
-    <ClInclude Include="..\Include\gameTransition.h" />
-    <ClInclude Include="..\Include\GSM.h" />
-    <ClInclude Include="..\Include\instructions.h" />
-    <ClInclude Include="..\Include\loseState.h" />
-    <ClInclude Include="..\Include\mainMenu.h" />
-    <ClInclude Include="..\Include\Maze.h" />
-    <ClInclude Include="..\Include\Monster.h" />
-    <ClInclude Include="..\Include\pauseOverlay.h" />
-    <ClInclude Include="..\Include\pch.h" />
-    <ClInclude Include="..\Include\Player.h" />
-    <ClInclude Include="..\Include\Rock.h" />
-    <ClInclude Include="..\Include\select.h" />
-    <ClInclude Include="..\Include\settingsOverlay.h" />
-    <ClInclude Include="..\Include\splash.h" />
-    <ClInclude Include="..\Include\utility.h" />
-    <ClInclude Include="..\Include\Wave.h" />
-    <ClInclude Include="..\Include\winState.h" />
+    <ClInclude Include="..\Source\game1.h" />
+    <ClInclude Include="..\Source\game2.h" />
+    <ClInclude Include="..\Source\game3.h" />
+    <ClInclude Include="..\Source\gamePreview.h" />
+    <ClInclude Include="..\Source\gameTransition.h" />
+    <ClInclude Include="..\Source\GSM.h" />
+    <ClInclude Include="..\Source\instructions.h" />
+    <ClInclude Include="..\Source\loseState.h" />
+    <ClInclude Include="..\Source\mainMenu.h" />
+    <ClInclude Include="..\Source\Maze.h" />
+    <ClInclude Include="..\Source\Monster.h" />
+    <ClInclude Include="..\Source\pauseOverlay.h" />
+    <ClInclude Include="..\Source\pch.h" />
+    <ClInclude Include="..\Source\Player.h" />
+    <ClInclude Include="..\Source\Rock.h" />
+    <ClInclude Include="..\Source\select.h" />
+    <ClInclude Include="..\Source\settingsOverlay.h" />
+    <ClInclude Include="..\Source\splash.h" />
+    <ClInclude Include="..\Source\utility.h" />
+    <ClInclude Include="..\Source\Wave.h" />
+    <ClInclude Include="..\Source\winState.h" />
+    <ClInclude Include="..\Source\WorldItems.h" />
+    <ClInclude Include="..\Source\Audio.h" />
+    <ClInclude Include="..\Source\baseStates.h" />
+    <ClInclude Include="..\Source\credits.h" />
+    <ClInclude Include="..\Source\exitOverlay.h" />
   </ItemGroup>
 </Project>

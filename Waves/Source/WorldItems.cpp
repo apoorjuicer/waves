@@ -4,7 +4,7 @@
 std::vector<WorldItem> createWorldItems(f32 tileSize) {
      float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
-     std::vector<WorldItem> worldItems;
+     std::vector<WorldItem> vw;
      //std::cout << "Rendering Maze and World Items:" << std::endl;
      for (int y{};y < MAX_ROW;++y) {
          for (int x{}; x < MAX_COL; ++x) {
@@ -13,17 +13,17 @@ std::vector<WorldItem> createWorldItems(f32 tileSize) {
              f32 worldY = startY - ((y + 1) * tileSize);
 
              if (tileValue == 3) {
-                 worldItems.emplace_back(WorldItem(KEY, worldX, worldY));
+                 vw.emplace_back(WorldItem(KEY, worldX, worldY));
              }
              else if (tileValue == 4) {
-                 worldItems.emplace_back(WorldItem(ROCK, worldX, worldY));
+                 vw.emplace_back(WorldItem(ROCK, worldX, worldY));
              }
          }
      }
-     return worldItems;
+     return vw;
 }
 
-void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture, std::vector<WorldItem> worldItems) {
+void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture, std::vector<WorldItem> const& worldItems) {
 
     f32 time = static_cast<f32>(AEGetTime(nullptr));
 
