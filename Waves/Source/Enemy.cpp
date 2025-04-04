@@ -147,6 +147,24 @@ int prevDestY = -1;
 		bool IsOnPatrolPath(const Pair& current, const std::vector<Pair>& patrolPath) {
 			return std::find(patrolPath.begin(), patrolPath.end(), current) != patrolPath.end();
 		}
+
+		bool circle_square_collision(AEVec2 cpos, f32 rad, AEVec2 rpos, f32 rscale) {
+			// nearest point in rectangle to circle;
+			f32 near_x = clamp(cpos.x, rpos.x - rscale / 2.f, rpos.x + rscale / 2.f);
+			f32 near_y = clamp(cpos.y, rpos.y - rscale / 2.f, rpos.y + rscale / 2.f);
+
+			// Calculate the distance from the circle center to this closest point;
+			f32 dx = cpos.x - near_x;
+			f32 dy = cpos.y - near_y;
+
+			// If the distance is less than or equal to the circle's radius, they collide;
+			f32 distanceSquared = (dx * dx) + (dy * dy);
+			f32 radiusSquared = (rad) * (rad);
+
+			// return result;
+			return (distanceSquared <= radiusSquared) ? true : false;
+		}
+
 	}// end of anon namespace
 
 	Path astarsearch(int grid[MAX_ROW][MAX_COL], Pair src, Pair dst, std::vector<Pair>& path) {
@@ -599,6 +617,8 @@ int prevDestY = -1;
 		const float IDLE_TIME = idle_timer;       // Time to stay idle
 		const float PATROL_TIME = patrol_timer;     // Time to stay patrol 
 		const float PURSUIT_TIME = pursuit_timer;    // Time to pursue rock
+		
+		AEVec2 wave_col_pos{};
 
 		// float IDLE_TIME = e.idle_timer;       // Time to stay idle
 		 //float PATROL_TIME = e.patrol_timer;     // Time to stay patrol 
@@ -611,6 +631,10 @@ int prevDestY = -1;
 
 			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
 				state = PURSUIT_ROCK;
+				stateTimer = PURSUIT_TIME;
+			}
+			else if (hitbywave(MainWaves, wave_col_pos) && state != PURSUIT_PLAYER) {
+				state = PURSUIT_PLAYER;
 				stateTimer = PURSUIT_TIME;
 			}
 			else if (seePlayer(sightRangePlayer)) {
@@ -627,6 +651,10 @@ int prevDestY = -1;
 		case PATROL:
 			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
 				state = PURSUIT_ROCK;
+				stateTimer = PURSUIT_TIME;
+			}
+			else if (hitbywave(MainWaves,wave_col_pos) && state != PURSUIT_PLAYER) {
+				state = PURSUIT_PLAYER;
 				stateTimer = PURSUIT_TIME;
 			}
 			else if (seePlayer(sightRangePlayer)) {
@@ -664,6 +692,10 @@ int prevDestY = -1;
 					state = IDLE;  // Reached the rock
 					stateTimer = IDLE_TIME;
 				}
+			}
+			else if (hitbywave(MainWaves, wave_col_pos) && state != PURSUIT_PLAYER) {
+				state = PURSUIT_PLAYER;
+				stateTimer = PURSUIT_TIME;
 			}
 			else if (seePlayer(sightRangePlayer) && state != PURSUIT_PLAYER) {
 				state = PURSUIT_PLAYER;
@@ -721,10 +753,31 @@ int prevDestY = -1;
 	}
 
 
+	//wave touch enemy
+	bool Enemy::hitbywave(Wave(&MainWaves)[MAX_NUM_WAVES], AEVec2 & out) const{ //position of wave on col
+		
+		//if hit by wave change state
+		// enemy go to wave when hit by wave
+		// 
+		//
+		//circle pos , circle radius , rect pos, rect scale
+		// circle_square_collision(AEVec2 cpos, f32 rad, AEVec2 rpos, f32 rscale)
+
+		for (Wave const & w : MainWaves) {
+			if (circle_square_collision(w.pos, w.scale.x, { x,y }, h)) {
+				out = w.pos;
+				return true;
+			}
+		}
+
+		return false;
+
+	}
 
 
-
-
+	/*
+	* print functions
+	*/
 	void Enemy::printEnemyPatrolpoints() const {
 		// Print sorted patrol points for confirmation
 		for (const Pair& p : patrolPath) {
