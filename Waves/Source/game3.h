@@ -48,6 +48,7 @@ private:
     AEGfxTexture* keyTexture;
     AEGfxTexture* rockTexture;
     AEGfxTexture* playerTexture;
+    AEGfxTexture* pathTexture;
     int prevDestX = -1;
     int prevDestY = -1;
     bool gameOverSoundPlayed = false;

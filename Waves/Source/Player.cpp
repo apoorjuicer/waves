@@ -18,115 +18,64 @@ Technology is prohibited.
 #include "Player.h"
 #include "audio.h"
 
-namespace {
-    //Collision flags
-    const unsigned int	COLLISION_LEFT = 0x00000001;		//0001
-    const unsigned int	COLLISION_RIGHT = 0x00000002;		//0010
-    const unsigned int	COLLISION_TOP = 0x00000004;			//0100
-    const unsigned int	COLLISION_BOTTOM = 0x00000008;		//1000
-
-
-    void SnapToCell(float* Coordinate)
-    {
-        *Coordinate = static_cast<int>(*Coordinate) + 0.5f;
-    }
-
-    int CheckInstanceBinaryMapCollision(float PosX, float PosY, float scaleX, float scaleY)
-    {
-        int flag{};
-
-        // half intervals;
-        float xplusH = PosX + (scaleX / 2.0f), xminusH = PosX - (scaleX / 2.0f);
-        float yplusH = PosY + (scaleY / 2.0f), yminusH = PosY - (scaleY / 2.0f);
-        // quarter intervals;
-        float xplusQ = PosX + (scaleX / 4.0f), xminusQ = PosX - (scaleX / 4.0f);
-        float yplusQ = PosY + (scaleY / 4.0f), yminusQ = PosY - (scaleY / 4.0f);
-
-        // define hotspots for each collision side;
-        float hotspots[4][4] = {
-            {xminusH, yplusQ, xminusH, yminusQ},  // left side;
-            {xminusQ, yplusH, xplusQ,  yplusH},   // top side;
-            {xplusH,  yplusQ, xplusH,  yminusQ},  // right side;
-            {xminusQ, yminusH, xplusQ, yminusH}   // bottom side;
-        };
-
-        // iterate through the sides of the object;
-        for (int i{}; i < 4; ++i) {
-            int cellx1 = (int)(hotspots[i][0] / scaleX);
-            int celly1 = (int)(hotspots[i][1] / scaleY);
-            int cellx2 = (int)(hotspots[i][2] / scaleX);
-            int celly2 = (int)(hotspots[i][3] / scaleY);
-
-            // if either hotspot is colliding for the current side, set flag;
-            if (maze[celly1][cellx1] == 1 || maze[celly2][cellx2] == 1) {
-                if (i == 0) flag |= COLLISION_LEFT;
-                if (i == 1) flag |= COLLISION_TOP;
-                if (i == 2) flag |= COLLISION_RIGHT;
-                if (i == 3) flag |= COLLISION_BOTTOM;
-            }
-        }
-
-        return flag;
-    }
-}
-
-void Player::move() {
-    f32 dt = (f32)AEFrameRateControllerGetFrameTime();
-    state = IS_IDLE;
-
-    // movement input
-    if (AEInputCheckCurr(AEVK_W)) {
-        state = IS_MOVING;
-        y += speed * dt;
-    }
-    else if (AEInputCheckCurr(AEVK_S)) {
-        state = IS_MOVING;
-        y -= speed * dt;
-    }
-    if (AEInputCheckCurr(AEVK_A)) {
-        state = IS_MOVING;
-        x -= speed * dt;
-
-        dir = FACING_LEFT;
-    }
-    else if (AEInputCheckCurr(AEVK_D)) {
-        state = IS_MOVING;
-        x += speed * dt;
-        
-        dir = FACING_RIGHT;
-    }
-
-    // snap if collide wall;
-    int col_flag = CheckInstanceBinaryMapCollision(x, y, 45.f, 45.f);
-
-    if (col_flag & COLLISION_BOTTOM || col_flag & COLLISION_TOP) {
-        SnapToCell(&y);
-    }
-    if (col_flag & COLLISION_LEFT || col_flag & COLLISION_RIGHT) {
-        SnapToCell(&x);
-    }
-    GlobalCenter.x = x; GlobalCenter.y = y;
-}
+//void Player::move() {
+//    f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+//    
+//    f32 prev_x{ x }, prev_y{ y };
+//
+//    // movement input
+//    if (AEInputCheckCurr(AEVK_W)) {
+//        state = IS_MOVING;
+//        y = y + speed * dt;
+//    }
+//    else if (AEInputCheckCurr(AEVK_S)) {
+//        state = IS_MOVING;
+//        y = y - speed * dt;
+//    }
+//    else if (AEInputCheckCurr(AEVK_A)) {
+//        state = IS_MOVING;
+//        x = x - speed * dt;
+//
+//        dir = FACING_LEFT;
+//    }
+//    else if (AEInputCheckCurr(AEVK_D)) {
+//        state = IS_MOVING;
+//        x = x + speed * dt;
+//        
+//        dir = FACING_RIGHT;
+//    }
+//    if (prev_x == x && prev_y == y) {
+//        state = IS_IDLE;
+//    }
+//
+//    //// Check if the new position is walkable
+//    //if (!IsWalkable(x, y, TILE_SIZE, 0.f)) {
+//    //    x = prev_x;
+//    //}
+//    //if (!IsWalkable(x, y, TILE_SIZE, 0.f)) {
+//    //    y = prev_y;
+//    //}
+//    GlobalCenter.x = x; GlobalCenter.y = y;
+//}
 
 void Player::draw() const {
 
-    f32 current_sprite_uv_offset_x = 0.f;   // 0.2f offsets;
-    f32 current_sprite_uv_offset_y = 0.f;   // 0.5f offset;
+    f32 current_sprite_uv_offset_x{ 0.f };   // 0.2f offsets;
+    f32 current_sprite_uv_offset_y{ 0.5f };   // 0.5f offset;
+
+    if (dir == FACING_RIGHT) {
+        current_sprite_uv_offset_y = 0.f;
+    }
+    else if (dir == FACING_LEFT) {
+        current_sprite_uv_offset_y = 0.5f;
+    }
 
     if (state == IS_IDLE) {
         current_sprite_uv_offset_x = 0.f;
-        current_sprite_uv_offset_y = 0.f;
     }
     else if (state == IS_MOVING) {
-        if (dir == FACING_RIGHT) {
-            current_sprite_uv_offset_y = 0.f;
-        }
-        else if (dir == FACING_LEFT) {
-            current_sprite_uv_offset_y = 0.5f;
-        }
-
         // animation speed;
-        const f32 animation_duration_per_frame = 0.1f;
+        const f32 animation_duration_per_frame = 0.3f;
         static f32 animation_timer = 0.f;
         static u32 sprite_index = 0;
 
@@ -134,23 +83,28 @@ void Player::draw() const {
         animation_timer += (f32)AEFrameRateControllerGetFrameTime();
 
         if (animation_timer >= animation_duration_per_frame) {
-            // Reset the timer.
-            animation_timer = 0;
 
             switch (sprite_index) {
             case 0:
-                current_sprite_uv_offset_x = 0.2f;
+                current_sprite_uv_offset_x = 0.f;
+                break;
             case 1:
-                current_sprite_uv_offset_x = 0.4f;
+                current_sprite_uv_offset_x = 0.25f;
+                break;
             case 2:
-                current_sprite_uv_offset_x = 0.6f;
+                current_sprite_uv_offset_x = 0.50f;
+                break;
             case 3:
-                current_sprite_uv_offset_x = 0.8f;
+                current_sprite_uv_offset_x = 0.75f;
+                break;
             }
             // increment anim frame;
             ++sprite_index;
             // reset if anim goes over last frame;
-            if (sprite_index >= 4) { sprite_index = 0; }
+            if (sprite_index > 2) { sprite_index = 0; }
+
+            // Reset the timer.
+            animation_timer = 0;
         }
     }
     // render settings;
@@ -161,11 +115,13 @@ void Player::draw() const {
     // Set the texture to pTex
     AEGfxTextureSet(texture, current_sprite_uv_offset_x, current_sprite_uv_offset_y);
 
-    AEMtx33 scale = { 0 };
+    AEMtx33 scale = { 0 }; AEMtx33 translate{ 0 }; AEMtx33 transform{};
     AEMtx33Scale(&scale, 50.0f, 50.0f);
+    AEMtx33Trans(&translate, x, y);
+    AEMtx33Concat(&transform, &translate, &scale);
 
     // Choose the transform to use
-    AEGfxSetTransform(scale.m);
+    AEGfxSetTransform(transform.m);
 
     // Actually drawing the mesh 
     AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
@@ -188,7 +144,7 @@ AEGfxVertexList* CreateTextureMesh(int spritesheet_cols, int spritesheet_rows) {
     AEGfxTriAdd(
         0.5f, -0.5f, 0xFFFFFFFF, sprite_uv_width, sprite_uv_height, // bottom right 
         0.5f, 0.5f, 0xFFFFFFFF, sprite_uv_width, 0.0f,   // top right
-        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);  // bottom left
+        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);  // top left
 
     // Saving the mesh (list of triangles) in pMesh
     pMesh = AEGfxMeshEnd();
@@ -284,52 +240,52 @@ void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32
 //    return AEGfxMeshEnd();
 //}
 //
-//bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
-//    // Define the radius (world units) that must be walkable
-//    const f32 radius = 7.0f;
-//
-//    // Compute the bounding box of the circle centered at (x,y)
-//    f32 minWorldX = x - radius;
-//    f32 maxWorldX = x + radius;
-//    f32 minWorldY = y - radius;
-//    f32 maxWorldY = y + radius;
-//
-//    // Lambda functions to convert a world coordinate to a grid index.
-//    auto convertX = [tileSize, mazeStartX](f32 worldX) -> int {
-//        return static_cast<int>((worldX - mazeStartX + (tileSize / 2)) / tileSize);
-//        };
-//    auto convertY = [tileSize, mazeStartY](f32 worldY) -> int {
-//        return static_cast<int>(((tileSize / 2) - mazeStartY - worldY) / tileSize);
-//        };
-//
-//    // Convert the four edges of the bounding box to grid indices.
-//    int gridX1 = convertX(minWorldX);
-//    int gridX2 = convertX(maxWorldX);
-//    int gridY1 = convertY(minWorldY);
-//    int gridY2 = convertY(maxWorldY);
-//
-//    // Determine the min and max grid indices (in case conversion inverts order).
-//    int minGridX = (gridX1 < gridX2) ? gridX1 : gridX2;
-//    int maxGridX = (gridX1 > gridX2) ? gridX1 : gridX2;
-//    int minGridY = (gridY1 < gridY2) ? gridY1 : gridY2;
-//    int maxGridY = (gridY1 > gridY2) ? gridY1 : gridY2;
-//
-//    // Check if any part of the bounding box is out-of-bounds.
-//    if (minGridX < 0 || maxGridX >= MAX_ROW || minGridY < 0 || maxGridY >= MAX_COL) {
-//        return false;
-//    }
-//
-//    // Check every grid cell in the bounding box.
-//    // (A more refined test might check only cells actually intersecting the circle.)
-//    for (int gy = minGridY; gy <= maxGridY; ++gy) {
-//        for (int gx = minGridX; gx <= maxGridX; ++gx) {
-//            if (maze1[gy][gx] == 1) { // assuming 1 means blocked
-//                return false;
-//            }
-//        }
-//    }
-//    return true;
-//}
+bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
+    // Define the radius (world units) that must be walkable
+    const f32 radius = 7.0f;
+
+    // Compute the bounding box of the circle centered at (x,y)
+    f32 minWorldX = x - radius;
+    f32 maxWorldX = x + radius;
+    f32 minWorldY = y - radius;
+    f32 maxWorldY = y + radius;
+
+    // Lambda functions to convert a world coordinate to a grid index.
+    auto convertX = [tileSize, mazeStartX](f32 worldX) -> int {
+        return static_cast<int>((worldX - tileSize + (tileSize / 2)) / tileSize);
+        };
+    auto convertY = [tileSize, mazeStartY](f32 worldY) -> int {
+        return static_cast<int>(((tileSize / 2) - tileSize - worldY) / tileSize);
+        };
+
+    // Convert the four edges of the bounding box to grid indices.
+    int gridX1 = convertX(minWorldX);
+    int gridX2 = convertX(maxWorldX);
+    int gridY1 = convertY(minWorldY);
+    int gridY2 = convertY(maxWorldY);
+
+    // Determine the min and max grid indices (in case conversion inverts order).
+    int minGridX = (gridX1 < gridX2) ? gridX1 : gridX2;
+    int maxGridX = (gridX1 > gridX2) ? gridX1 : gridX2;
+    int minGridY = (gridY1 < gridY2) ? gridY1 : gridY2;
+    int maxGridY = (gridY1 > gridY2) ? gridY1 : gridY2;
+
+    // Check if any part of the bounding box is out-of-bounds.
+    if (minGridX < 0 || maxGridX >= MAX_ROW || minGridY < 0 || maxGridY >= MAX_COL) {
+        return false;
+    }
+
+    // Check every grid cell in the bounding box.
+    // (A more refined test might check only cells actually intersecting the circle.)
+    for (int gy = minGridY; gy <= maxGridY; ++gy) {
+        for (int gx = minGridX; gx <= maxGridX; ++gx) {
+            if (maze1[gy][gx] == 1) { // assuming 1 means blocked
+                return false;
+            }
+        }
+    }
+    return true;
+}
 
 void CheckItem(Player& player1, std::vector<WorldItem>& worldItems) {
 
@@ -377,21 +333,21 @@ void Player::DropItem(f32 dropX, f32 dropY, std::vector<WorldItem>& worldItems) 
     }
 }
 
-//void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
-//    //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
-//
-//    // Calculate the potential new position
-//    f32 newX = pplayer.x + dx * speed * dt;
-//    f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
-//
-//    // Check if the new position is walkable
-//    if (IsWalkable(newX, pplayer.y, maze1, tileSize, 0.0f, 0)) {
-//        pplayer.x = newX;
-//    }
-//    if (IsWalkable(pplayer.x, newY, maze1, tileSize, 0.0f, 0)) {
-//        pplayer.y = newY;
-//    }
-//}
+void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
+    //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
+
+    // Calculate the potential new position
+    f32 newX = pplayer.x + dx * speed * dt;
+    f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
+
+    // Check if the new position is walkable
+    if (IsWalkable(newX, pplayer.y, maze1, tileSize, 0.0f, 0)) {
+        pplayer.x = newX;
+    }
+    if (IsWalkable(pplayer.x, newY, maze1, tileSize, 0.0f, 0)) {
+        pplayer.y = newY;
+    }
+}
 
 AEGfxVertexList* CreateBoxMesh(u32 color) {
     AEGfxMeshStart();

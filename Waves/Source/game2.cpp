@@ -22,7 +22,7 @@ Technology is prohibited.
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
-goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
+goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), pathTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {}
 
 void GameState2::Load() {
@@ -47,6 +47,7 @@ void GameState2::Load() {
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
     this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
     this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
+    this->pathTexture = AEGfxTextureLoad("Assets/Textures/Texture_Path.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
@@ -94,7 +95,28 @@ void GameState2::Update(f32 deltaTime) {
         return;
     }
 
-    player.move();
+    // PLAYER INPUT-----------------------------------------------------
+    // Player movement
+    f32 speed = 200.0f; player.state = player.PLAYER_STATE::IS_IDLE;
+    if (AEInputCheckCurr(AEVK_W)) {
+        player.state = player.PLAYER_STATE::IS_MOVING;
+        MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
+    }
+    if (AEInputCheckCurr(AEVK_S)) {
+        player.state = player.PLAYER_STATE::IS_MOVING;
+        MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
+    }
+    if (AEInputCheckCurr(AEVK_A)) {
+        player.state = player.PLAYER_STATE::IS_MOVING;
+        MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
+        player.dir = player.PLAYER_STATE::FACING_LEFT;
+    }
+    if (AEInputCheckCurr(AEVK_D)) {
+        player.state = player.PLAYER_STATE::IS_MOVING;
+        MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
+        player.dir = player.PLAYER_STATE::FACING_RIGHT;
+    }
+    GlobalCenter.x = player.x; GlobalCenter.y = player.y;
 
     if (AEInputCheckTriggered(AEVK_SPACE) && !dir_wave.is_active && !waveSpawned) {
         // spawn a directional wave towards player mouse;
@@ -154,13 +176,13 @@ void GameState2::Update(f32 deltaTime) {
 
 void GameState2::Draw() {
     AEGfxSetCamPosition(GlobalCenter.x, GlobalCenter.y);
+
+    // render maze elements;
+    RenderBackground(tilesize, pathMesh, goalMesh, pathTexture);
+    RenderItems(keyMesh, rockMesh, keyTexture, rockTexture, worldItems);
     if (!PauseOverlay::IsPaused()) {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture, worldItems);
     }
-
-    // render maze elements;
-    RenderBackground(tilesize, pathMesh, goalMesh);
-    RenderItems(keyMesh, rockMesh, keyTexture, rockTexture, worldItems);
     // render enemy;
     //(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
     // vision radius;
@@ -219,6 +241,7 @@ void GameState2::Free() {
     AEGfxMeshFree(boxMesh);
     AEGfxTextureUnload(keyTexture);
     AEGfxTextureUnload(rockTexture);
+    AEGfxTextureUnload(pathTexture);
     worldItems.clear();
 
     for (int i{};i < INVENTORY_SIZE;++i) {

@@ -56,4 +56,4 @@ void PrintMapData();
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);
 
 void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh);
-void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh/*, AEGfxTexture* pathTexture, AEGfxTexture* goalTexture*/);
+void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxTexture* pathTexture/*, AEGfxTexture* goalTexture*/);
