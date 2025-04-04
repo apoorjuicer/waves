@@ -139,7 +139,7 @@ void GameState1::Update(f32 deltaTime) {
 
 
     //debug
-   // enemy1.print_debug();
+    //enemy1.print_debug();
    // std::cout << player.x << player.y <<"\n";
     if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;

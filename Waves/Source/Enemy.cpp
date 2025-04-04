@@ -385,7 +385,7 @@ namespace {// Utility Functions
 				prevDestY = destY;
 			}
 
-			if (path.empty()) {
+			if (path.empty() && accumulatedTime == 0.0f) {
 				EnterPatrolPath();
 			}
 
@@ -396,9 +396,14 @@ namespace {// Utility Functions
 				if (!path.empty() && pathIndex < path.size()) {
 					//std::cout << "move this enemy";
 					moveEnemy((&MainWaves)[MAX_NUM_WAVES], mesh);
-					printPosition();
+					//printPosition();
 				}
 				accumulatedTime = 0.0f;
+			}
+
+			if (path.empty() && accumulatedTime == 0.0f) {
+				EnterPatrolPath();
+				state = PATROL;
 			}
 
 			//std::cout << accumulatedTime<<"\n";
@@ -426,9 +431,9 @@ namespace {// Utility Functions
 		int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 		enemy_wave(MainWaves, mesh);
 
-		const float IDLE_TIME = idle_timer;       // Time to stay idle
-		const float PATROL_TIME = patrol_timer;     // Time to stay patrol 
-		const float PURSUIT_TIME = pursuit_timer;    // Time to pursue rock
+		//const float IDLE_TIME = idle_timer;       // Time to stay idle
+		//const float PATROL_TIME = patrol_timer;     // Time to stay patrol 
+		//const float PURSUIT_TIME = pursuit_timer;    // Time to pursue rock
 		
 		AEVec2 wave_col_pos{};
 
@@ -442,69 +447,59 @@ namespace {// Utility Functions
 		case IDLE:
 
 			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
-				state = PURSUIT_ROCK;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave, wave_col_pos) && state != PURSUIT_PLAYER) {
 				//std::cout << "change state to pursuit player!\n";
-				state = PURSUIT_PLAYER;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitPlayerState();
 			}
 			else if (seePlayer(sightRangePlayer)) {
-				state = PURSUIT_PLAYER;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitPlayerState();
 			}
 			else if (stateTimer <= 0.0f) {
 
-				state = PATROL;
-				stateTimer = PATROL_TIME;
+				SetPatrolState();
 			}
 
 			break;
 		case PATROL:
 			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
-				state = PURSUIT_ROCK;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave,wave_col_pos) && state != PURSUIT_PLAYER) {
 				//std::cout << "change state to pursuit player!\n";
-				state = PURSUIT_PLAYER;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitPlayerState();
 			}
 			else if (seePlayer(sightRangePlayer)) {
-				state = PURSUIT_PLAYER;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitPlayerState();
 			}
 			else if (stateTimer <= 0.0f) { //idle
-				state = IDLE;
-				stateTimer = IDLE_TIME;
+				SetIdleState();
 			}
 			else if (path.empty()) {
 				EnterPatrolPath();
+				SetPatrolState();
 			}
 
 			break;
 		case PURSUIT_PLAYER:
 			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
-				state = PURSUIT_ROCK;
-
+				SetPursuitRockState();
 			}
 			else if (!seePlayer(sightRangePlayer) && (stateTimer <= 0.0f)) { //player zao alr
-				state = PATROL;
+				SetPatrolState();
 			}
 
 			break;
 		case PURSUIT_ROCK:
-			if (gridX == destX && gridY == destY) {
+			if (gridX == destX && gridY == destY || stateTimer<0.0f) {
 				//std::cout << "Enemy reached the rock!\n";
 				if (seePlayer(sightRangePlayer) && state != PURSUIT_PLAYER) {
-					state = PURSUIT_PLAYER;
-					stateTimer = PURSUIT_TIME;
+					SetPursuitPlayerState();
 					//std::cout << "Switching to PURSUIT_PLAYER.\n";
 				}
 				else{
-					state = IDLE;  // Reached the rock
-					stateTimer = IDLE_TIME;
+					SetIdleState();
 				 }
 				
 			
@@ -512,16 +507,13 @@ namespace {// Utility Functions
 			}
 			else if (hitbywave(dir_wave, wave_col_pos) && state != PURSUIT_PLAYER) {
 				//std::cout << "change state to pursuit player!\n";
-				state = PURSUIT_PLAYER;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitPlayerState();
 			}
 			else if (seePlayer(sightRangePlayer) && state != PURSUIT_PLAYER) {
-				state = PURSUIT_PLAYER;
-				stateTimer = PURSUIT_TIME;
+				SetPursuitPlayerState();
 			}
-			else if (!seePlayer(sightRangePlayer) && stateTimer <= 0.0f) { //player zao alr
-				state = PATROL;
-				stateTimer = PATROL_TIME;
+			else if (!seePlayer(sightRangePlayer) || stateTimer <= 0.0f) { //player zao alr
+				SetPatrolState();
 
 			}
 
@@ -587,9 +579,9 @@ namespace {// Utility Functions
 	*/
 	void Enemy::printEnemyPatrolpoints() const {
 		// Print sorted patrol points for confirmation
-		for (const Pair& p : patrolPath) {
-			std::cout << "Patrol point: (" << p.first << ", " << p.second << ")\n";
-		}
+		//for (const Pair& p : patrolPath) {
+			//std::cout << "Patrol point: (" << p.first << ", " << p.second << ")\n";
+		//}
 	}
 
 	void Enemy::print_debug() const {
@@ -603,6 +595,30 @@ namespace {// Utility Functions
 		}
 	}
 
+
+	void Enemy::SetIdleState() {
+
+		state = IDLE;
+		stateTimer = idle_timer;
+
+	}
+	void Enemy::SetPatrolState() {
+	
+		state = PATROL;
+		stateTimer = patrol_timer;
+
+	}
+	void Enemy::SetPursuitPlayerState() {
+
+		state = PURSUIT_PLAYER;
+		stateTimer = pursuit_timer;
+	}
+	void Enemy::SetPursuitRockState() {
+
+		state = PURSUIT_ROCK;
+		stateTimer = pursuit_timer;
+	}
+	
 
 	/*
 	* noon-member functions

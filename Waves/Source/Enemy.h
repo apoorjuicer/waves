@@ -110,6 +110,7 @@ Technology is prohibited.
 		float idle_timer = 3.f;
 		float patrol_timer = 10.f;
 		float pursuit_timer = 4.f;
+		//bool hasPursuedRock = false;
 
 		Enemy() : x{ 100.f }, y{ -200.f }, gridX{ 1 }, gridY{ 1 }, w{ 50.f }, h{ 50.f }, state{ IDLE }
 			, previousState{ IDLE } {}
@@ -131,8 +132,13 @@ Technology is prohibited.
 		bool seePlayer(float sightRange) const;
 		bool seeRock(float sightRange) const;
 		bool hitbywave(DirectionalWave dir_wave, AEVec2& out) const;
-
 		void Update_Patrol(bool in_PatrolPath, Pair currIndexpos, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
+		
+		void SetIdleState();
+		void SetPatrolState();
+		void SetPursuitPlayerState();
+		void SetPursuitRockState();
+
 	private:
 
 
