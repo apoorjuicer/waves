@@ -138,7 +138,7 @@ void GameState2::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    enemy2.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes);
+    enemy2.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes, dir_wave);
     //enemy1.enemy_wave(enemy_wave, wave_meshes);
 
     // UPDATE WAVES-----------------------------------------------------

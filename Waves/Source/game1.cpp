@@ -103,8 +103,8 @@ void GameState1::Initialize() {
     //enemy1.x = 1 * TILE_SIZE;
     //enemy1.y = 1 * -TILE_SIZE;
     //enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
-    enemy1.state = PATROL;
-    enemy1.previousState = PATROL;
+    enemy1.state = PURSUIT_PLAYER;
+    enemy1.previousState = PURSUIT_PLAYER;
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
 	AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
@@ -140,6 +140,7 @@ void GameState1::Update(f32 deltaTime) {
 
     //debug
     //enemy1.print_debug();
+   // std::cout << player.x << player.y <<"\n";
     if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;
         std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
@@ -182,7 +183,7 @@ void GameState1::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    enemy1.UpdateEnemystate(deltaTime, enemy_wave,wave_meshes);
+    enemy1.UpdateEnemystate(deltaTime, enemy_wave,wave_meshes,dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();

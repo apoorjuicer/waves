@@ -145,7 +145,7 @@ void GameState3::Update(f32 deltaTime) {
     }*/
 
     //UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
-    enemy3.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes);
+    enemy3.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes, dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
