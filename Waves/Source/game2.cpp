@@ -46,7 +46,7 @@ void GameState2::Load() {
     enemyMesh = createEnemyMesh(0xFFFF0000);
     goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
     keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
-    rockMesh = CreateSquareMesh(30.0f, 0x8B4513FF);
+    rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
     this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
