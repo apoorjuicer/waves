@@ -87,6 +87,8 @@ void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32
 
     // Apply the transform and draw the mesh
     AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+    AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+    AEGfxSetColorToAdd(0.f, 0.f, 0.f, 0.f);
     AEGfxSetTransform(transformDonut.m);
     AEGfxMeshDraw(NameOfMesh, AE_GFX_MDM_TRIANGLES);
 }
@@ -258,6 +260,9 @@ void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh,
 
         // Draw inventory slot (box) - No Texture
         AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+        AEGfxSetColorToMultiply(1.f, 1.f, 1.f, 1.f);
+        AEGfxSetColorToAdd(0.f, 0.f, 0.f, 0.f);
+
         AEMtx33 boxTransform;
         AEMtx33Identity(&boxTransform);
         AEMtx33Scale(&boxTransform, boxSize, boxSize);

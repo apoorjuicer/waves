@@ -303,11 +303,18 @@ void Wave::draw() {
 	if (!is_active) {
 		return;
 	}
+
+	AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+	AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+	AEGfxSetColorToAdd(1.0f, 1.0f, 1.0f, 1.0f);
+
 	// set transforms;
 	AEMtx33 transform = set_transform(scale, pos, rot);
 	AEGfxSetTransform(transform.m);
 	// draw wave;
 	AEGfxMeshDraw(*mesh, AE_GFX_MDM_TRIANGLES);
+
+	AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
 	return;
 
@@ -587,7 +594,7 @@ void DirectionalWave::check_collide() {
 
 	switch (direction) {
 	case DIR_LEFT:
-		tmp.x = tmp.x - (0.3f * scale.x);
+		tmp.x = tmp.x - (1.3f * scale.x);
 		break;
 	case DIR_RIGHT:
 		tmp.x = tmp.x + (0.3f * scale.x);
@@ -960,11 +967,18 @@ void DirectionalWave::draw() {
 	if (!is_active) {
 		return;
 	}
+
+	AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+	AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+	AEGfxSetColorToAdd(1.0f, 1.0f, 1.0f, 1.0f);
+
 	// set transforms;
 	AEMtx33 transform = set_transform(scale, pos, rot + 45.f);
 	AEGfxSetTransform(transform.m);
 	// draw wave;
 	AEGfxMeshDraw(mesh[1], AE_GFX_MDM_TRIANGLES);
+
+	AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
 	return;
 }
@@ -1032,11 +1046,18 @@ void Outline::draw() {
 	if (!is_active) {
 		return;
 	}
+
+	AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+	AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+	AEGfxSetColorToAdd(1.0f, 1.0f, 1.0f, 1.0f);
+
 	// set transforms;
 	AEMtx33 transform = set_transform(scale, pos, rot);
 	AEGfxSetTransform(transform.m);
 	// draw wave;
 	AEGfxMeshDraw(*mesh, AE_GFX_MDM_TRIANGLES);
+
+	AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
 	return;
 }

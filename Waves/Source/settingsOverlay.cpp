@@ -98,6 +98,10 @@ namespace SettingsOverlay {
     void Draw() {
         if (!sVisible) return;
 
+        AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+        AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+        AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
+
         AEMtx33 t, s, m;
         AEMtx33Trans(&t, panelPosX, panelPosY);
         AEMtx33Scale(&s, panelWidth, panelHeight);

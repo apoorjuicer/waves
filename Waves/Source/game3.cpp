@@ -200,12 +200,14 @@ void GameState3::Draw() {
     if (!PauseOverlay::IsPaused()) {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
 	}
+
+    // render maze elements;
+    RenderBackground(tilesize, pathMesh, goalMesh);
+    RenderItems(keyMesh, rockMesh, keyTexture, rockTexture);
+    // render enemy;
     RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
-
-    RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh, keyTexture, rockTexture);
-    //RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
-
-    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    // vision radius;
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();
@@ -219,18 +221,16 @@ void GameState3::Draw() {
             w.draw();
         }
     }
-    //for (Wave& r : reflections) {
-    //    if (r.is_active) {
-    //        r.draw();
-    //    }
-    //}
     for (Outline& l : outlines) {
         if (l.is_active) {
             l.draw();
         }
     }
     // ---------------------------------------------------
+    // render player;
     RenderPlayer(player, PlayerMesh, playerTexture);
+    // render walls;
+    RenderWalls(tilesize, wallMesh);
 
     DrawInventory(player, boxMesh, keyMesh, rockMesh, keyTexture, rockTexture);
 

@@ -73,6 +73,8 @@ namespace PauseOverlay {
         AEMtx33 t, scaleMtx, finalMtx;
 
         AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+        AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+        AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
         // Draw pause screen background (using player's world position as base)
         AEMtx33Trans(&t, player.x, player.y);

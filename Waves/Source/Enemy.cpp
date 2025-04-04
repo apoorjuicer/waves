@@ -49,6 +49,10 @@ int prevDestY = -1;
 
 	void RenderEnemy_Mesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation)
 	{
+		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+		AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+		AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
+
 		// Create transform matrices
 		AEMtx33 scale_matrix = { 0 };
 		AEMtx33 rotate_matrix = { 0 };
