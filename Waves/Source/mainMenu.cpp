@@ -52,6 +52,7 @@ void MainMenuState::Initialize() {
     AudioManager::PlayAudio("MainMenu", 1.0f, 1.0f, -1);
 
     SettingsOverlay::Init();
+	ExitConfirmOverlay::Init();
 }
 
 void MainMenuState::Update(f32 deltaTime) {
@@ -72,6 +73,11 @@ void MainMenuState::Update(f32 deltaTime) {
     if (SettingsOverlay::IsVisible()) {
         SettingsOverlay::Update();
         return; // Don't continue menu logic when settings are open
+    }
+
+    if (ExitConfirmOverlay::IsVisible()) {
+        ExitConfirmOverlay::Update(pGameRunning);
+        return;
     }
 
     // Only check clicks when the left mouse button is triggered.
@@ -161,8 +167,9 @@ void MainMenuState::Update(f32 deltaTime) {
             if (IsMouseInsideButtonNDC(centerX_NDC, centerY_NDC, textW, textH))
             {
                 // Safely exit the game.
-                if (pGameRunning)
-                    *pGameRunning = 0;
+                /*if (pGameRunning)
+                    *pGameRunning = 0;*/
+                ExitConfirmOverlay::Toggle();
             }
         }
     }
@@ -287,6 +294,7 @@ void MainMenuState::Draw() {
     }
 
     SettingsOverlay::Draw();
+    ExitConfirmOverlay::Draw();
 }
 
 void MainMenuState::Free() {

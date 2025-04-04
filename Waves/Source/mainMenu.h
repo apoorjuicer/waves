@@ -27,6 +27,7 @@ Technology is prohibited.
 #include "utility.h"
 #include "settingsOverlay.h"
 #include "credits.h"
+#include "exitOverlay.h"
 
 class MainMenuState : public BaseState {
 private:
