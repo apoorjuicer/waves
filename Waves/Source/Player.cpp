@@ -160,11 +160,7 @@ bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 maz
 }
 
 
-void CheckItem(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
-    UNREFERENCED_PARAMETER(tileSize);
-    UNREFERENCED_PARAMETER(mazeStartX);
-    UNREFERENCED_PARAMETER(mazeStartY);
-    UNREFERENCED_PARAMETER(maze1);
+void CheckItem(Player& player1) {
 
     if (AEInputCheckTriggered(AEVK_E)) {
         f32 playerMinX = player1.x - player1.rad;

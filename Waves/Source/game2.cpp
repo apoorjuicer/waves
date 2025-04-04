@@ -49,7 +49,7 @@ void GameState2::Load() {
     rockMesh = CreateSquareMesh(30.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
-    this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
     this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
@@ -171,7 +171,7 @@ void GameState2::Update(f32 deltaTime) {
     }
     // -----------------------------------------------------------------
 
-    CheckItem(player, maze, tilesize, 0.0f, 0);
+    CheckItem(player);
     dead = PlayerEnemyCollision(player, enemy2, tilesize);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
     if (dead && !gameOverSoundPlayed)

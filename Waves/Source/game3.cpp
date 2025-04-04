@@ -52,7 +52,7 @@ void GameState3::Load() {
     if (!this->keyTexture) {
         std::cerr << "Error: Failed to load key texture!" << std::endl;
     }
-    this->rockTexture = AEGfxTextureLoad("Assets/PlanetTexture.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
     if (!this->rockTexture) {
         std::cerr << "Error: Failed to load rock texture!" << std::endl;
     }
@@ -177,7 +177,7 @@ void GameState3::Update(f32 deltaTime) {
     }
     // -----------------------------------------------------------------
 
-    CheckItem(player, maze, tilesize, 0.0f, 0);
+    CheckItem(player);
 
     dead = PlayerEnemyCollision(player, enemy3, tilesize);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
