@@ -189,7 +189,7 @@ namespace rock {
                 // If collision on X axis, revert X and reverse the X velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.x = prevX;
-                rock.dx *= ( - 0.4);
+                rock.dx *= ( - 0.4f);
                 rock.currBounce++;
 
                 // Play the collision sound
@@ -202,7 +202,7 @@ namespace rock {
                 // If collision on Y axis, revert Y and reverse the Y velocity
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rock.y = prevY;
-                rock.dy *= ( - 0.4);
+                rock.dy *= ( - 0.4f);
                 rock.currBounce++;
 
                 // Play the collision sound
