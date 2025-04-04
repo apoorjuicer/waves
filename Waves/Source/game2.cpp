@@ -40,7 +40,7 @@ void GameState2::Load() {
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
-    PlayerMesh = Player_Mesh(48, 0xFFFFFFFF, 10.0f);
+    PlayerMesh = CreateSquareMesh(50.0f, 0xFFFFFFFF);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateSquareMesh(tilesize, 0x55555555);
     enemyMesh = createEnemyMesh(0xFFFF0000);
@@ -195,7 +195,7 @@ void GameState2::Draw() {
     RenderMesh(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
 
     RenderMaze(maze, tilesize, wallMesh, pathMesh, goalMesh, keyMesh, rockMesh, keyTexture, rockTexture);
-    RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
