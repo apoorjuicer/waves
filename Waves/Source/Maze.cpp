@@ -108,7 +108,6 @@ void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* 
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tilesize; // Y starts at the top (10 tiles * tile size)
-    static size_t path_num{}; f32 offset{};
 
     for (int y = 0; y < MAX_ROW; ++y) {
         for (int x = 0; x < MAX_COL; ++x) {
@@ -124,29 +123,17 @@ void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* 
             AEGfxSetTransform(transform.m);
             // Draw walls or paths
             if (maze[y][x] != 1) {
-                
-                switch (path_num%4) {
-                case 0:
-                    offset = 0.f;
-                case 1:
-                    offset = 0.25;
-                case 2:
-                    offset = 0.50f;
-                case 3:
-                    offset = 0.50f;
-                }
 
                 AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
                 AEGfxSetColorToMultiply(1.f, 1.f, 1.f, 1.0f);
                 AEGfxSetColorToAdd(0.f, 0.f, 0.f, 0.f);
 
-                AEGfxTextureSet(pathTexture, offset, 0.f);
+                AEGfxTextureSet(pathTexture, 0.f, 0.f);
                 AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
-                ++path_num;
             }
             if (maze[y][x] == 2) {
-                //AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-                //AEGfxMeshDraw(goalMesh, AE_GFX_MDM_TRIANGLES);
+                AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+                AEGfxMeshDraw(goalMesh, AE_GFX_MDM_TRIANGLES);
             }
         }
     }

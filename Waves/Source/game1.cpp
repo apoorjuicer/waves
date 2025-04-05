@@ -33,6 +33,7 @@ void GameState1::Load() {
     if (!ImportMapDataFromFile("Assets/Maze1.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
     }
+    PrintMapData();
     
     player.texture = AEGfxTextureLoad("Assets/Textures/Texture_Player.png");
     player.mesh = CreateTextureMesh(4, 2);
@@ -45,7 +46,7 @@ void GameState1::Load() {
     rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
-    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/Textures/Texture_Rock.png");
     this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
     this->pathTexture = AEGfxTextureLoad("Assets/Textures/Texture_Path.png");
 
@@ -114,7 +115,7 @@ void GameState1::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_D)) {
         player.state = player.PLAYER_STATE::IS_MOVING;
         MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
-        player.dir = player.PLAYER_STATE::FACING_LEFT;
+        player.dir = player.PLAYER_STATE::FACING_RIGHT;
     }
     GlobalCenter.x = player.x; GlobalCenter.y = player.y;
 

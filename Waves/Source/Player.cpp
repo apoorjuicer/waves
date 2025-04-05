@@ -60,8 +60,8 @@ Technology is prohibited.
 
 void Player::draw() const {
 
-    f32 current_sprite_uv_offset_x{ 0.f };   // 0.2f offsets;
-    f32 current_sprite_uv_offset_y{ 0.5f };   // 0.5f offset;
+    static f32 current_sprite_uv_offset_x{ 0.f };   // 0.2f offsets;
+    static f32 current_sprite_uv_offset_y{ 0.5f };   // 0.5f offset;
 
     if (dir == FACING_RIGHT) {
         current_sprite_uv_offset_y = 0.f;
@@ -75,36 +75,19 @@ void Player::draw() const {
     }
     else if (state == IS_MOVING) {
         // animation speed;
-        const f32 animation_duration_per_frame = 0.3f;
+        const f32 animation_duration_per_frame = 0.1f;
         static f32 animation_timer = 0.f;
-        static u32 sprite_index = 0;
 
         // Update the animation timer.
         animation_timer += (f32)AEFrameRateControllerGetFrameTime();
 
         if (animation_timer >= animation_duration_per_frame) {
+            current_sprite_uv_offset_x += 0.25f;
 
-            switch (sprite_index) {
-            case 0:
+            if (current_sprite_uv_offset_x >= 0.75f) {
                 current_sprite_uv_offset_x = 0.f;
-                break;
-            case 1:
-                current_sprite_uv_offset_x = 0.25f;
-                break;
-            case 2:
-                current_sprite_uv_offset_x = 0.50f;
-                break;
-            case 3:
-                current_sprite_uv_offset_x = 0.75f;
-                break;
             }
-            // increment anim frame;
-            ++sprite_index;
-            // reset if anim goes over last frame;
-            if (sprite_index > 2) { sprite_index = 0; }
-
-            // Reset the timer.
-            animation_timer = 0;
+            animation_timer = 0.f;
         }
     }
     // render settings;
@@ -340,11 +323,17 @@ void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MA
     f32 newX = pplayer.x + dx * speed * dt;
     f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
 
+
+    int x_idx = static_cast<int>((pplayer.x - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
+    int y_idx = abs(static_cast<int>((pplayer.y - TILE_SIZE / 2.f) / TILE_SIZE));
+    int newx_idx = static_cast<int>((newX + (dx * 15.f) - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
+    int newy_idx = abs(static_cast<int>((newY + (dy * 15.f) - TILE_SIZE / 2.f) / TILE_SIZE));
+
     // Check if the new position is walkable
-    if (IsWalkable(newX, pplayer.y, maze1, tileSize, 0.0f, 0)) {
+    if (maze[y_idx][newx_idx] != 1/* && pplayer.x > (2.f * TILE_SIZE - (activeCol * TILE_SIZE / 2.f))*/) {
         pplayer.x = newX;
     }
-    if (IsWalkable(pplayer.x, newY, maze1, tileSize, 0.0f, 0)) {
+    if (maze[newy_idx][x_idx] != 1/* && pplayer.y < ((activeRow * TILE_SIZE / 2.f) - TILE_SIZE)*/) {
         pplayer.y = newY;
     }
 }

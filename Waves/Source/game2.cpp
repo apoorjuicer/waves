@@ -32,6 +32,7 @@ void GameState2::Load() {
     if (!ImportMapDataFromFile("Assets/Maze2.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
     }
+    PrintMapData();
 
     player.texture = AEGfxTextureLoad("Assets/Textures/Texture_Player.png");
     player.mesh = CreateTextureMesh(4, 2);
@@ -45,7 +46,7 @@ void GameState2::Load() {
     rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
-    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/Textures/Texture_Rock.png");
     this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
     this->pathTexture = AEGfxTextureLoad("Assets/Textures/Texture_Path.png");
 
