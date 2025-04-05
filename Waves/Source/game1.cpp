@@ -215,7 +215,7 @@ void GameState1::Update(f32 deltaTime) {
     }
     // -----------------------------------------------------------------
 
-    CheckItem(player); 
+    CheckItem(player);
 
     dead = PlayerEnemyCollision(player, { enemy1.x, enemy1.y }, tilesize);
 

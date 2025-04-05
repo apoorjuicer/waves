@@ -169,7 +169,7 @@ void GameState2::Update(f32 deltaTime) {
     }
     // -----------------------------------------------------------------
 
-    CheckItem(player, maze, tilesize, 0.0f, 0);
+    CheckItem(player);
     dead = PlayerEnemyCollision(player, {enemy2.x, enemy2.y}, tilesize);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
     if (dead && !gameOverSoundPlayed)

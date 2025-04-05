@@ -374,8 +374,8 @@ namespace {// Utility Functions
 		}
 
 
-		int destX = static_cast<int>((p.lastRockPos.x + (TILE_SIZE / 2)) / TILE_SIZE);
-		int destY = static_cast<int>((p.lastRockPos.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+		//int destX = static_cast<int>((p.lastRockPos.x + (TILE_SIZE / 2)) / TILE_SIZE);
+		//int destY = static_cast<int>((p.lastRockPos.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 		enemy_wave(MainWaves, mesh);
 
 		//const float IDLE_TIME = idle_timer;       // Time to stay idle
