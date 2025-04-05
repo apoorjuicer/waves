@@ -53,8 +53,8 @@ Technology is prohibited.
 	//#define TILE_SIZE_Y -100
 	constexpr float ENEMY_SPEED = 16.0f;  // Pixels per frame (adjust as needed)
 	constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
-	constexpr float sightRangeRock = 3.5f * TILE_SIZE;  // Enemy detection range for rock
-	constexpr float sightRangePlayer = 2.5f * TILE_SIZE;  // Enemy detection range for player
+	constexpr float sightRangeRock = 6.0f * TILE_SIZE;  // Enemy detection range for rock
+	constexpr float sightRangePlayer = 2.0f * TILE_SIZE;  // Enemy detection range for player
 
 	// create shortcut for <int, int> pair
 	typedef std::pair<int, int> Pair; //contains i and j
@@ -97,7 +97,7 @@ Technology is prohibited.
 		Pair endPatrol;
 		//float startPatrolx, startPatroly;
 		//float endPatrolX, endPatrolY;
-		enum Enemy_State state = PATROL;
+		enum Enemy_State state = IDLE;
 		enum Enemy_State previousState;  // Track previous state to detect state changes
 		//vector<pair<int, int>> path; // Stores A* path
 		std::vector<Pair> path = {};
@@ -106,12 +106,13 @@ Technology is prohibited.
 		int pathIndex = 0; // Current target in path
 		bool reachPath = false;
 		//Wave enemy_waves[MAX_NUM_WAVES];
-		float stateTimer = 0;
-		float idle_timer = 3.f;
+		float stateTimer = 0.f;
+		float idle_timer = 6.f;
 		float patrol_timer = 10.f;
 		float pursuit_timer = 4.f;
 		//bool hasPursuedRock = false;
-
+		Pair rockPrevDest = { -1, -1 };
+		bool reachedRock = false;
 		Enemy() : x{ 100.f }, y{ -200.f }, gridX{ 1 }, gridY{ 1 }, w{ 50.f }, h{ 50.f }, state{ IDLE }
 			, previousState{ IDLE } {}
 

@@ -93,7 +93,7 @@ namespace rock {
 
     // Global rock object
     Rock rock = { 0.0f, 0.0f, 0.0f, 0.0f, 0, 3 };
-    bool rockActive = false;
+    //bool rockActive = false;
     f32 rockThrowSoundTimer = 0.0f; // Timer for the rock throw sound
     const f32 rockThrowSoundDuration = 0.3f; // Duration to play the sound (in seconds)
 
@@ -117,8 +117,9 @@ namespace rock {
         }
 
         // Launch the rock when the left mouse button is clicked (and if not already active)
-        if (AEInputCheckCurr(AEVK_RBUTTON) && !rockActive && hasRock) {
+        if (AEInputCheckCurr(AEVK_RBUTTON) && !player.rockActive && hasRock) {
 
+          
             f32 speed = 15.0f;
             AEInputGetCursorPosition(&mouseX, &mouseY);
 
@@ -148,11 +149,11 @@ namespace rock {
                 rock.dx = normalisedVec.x * speed;
                 rock.dy = normalisedVec.y * speed;
                 rock.currBounce = 0;
-                rockActive = true;
+                player.rockActive = true;
             }
         }
 
-        if (rockActive) {
+        if (player.rockActive) {
             // Assume dt is the time elapsed this frame in seconds
             f32 dt = (f32)AEFrameRateControllerGetFrameTime();
 
@@ -211,10 +212,12 @@ namespace rock {
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
                 spawn_wave(MainWaves, prevX, prevY, mesh);
-                rockActive = false;
+                player.rockActive = false;
                 rplayer.lastRockPos.x = rock.x;
                 rplayer.lastRockPos.y = rock.y;
+                std::cout << prevX << ","<< prevY << "\n";
                 rplayer.DropItem(rock.x, rock.y);
+                
             }
 
             // Draw the rock at its current position

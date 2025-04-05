@@ -46,6 +46,8 @@ struct Player {
     InventoryItemType inventory[3] = { NOTHING, NOTHING, NOTHING };
     //InventoryItem inventory[INVENTORY_SIZE] = { ROCK, NOTHING, NOTHING };'
     AEVec2 lastRockPos{0.f,0.f};
+    bool rockActive = false;
+    bool rockLanded = false;
     void PickUpItem(InventoryItemType itemType);
     void DropItem(f32 dropX, f32 dropY);
 };

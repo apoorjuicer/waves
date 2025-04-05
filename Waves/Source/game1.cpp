@@ -103,8 +103,8 @@ void GameState1::Initialize() {
     //enemy1.x = 1 * TILE_SIZE;
     //enemy1.y = 1 * -TILE_SIZE;
     //enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
-    enemy1.state = PURSUIT_PLAYER;
-    enemy1.previousState = PURSUIT_PLAYER;
+    enemy1.state = IDLE;
+    enemy1.previousState = IDLE;
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
 	AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
