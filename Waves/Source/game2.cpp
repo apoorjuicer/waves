@@ -74,7 +74,7 @@ void GameState2::Initialize() {
     player.x = 100.f;
     player.y = -100.f;
     player.inventory[0] = ROCK;
-
+    player.lastRockPos = {};
     //enemy2.x = 100.f;
     //enemy2.y = -700.f;
     //enemy2.startPatrol = { 2,7 };
@@ -86,8 +86,8 @@ void GameState2::Initialize() {
     enemy2.endPatrol = enemy2.patrolPath.back();
     enemy2.x = enemy2.startPatrol.first * TILE_SIZE;
     enemy2.y = enemy2.startPatrol.second * -TILE_SIZE;
-    enemy2.state = PATROL;
-    enemy2.previousState = PATROL;
+    enemy2.state = IDLE;
+    enemy2.previousState = IDLE;
     //enemy2.idle_timer = 3.f;
     enemy2.patrol_timer = 20.f;
     //enemy2.pursuit_timer = 3.f;
@@ -155,7 +155,7 @@ void GameState2::Update(f32 deltaTime) {
    /* if (AEInputCheckTriggered(AEVK_SPACE)) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
-
+   // enemy2.print_debug();
     enemy2.UpdateEnemystate(player, deltaTime, enemy_wave, wave_meshes, dir_wave);
     //enemy1.enemy_wave(enemy_wave, wave_meshes);
 
@@ -216,7 +216,7 @@ void GameState2::Draw() {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
     }
     // vision radius;
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();

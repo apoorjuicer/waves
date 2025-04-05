@@ -48,7 +48,7 @@ Technology is prohibited.
 	//#define TILE_SIZE_Y -100
 	constexpr float ENEMY_SPEED = 16.0f;  // Pixels per frame (adjust as needed)
 	constexpr double VAL_INF = std::numeric_limits<double>::infinity(); //infinity for init
-	constexpr float sightRangeRock = 6.0f * TILE_SIZE;  // Enemy detection range for rock
+	constexpr float sightRangeRock = 16.0f * TILE_SIZE;  // Enemy detection range for rock
 	constexpr float sightRangePlayer = 2.0f * TILE_SIZE;  // Enemy detection range for player
 
 	// create shortcut for <int, int> pair
@@ -107,7 +107,7 @@ Technology is prohibited.
 		float pursuit_timer = 4.f;
 		//bool hasPursuedRock = false;
 		Pair rockPrevDest = { -1, -1 };
-		bool reachedRock = false;
+		//bool reachedRock = false;
 		Enemy() : x{ 100.f }, y{ -200.f }, gridX{ 1 }, gridY{ 1 }, w{ 50.f }, h{ 50.f }, state{ IDLE }
 			, previousState{ IDLE } {}
 
@@ -127,6 +127,10 @@ Technology is prohibited.
 		void chasePlayer(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		bool seePlayer(Player player, float sightRange) const;
 		bool seeRock(Player& p,float sightRange) const;
+		//void chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
+		void chaseRock(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
+		//bool seePlayer(float sightRange) const;
+		//bool seeRock(float sightRange);
 		bool hitbywave(DirectionalWave dir_wave, AEVec2& out) const;
 		void Update_Patrol(bool in_PatrolPath, Pair currIndexpos, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		

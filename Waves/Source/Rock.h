@@ -38,6 +38,9 @@ Technology is prohibited.
 struct Rock {
     float x, y, dx, dy;  // Position in world space
     int currBounce, maxBounce;
+    //std::vector<Rock> activeRocks;
+
+
 };
 
 namespace rock {

@@ -73,7 +73,7 @@ void GameState1::Initialize() {
     winGame = false;
     player.x = 300.f;
     player.y = -100.f;
-    
+    player.lastRockPos = {};
     player.inventory[0] = ROCK;
     //enemy1.x = 100.f;
     //enemy1.y = -700.f;
@@ -119,7 +119,11 @@ void GameState1::Update(f32 deltaTime) {
         return;
     }
 
-    if (AEInputCheckCurr(AEVK_1)) {
+
+    //debug
+    enemy1.print_debug();
+   // std::cout << player.x << player.y <<"\n";
+  /*  if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;
         std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
     }
@@ -239,7 +243,7 @@ void GameState1::Draw() {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
     }
     // vision radius;
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();
