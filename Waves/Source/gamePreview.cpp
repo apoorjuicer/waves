@@ -18,7 +18,7 @@ Technology is prohibited.
 
 #include "gamePreview.h"
 
-gamePreview::gamePreview(int i) : goGame(false), previewFont(-1), maze1_mesh(nullptr), okButtonMesh(nullptr), level_num{ i } {}
+gamePreview::gamePreview(int i) : goGame(false), back2Main(false), previewFont(-1), maze1_mesh(nullptr), level_num{ i } {}
 
 void gamePreview::Load() {
     AEGfxSetCamPosition(0, 0);
@@ -29,8 +29,6 @@ void gamePreview::Load() {
     previewFont = FontManager::GetFont("NunitoBold70");
 
     maze1_mesh = TextureMesh();
-
-    okButtonMesh = CreateButtonMesh(0xFFFFFFFF);
 
     // read file depending on which level selected;
     switch (level_num) {
@@ -53,21 +51,36 @@ void gamePreview::Load() {
 }
 
 void gamePreview::Initialize() {
-    AEInputReset();    // Reset any prior input events
     goGame = false;
+    back2Main = false;
 }
 
 void gamePreview::Update(f32 deltaTime) {
     (f32)deltaTime;
 
-    // Example: Press ENTER to return to main menu
     if (AEInputCheckTriggered(AEVK_RETURN)) {
         goGame = true;
     }
 
+	if (AEInputCheckTriggered(AEVK_ESCAPE)) {
+		back2Main = true;
+	}
+
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
-        if (IsMouseInsideButton(0.0f, -300.0f, 200.0f, 100.0f)) {
-            goGame = true;
+        // ---------------------------
+        // "OK" Button
+        // ---------------------------
+        {
+            f32 textW, textH;
+            AEGfxGetPrintSize(previewFont, "OK", 1.0f, &textW, &textH);
+
+            f32 centerX_NDC = 0.0f;
+            f32 centerY_NDC = -0.7f;
+
+            if (IsMouseInsideButtonNDC(centerX_NDC, centerY_NDC, textW, textH))
+            {
+                goGame = true;
+            }
         }
     }
 }
@@ -121,35 +134,53 @@ void gamePreview::Draw() {
         start_pos.y -= p_scale;
     }
     
-    // print text;
-    AEGfxPrint(previewFont, "Maze Layout", -0.25f, 0.7f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+    // ======================================================================
+	// Print Maze Layout Text
+    // ======================================================================
+    f32 TextWidthNDC, TextHeightNDC;
+    AEGfxGetPrintSize(previewFont, "Maze Layout", 1.0f, &TextWidthNDC, &TextHeightNDC);
+    f32 CenterX_NDC = 0.0f;
+    f32 CenterY_NDC = 0.75f;
+    f32 TextX_NDC = CenterX_NDC - (TextWidthNDC * 0.5f);
+    f32 TextY_NDC = CenterY_NDC - (TextHeightNDC * 0.5f);
+    AEGfxPrint(previewFont, "Maze Layout", TextX_NDC, TextY_NDC, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
 
-    if (!okButtonMesh) return;
-    
-    RenderMesh(okButtonMesh, 0.0f, -300.0f, 1.0f, 1.0f, 0.0f);
-    AEGfxPrint(previewFont, "OK", -0.055f, -0.72f, 1.0f, 0.0f, 0.0f, 0.0f, 1.0f);
+	// ======================================================================
+	// RENDER OK BUTTON
+	// ======================================================================
+    {
+        f32 OKTextWidthNDC, OKTextHeightNDC;
+        AEGfxGetPrintSize(previewFont, "OK", 1.0f, &OKTextWidthNDC, &OKTextHeightNDC);
+
+        f32 OKCenterX_NDC = 0.0f;
+        f32 OKCenterY_NDC = -0.7f;
+
+        f32 OK_r = 0.0f;
+        f32 OK_g = 0.0f;
+        f32 OK_b = 0.0f;
+
+        f32 OKTextX_NDC = OKCenterX_NDC - (OKTextWidthNDC * 0.5f);
+        f32 OKTextY_NDC = OKCenterY_NDC - (OKTextHeightNDC * 0.5f);
+        AEGfxPrint(previewFont, "OK", OKTextX_NDC, OKTextY_NDC, 1.0f, OK_r, OK_g, OK_b, 1.0f);
+    }
 }
 
 void gamePreview::Free() {
-    if (okButtonMesh) {
-        AEGfxMeshFree(okButtonMesh);
-        okButtonMesh = nullptr;
-    }
     if (maze1_mesh) {
         AEGfxMeshFree(maze1_mesh);
         maze1_mesh = nullptr;
     }
-
 }
 
 void gamePreview::Unload() {
-	/*if (previewFont != -1) {
-		AEGfxDestroyFont(previewFont);
-		previewFont = -1;
-	}*/
 }
 
 BaseState* gamePreview::GetNextState() {
+	// If back2Main is true, transition to main menu
+	if (back2Main) {
+		return new LevelSelectState();
+    }
+
     // If goMenu is true, transition to main menu
     switch (level_num) {
     case 1:

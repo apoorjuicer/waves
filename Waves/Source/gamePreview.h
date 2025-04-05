@@ -25,10 +25,9 @@ Technology is prohibited.
 class gamePreview : public BaseState {
 private:
     bool goGame = false;   // Flag for returning to the main menu
+    bool back2Main = false;
     s8 previewFont;
     AEGfxVertexList* maze1_mesh = nullptr;
-    AEGfxVertexList* okButtonMesh = nullptr;
-
     int level_num;
 public:
     gamePreview(int i);
