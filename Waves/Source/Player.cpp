@@ -160,10 +160,10 @@ bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 maz
 void CheckItem(Player& player1) {
 
     if (AEInputCheckTriggered(AEVK_E)) {
-        f32 playerMinX = player1.x - player1.rad;
-        f32 playerMaxX = player1.x + player1.rad;
-        f32 playerMinY = player1.y - player1.rad;
-        f32 playerMaxY = player1.y + player1.rad;
+        f32 playerMinX = player1.x - player1.rad - 30.f;
+        f32 playerMaxX = player1.x + player1.rad + 30.f;
+        f32 playerMinY = player1.y - player1.rad - 30.f;
+        f32 playerMaxY = player1.y + player1.rad + 30.f;
 
         for (auto& item : worldItems) {
             if (!item.collected &&
@@ -173,27 +173,27 @@ void CheckItem(Player& player1) {
                 AudioManager::PlayAudio("Collect", 0.2f, 1.0f, 0);
 
                 // Pick up the item (add it to the player's inventory)
-                player1.PickUpItem(item.type);
-
-                // Mark the item as collected
-                item.collected = true;
-                break;
+                item.collected = player1.PickUpItem(item.type);
+                if (item.collected) {
+                    break;
+                }
             }
         }
     }
 }
 
-void Player::PickUpItem(InventoryItemType itemType) {
+bool Player::PickUpItem(InventoryItemType itemType) {
     for (int i = 0; i < INVENTORY_SIZE; ++i) {
         if (inventory[i] == NOTHING) {
             inventory[i] = itemType;
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 void Player::DropItem(f32 dropX, f32 dropY) {
-    for (int i = {INVENTORY_SIZE -1 }; i >=0; --i) {
+    for (int i = { INVENTORY_SIZE - 1 }; i >= 0; --i) {
         if (inventory[i] == ROCK) {
             // Drop the item and add it to worldItems
             worldItems.emplace_back(WorldItem(inventory[i], dropX, dropY));
@@ -443,15 +443,3 @@ bool checkGoal(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 m
     // Check if the player has the key and is standing on the goal tile (maze value == 2)
     return (hasKey && maze1[gridY][gridX] == 2 && AEInputCheckCurr(AEVK_E));
 }
-
-
-
-//void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh,AEGfxTexture* playerTexture) {
-//    AEMtx33 transform = { 0 };
-//    AEMtx33Trans(&transform, pplayer.x, pplayer.y); // Adjust for screen space
-//    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-//    AEGfxSetTransform(transform.m);
-//    AEGfxTextureSet(playerTexture, 0, 0);
-//    AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
-//    AEGfxTextureSet(nullptr, 0, 0);
-//}

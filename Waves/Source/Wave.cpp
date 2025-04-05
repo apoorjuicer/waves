@@ -593,16 +593,16 @@ void DirectionalWave::check_collide() {
 
 	switch (direction) {
 	case DIR_LEFT:
-		tmp.x = tmp.x - (1.3f * scale.x);
+		tmp.x = tmp.x - (0.5f * scale.x);
 		break;
 	case DIR_RIGHT:
-		tmp.x = tmp.x + (0.3f * scale.x);
+		tmp.x = tmp.x + (0.5f * scale.x);
 		break;
 	case DIR_DOWN:
-		tmp.y = tmp.y - (0.8f * scale.y);
+		tmp.y = tmp.y - (0.5f * scale.y);
 		break;
 	case DIR_UP:
-		tmp.y = tmp.y + (0.3f * scale.y);
+		tmp.y = tmp.y + (0.5f * scale.y);
 		break;
 	}
 
