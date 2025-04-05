@@ -19,9 +19,10 @@ Technology is prohibited.
 #include "mainMenu.h"
 #include "GSM.h"
 
-
+// Constructor
 GameStateManager::GameStateManager() {}
 
+// Set the pointer to the game running flag
 void GameStateManager::SetState(BaseState* newState) {
     if (currentState) {
         currentState->Free();
@@ -40,7 +41,7 @@ void GameStateManager::SetState(BaseState* newState) {
     }
 }
 
-
+// Update the current state
 void GameStateManager::Update(f32 deltaTime) {
     if (!currentState) return;
 
@@ -52,12 +53,14 @@ void GameStateManager::Update(f32 deltaTime) {
     }
 }
 
+// Draw the current state
 void GameStateManager::Draw() {
     if (currentState) {
         currentState->Draw();
     }
 }
 
+// Destructor
 GameStateManager::~GameStateManager() {
     if (currentState) {
         currentState->Free();

@@ -19,18 +19,21 @@ Technology is prohibited.
 
 #include "pch.h"
 
+// ========================================
+// GameStateManager class for managing game states
+// ========================================
 class GameStateManager {
 private:
-    BaseState* currentState = nullptr;
-    int* pGameRunning = nullptr;
+	BaseState* currentState = nullptr;							// Pointer to the current game state
+	int* pGameRunning = nullptr;								// Pointer to the game running flag
 public:
-    GameStateManager();
+	GameStateManager();											// Constructor
 
-    void SetGameRunningPtr(int* ptr) { pGameRunning = ptr; }
+	void SetGameRunningPtr(int* ptr) { pGameRunning = ptr; }	// Set the game running pointer
 
-    void SetState(BaseState* newState);
-    void Update(f32 deltaTime);
-    void Draw();
-    ~GameStateManager();
+	void SetState(BaseState* newState);							// Set the current game state
+	void Update(f32 deltaTime);									// Update the current state
+	void Draw();												// Draw the current state
+	~GameStateManager();										// Destructor
 };
 

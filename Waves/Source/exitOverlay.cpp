@@ -1,13 +1,32 @@
+/* Start Header ************************************************************************/
+/*!
+\file		exitOverlay.cpp
+\author		Henrey Hu
+\email		zhihenghenrey.hu@digipen.edu
+
+\brief      This file defines the ExitConfirmOverlay namespace, which manages the exit confirmation overlay in the game.
+            It provides functionality for initializing, updating, drawing, and freeing the overlay resources.
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "exitOverlay.h"
 
+// ======================================================
+// Internal variables for the exit confirmation overlay
+// ======================================================
 namespace {
-    bool sVisible = false;
-    AEGfxVertexList* panelMesh = nullptr;
-    AEGfxVertexList* yesButtonMesh = nullptr;
-    AEGfxVertexList* noButtonMesh = nullptr;
+	bool sVisible = false;
+	AEGfxVertexList* panelMesh = nullptr; 
+	AEGfxVertexList* yesButtonMesh = nullptr;
+	AEGfxVertexList* noButtonMesh = nullptr; 
     s8 font = -1;
 
-    const f32 panelWidth = 500.0f;
+	const f32 panelWidth = 500.0f;
     const f32 panelHeight = 300.0f;
     const f32 panelPosX = 0.0f;
     const f32 panelPosY = 0.0f;
@@ -20,7 +39,11 @@ namespace {
     const f32 buttonY = -80.0f;
 }
 
+// ======================================================
+// Internal functions for the exit confirmation overlay
+// ======================================================
 namespace ExitConfirmOverlay {
+	// Initialize the overlay
     void Init() {
         sVisible = false;
         font = FontManager::GetFont("NunitoBold50");
@@ -29,9 +52,11 @@ namespace ExitConfirmOverlay {
         noButtonMesh = CreateButtonMesh(0xFFFFFFFF);
     }
 
+	// Update the overlay
     void Update(int* pGameRunning) {
         if (!sVisible) return;
 
+		// Check if the mouse is inside the button
         if (AEInputCheckTriggered(AEVK_LBUTTON)) {
             if (IsMouseInsideButton(yesX, buttonY, buttonW, buttonH)) {
                 if (pGameRunning)
@@ -43,6 +68,7 @@ namespace ExitConfirmOverlay {
         }
     }
 
+	// Draw the overlay
     void Draw() {
         if (!sVisible) return;
 
@@ -65,17 +91,20 @@ namespace ExitConfirmOverlay {
         DrawButton(noButtonMesh, noX, buttonY, "No", font, buttonW, buttonH, 0, 0, 0, 1);
     }
 
-    void Toggle() {
-        sVisible = !sVisible;
-    }
-
-    bool IsVisible() {
-        return sVisible;
-    }
-
+	// Free the overlay resources
     void Free() {
         if (panelMesh) { AEGfxMeshFree(panelMesh); panelMesh = nullptr; }
         if (yesButtonMesh) { AEGfxMeshFree(yesButtonMesh); yesButtonMesh = nullptr; }
         if (noButtonMesh) { AEGfxMeshFree(noButtonMesh); noButtonMesh = nullptr; }
+    }
+
+    // Toggle the overlay visibility
+    void Toggle() {
+        sVisible = !sVisible;
+    }
+
+    // Check if the overlay is visible
+    bool IsVisible() {
+        return sVisible;
     }
 }

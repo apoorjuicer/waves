@@ -17,29 +17,32 @@ Technology is prohibited.
 
 #pragma once
 #include "pch.h"
-
 #include "mainMenu.h"
 #include "game1.h"
 #include "game2.h"
 #include "Player.h"
 
+// Cam position
 extern AEVec2 GlobalCenter;
 
+// ========================================================
+// gameTransition class for managing the game transition state
+// ========================================================
 class gameTransition : public BaseState {
 private:
-    bool continueGame = false;      // Flag for going to next Game
-    bool quitGame = false;          // Flag for returning to the main menu
-    s8 transitionFont;
-    AEGfxVertexList* continueButtonMesh = nullptr;
-    AEGfxVertexList* quitButtonMesh = nullptr;
-    BaseState* nNextState;          // Pointer to the next state 
+    bool continueGame = false;                      // Flag for going to next Game
+    bool quitGame = false;                          // Flag for returning to the main menu
+	s8 transitionFont; 		                        // Font for the transition
+	AEGfxVertexList* continueButtonMesh = nullptr;  // Mesh for continue button
+	AEGfxVertexList* quitButtonMesh = nullptr;      // Mesh for quit button
+    BaseState* nNextState;                          // Pointer to the next state 
 public:
-    gameTransition(BaseState* nextState);
-    void Load() override;
-    void Initialize() override;
-    void Update(f32 deltaTime) override;
-    void Draw() override;
-    void Free() override;
-    void Unload() override;
-    BaseState* GetNextState() override;
+	gameTransition(BaseState* nextState);			// Constructor
+	void Load() override;							// Load assets
+	void Initialize() override;						// Initialize data
+	void Update(f32 deltaTime) override;			// Update logic
+	void Draw() override;							// Render game objects
+	void Free() override;							// Free runtime resources
+	void Unload() override;							// Unload assets
+	BaseState* GetNextState() override;				// Return the next state
 };

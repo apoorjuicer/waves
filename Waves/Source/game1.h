@@ -32,12 +32,25 @@ Technology is prohibited.
 #include "pauseOverlay.h"
 #include "Audio.h"
 
+// ========================================================
+// GameState1 class for managing the core gameplay
+// ========================================================
 class GameState1 : public BaseState {
 private:
-    bool exitGame = false;
-    bool dead = false;
-    bool winGame = false;
-    f32 tilesize = 100.0f;
+	// ====================================================
+	// Boolean variables for game state management
+	// ====================================================
+	bool exitGame = false; 
+	bool dead = false; 
+	bool winGame = false; 
+    bool gameOverSoundPlayed = false;  
+    bool gameWinSoundPlayed = false;  
+
+	f32 tilesize = 100.0f; // Tile size for the game grid
+
+	// ====================================================
+	// Meshes and textures for rendering
+	// ====================================================
     AEGfxVertexList* pDonutMesh = nullptr;
     AEGfxVertexList* PlayerMesh = nullptr;
     AEGfxVertexList* wallMesh = nullptr;
@@ -54,11 +67,16 @@ private:
     AEGfxTexture* pathTexture;
     AEGfxTexture* doorTexture;
     AEGfxTexture* enemyTexture;
+
+	// ====================================================
+	// Game objects and variables
+	// ====================================================
     int prevDestX = -1;
     int prevDestY = -1;
-    bool gameOverSoundPlayed = false;  // Declare this outside the game loop
-    bool gameWinSoundPlayed = false;  // Declare this outside the game loop
 
+	// ====================================================
+	// Directional Wave and Wave objects
+	// ====================================================
     Player player;
 
     DirectionalWave dir_wave;
@@ -68,13 +86,13 @@ private:
     Outline outlines[MAX_NUM_OUTLINES];
 
 public:
-    GameState1();
-    void Load() override;
-    void Initialize() override;
-    void Update(f32 deltaTime) override;
-    void Draw() override;
-    void Free() override;
-    void Unload() override;
-    BaseState* GetNextState() override;
+	GameState1();                           // Constructor
+	void Load() override;                   // Load assets
+	void Initialize() override;             // Initialize data
+	void Update(f32 deltaTime) override;    // Handle logic updates
+	void Draw() override;                   // Render game objects
+	void Free() override;                   // Free runtime resources
+	void Unload() override;                 // Unload assets
+	BaseState* GetNextState() override;     // Return the next state
 };
 

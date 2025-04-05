@@ -17,7 +17,6 @@ Technology is prohibited.
 
 #pragma once
 #include "pch.h"
-
 #include "mainMenu.h"
 #include "Audio.h"
 #include "gameTransition.h"
@@ -26,17 +25,17 @@ extern AEVec2 GlobalCenter;
 
 class LoseState : public BaseState {
 private:
-    bool goMenu;   // Flag for returning to the main menu
-    s8 loseFont;
-	s8 buttonFont;
-    AEGfxVertexList* okButtonMesh = nullptr;
+    bool goMenu;                                // Flag for returning to the main menu
+	s8 loseFont;                                // Font for the loss message
+	s8 buttonFont;                              // Font for the button
+	AEGfxVertexList* okButtonMesh = nullptr;    // Mesh for the OK button
 public:
-    LoseState();
-    void Load() override;
-    void Initialize() override;
-    void Update(f32 deltaTime) override;
-    void Draw() override;
-    void Free() override;
-    void Unload() override;
-    BaseState* GetNextState() override;
+	LoseState();                                // Constructor
+	void Load() override;                       // Load assets
+	void Initialize() override;                 // Initialize data
+	void Update(f32 deltaTime) override;		// Update logic
+	void Draw() override;						// Render game objects
+	void Free() override;						// Free runtime resources
+	void Unload() override;						// Unload assets
+	BaseState* GetNextState() override;			// Return the next state
 };

@@ -17,8 +17,10 @@ Technology is prohibited.
 
 #include "instructions.h"
 
+// Constructor
 instructionState::instructionState() : goMenu(false), guide(nullptr), guide_mesh(nullptr) {}
 
+// Load assets for the instruction state
 void instructionState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
@@ -27,10 +29,12 @@ void instructionState::Load() {
     guide_mesh = TextureMesh();
 }
 
+// Initialize the instruction state
 void instructionState::Initialize() {
     goMenu = false;
 }
 
+// Update the instruction state
 void instructionState::Update(f32 deltaTime) {
     (f32)deltaTime;
 
@@ -40,6 +44,7 @@ void instructionState::Update(f32 deltaTime) {
     }
 }
 
+// Draw the instruction state
 void instructionState::Draw() {
     // Tell the Alpha Engine to get ready to draw something with texture.
     AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
@@ -77,6 +82,7 @@ void instructionState::Draw() {
     AEGfxMeshDraw(guide_mesh, AE_GFX_MDM_TRIANGLES);
 }
 
+// Free runtime resources
 void instructionState::Free() 
 {
 	if (guide_mesh)
@@ -86,6 +92,7 @@ void instructionState::Free()
 	}
 }
 
+// Unload assets for the instruction state
 void instructionState::Unload() {
     if (guide)
     {
@@ -94,6 +101,7 @@ void instructionState::Unload() {
     }
 }
 
+// Return the next state
 BaseState* instructionState::GetNextState() {
     // If goMenu is true, transition to main menu
     return goMenu ? new MainMenuState() : nullptr;

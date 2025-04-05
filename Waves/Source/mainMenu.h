@@ -17,7 +17,6 @@ Technology is prohibited.
 
 #pragma once
 #include "pch.h"
-
 #include "game1.h"
 #include "select.h"
 #include "gamePreview.h"
@@ -28,32 +27,36 @@ Technology is prohibited.
 #include "credits.h"
 #include "exitOverlay.h"
 
+// ======================================================
+// Internal variables for the main menu
+// ======================================================
 class MainMenuState : public BaseState {
 private:
-    bool startGame = false;
-    bool guide = false;
-	bool credit = false;
-	bool setting = false;
-    int* pGameRunning; // <-- Pointer to gGameRunning
-    s8 menuFont;
-    s8 buttonFont;
-    AEGfxVertexList* playButtonMesh = nullptr;      // Mesh for the 'Play' button
-    AEGfxVertexList* guideButtonMesh = nullptr;     // Mesh for 'Guide' button
-    AEGfxVertexList* creditButtonMesh = nullptr;    // Mesh for 'Credits' button
-    AEGfxVertexList* settingButtonMesh = nullptr;   // Mesh for 'Settings' button
-    AEGfxVertexList* exitButtonMesh = nullptr;      // Mesh for 'Exit' button
-	bool waitingForMouseRelease = true; 		    // Prevents multiple clicks  
+	bool startGame = false;                                 // Flag for starting the game
+	bool guide = false; 	                                // Flag for showing the guide
+	bool credit = false;                                    // Flag for showing the credits
+	bool setting = false;                                   // Flag for showing the settings
+    int* pGameRunning;                                      // <-- Pointer to gGameRunning
+	s8 menuFont;                                            // Font for the menu
+	s8 buttonFont;                                          // Font for the buttons
+    AEGfxVertexList* playButtonMesh = nullptr;              // Mesh for the 'Play' button
+    AEGfxVertexList* guideButtonMesh = nullptr;             // Mesh for 'Guide' button
+    AEGfxVertexList* creditButtonMesh = nullptr;            // Mesh for 'Credits' button
+    AEGfxVertexList* settingButtonMesh = nullptr;           // Mesh for 'Settings' button
+    AEGfxVertexList* exitButtonMesh = nullptr;              // Mesh for 'Exit' button
+	bool waitingForMouseRelease = true; 		            // Prevents multiple clicks  
+
 public:
-    MainMenuState();
+	MainMenuState();                                            // Constructor
 
     // Let the caller inject a pointer to gGameRunning
     void SetGameRunningPtr(int* ptr) { pGameRunning = ptr; }
 
-    void Load() override;
-    void Initialize() override;
-    void Update(f32 deltaTime) override;
-    void Draw() override;
-    void Free() override;
-    void Unload() override;
-    BaseState* GetNextState() override;
+	void Load() override;                                       // Load assets
+	void Initialize() override;                                 // Initialize data
+	void Update(f32 deltaTime) override;                        // Update logic
+	void Draw() override;                                       // Render game objects
+	void Free() override;										// Free runtime resources
+	void Unload() override;										// Unload assets
+	BaseState* GetNextState() override;							// Return the next state	
 };

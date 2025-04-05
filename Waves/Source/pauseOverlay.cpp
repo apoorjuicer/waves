@@ -3,7 +3,8 @@
 \file		pauseOverlay.cpp
 \author		Henry Hu
 \email		zhihenghenrey.hu@digipen.edu
-\brief      
+\brief      This file defines the PauseOverlay namespace, which manages the pause overlay in the game.
+			It provides functionality for initializing, updating, drawing, and freeing the overlay resources.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents
@@ -13,7 +14,6 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "pauseOverlay.h"
-
 
 // Internal variables (file scope)
 namespace {
@@ -39,9 +39,6 @@ namespace PauseOverlay {
     void Init() {
         sPaused = false;
         sExitToMenu = false;
-
-        /*sFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 50);
-        mFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 100);*/
 
         sFont = FontManager::GetFont("NunitoBold50");
         mFont = FontManager::GetFont("NunitoBold100");
@@ -109,7 +106,6 @@ namespace PauseOverlay {
         if (pauseScreenMesh) { AEGfxMeshFree(pauseScreenMesh); sResumeMesh = nullptr; }
         if (sResumeMesh) { AEGfxMeshFree(sResumeMesh); sResumeMesh = nullptr; }
         if (sMainMenuMesh) { AEGfxMeshFree(sMainMenuMesh); sMainMenuMesh = nullptr; }
-        //if (sFont != -1) { AEGfxDestroyFont(sFont); sFont = -1; }
     }
 
     bool IsPaused() { return sPaused; }

@@ -17,19 +17,11 @@ Technology is prohibited.
 
 #include "winState.h"
 
-//const f32 kButtonW = 300.0f;
-//const f32 kButtonH = 100.0f;
-//const f32 kokY = -200.0f;
-//const f32 kokX = 0.0f;
-
 WinState::WinState() : goNext(false), winFont(-1), buttonFont(-1), okButtonMesh(nullptr) {}
 
 void WinState::Load() {
     AEGfxSetCamPosition(0.0f, 0.0f);
-    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f); // Dark green background
-
-    /*winFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
-    buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);*/
+    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f); 
 
     winFont = FontManager::GetFont("Buggy80");
     buttonFont = FontManager::GetFont("NunitoBold70");
@@ -49,10 +41,6 @@ void WinState::Update(f32 deltaTime) {
     }
 
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
-        /*if (IsMouseInsideButton(kokX, kokY, kButtonW, kButtonH)) {
-            goNext = true;
-        }*/
-
     // ---------------------------
     // "OK" Button
     // ---------------------------
@@ -79,8 +67,6 @@ void WinState::Draw() {
     float centeredY = 0.0f;
 
     AEGfxPrint(winFont, "YOU WIN", centeredX, centeredY, 1.5f, 0.0f, 1.0f, 0.0f, 1.0f);
-
-    //DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 
     // ==============================================================
     // Color Change on Hover 'OK' Button
@@ -110,13 +96,7 @@ void WinState::Free() {
     }
 }
 
-void WinState::Unload() {
-    // Unload any assets if needed
-    /*if (winFont != -1) {
-        AEGfxDestroyFont(winFont);
-        winFont = -1;
-    }*/
-}
+void WinState::Unload() {}
 
 BaseState* WinState::GetNextState() {
     return goNext ? new MainMenuState() : nullptr;

@@ -56,10 +56,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	GameStateManager gameStateManager;
 	gameStateManager.SetGameRunningPtr(&gGameRunning); // Provide the pointer to GSM
 
-	//// Create main menu
-	//MainMenuState* menu = new MainMenuState();
-	//gameStateManager.SetState(menu);
-
 	// Start with the splash state
 	SplashState* splash = new SplashState();
 	gameStateManager.SetState(splash);

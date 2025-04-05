@@ -17,16 +17,14 @@ Technology is prohibited.
 
 #include "mainMenu.h"
 
+// Constructor
 MainMenuState::MainMenuState()
     : startGame(false), guide(false), credit(false), setting(false), pGameRunning(nullptr), menuFont(-1), buttonFont(-1),
     playButtonMesh(nullptr), guideButtonMesh(nullptr), exitButtonMesh(nullptr), creditButtonMesh(nullptr), settingButtonMesh(nullptr) {}
 
+// Load assets for the main menu
 void MainMenuState::Load() {
     AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
-
-    // Use relative path instead of absolute path
-    //menuFont = AEGfxCreateFont("Assets/Fonts/Nosifer-Regular.ttf", 150);
-    //buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-SemiBoldItalic.ttf", 70);
 
     menuFont = FontManager::GetFont("NosiferRegular150");
     buttonFont = FontManager::GetFont("NunitoSemiBoldItalic70");
@@ -41,6 +39,7 @@ void MainMenuState::Load() {
     AudioManager::LoadAudio("MainMenu", "Assets/Audio/MainMenu.wav", true, BGMGROUP);
 }
 
+// Initialize the main menu state
 void MainMenuState::Initialize() {
     AEInputReset();    // Reset any prior input events
     startGame = false;
@@ -55,6 +54,7 @@ void MainMenuState::Initialize() {
 	ExitConfirmOverlay::Init();
 }
 
+// Update the main menu state
 void MainMenuState::Update(f32 deltaTime) {
     (f32)deltaTime;
 
@@ -175,6 +175,7 @@ void MainMenuState::Update(f32 deltaTime) {
     }
 }
 
+// Free runtime resources
 void MainMenuState::Draw() {
     if (menuFont != -1) {
         f32 textWidth, textHeight;
@@ -297,6 +298,7 @@ void MainMenuState::Draw() {
     ExitConfirmOverlay::Draw();
 }
 
+// Free runtime resources
 void MainMenuState::Free() {
     if (playButtonMesh) {
         AEGfxMeshFree(playButtonMesh);
@@ -318,21 +320,16 @@ void MainMenuState::Free() {
         AEGfxMeshFree(exitButtonMesh);
         exitButtonMesh = nullptr;
     }
+
     SettingsOverlay::Free();
 }
 
+// Unload assets for the main menu
 void MainMenuState::Unload() {
-    /*if (menuFont != -1) {
-        AEGfxDestroyFont(menuFont);
-        menuFont = -1;
-    }
-    if (buttonFont != -1) {
-        AEGfxDestroyFont(buttonFont);
-        buttonFont = -1;
-    }*/
     AudioManager::UnloadAudio("MainMenu");
 }
 
+// Return the next state
 BaseState* MainMenuState::GetNextState() {
     if (startGame) {
         return new LevelSelectState();

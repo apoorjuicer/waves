@@ -1,6 +1,6 @@
 /* Start Header ************************************************************************/
 /*!
-\file		instructions.cpp
+\file		credits.cpp
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
@@ -15,8 +15,10 @@ Technology is prohibited.
 
 #include "credits.h"
 
+// Constructor
 creditState::creditState() : goMenu(false), credit(nullptr), credit_mesh(nullptr) {}
 
+// Load assets for the credit state
 void creditState::Load() {
     AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
 
@@ -25,38 +27,31 @@ void creditState::Load() {
     credit_mesh = TextureMesh();
 }
 
+// Initialize the credit state
 void creditState::Initialize() {
     goMenu = false;
 }
 
+// Update the credit state
 void creditState::Update(f32 deltaTime) {
     (f32)deltaTime;
 
-    // Example: Press ENTER to return to main menu
     if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         goMenu = true;
     }
 }
 
 void creditState::Draw() {
-    // Tell the Alpha Engine to get ready to draw something with texture.
+	// ============================
+	// Draw the credits
+	// ============================
     AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-
-    // Set the the color to multiply to white, so that the sprite can 
-    // display the full range of colors (default is black).
     AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
-
-    // Set the color to add to nothing, so that we don't alter the sprite's color
     AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
-
-    // Set blend mode to AE_GFX_BM_BLEND, which will allow transparency.
     AEGfxSetBlendMode(AE_GFX_BM_BLEND);
     AEGfxSetTransparency(1.0f);
-
-    // Tell Alpha Engine to use the texture stored in pTex
     AEGfxTextureSet(credit, 0, 0);
 
-    // Create a 3x3 transformation matrix
     AEMtx33 transform;
     AEMtx33Identity(&transform);
 
@@ -75,6 +70,7 @@ void creditState::Draw() {
     AEGfxMeshDraw(credit_mesh, AE_GFX_MDM_TRIANGLES);
 }
 
+// Free runtime resources
 void creditState::Free()
 {
     if (credit_mesh)
@@ -84,6 +80,7 @@ void creditState::Free()
     }
 }
 
+// Unload assets for the credit state
 void creditState::Unload() {
     if (credit)
     {
@@ -92,6 +89,7 @@ void creditState::Unload() {
     }
 }
 
+// Return the next state
 BaseState* creditState::GetNextState() {
     // If goMenu is true, transition to main menu
     return goMenu ? new MainMenuState() : nullptr;

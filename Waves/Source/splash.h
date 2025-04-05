@@ -1,3 +1,19 @@
+/* Start Header ************************************************************************/
+/*!
+\file		splash.h
+\author		Henrey Hu
+\email		zhihenghenrey.hu@digipen.edu
+
+\brief      This file defines the SplashState class, which manages the splash screen of the game.
+            It handles loading, rendering, and transitioning to the main menu after a specified duration.
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #pragma once
 #include "pch.h"
 #include "mainMenu.h"    

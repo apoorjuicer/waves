@@ -1,3 +1,19 @@
+/* Start Header ************************************************************************/
+/*!
+\file		splash.cpp
+\author		Henrey Hu
+\email		zhihenghenrey.hu@digipen.edu
+
+\brief      This file defines the SplashState class, which manages the splash screen of the game.
+			It handles loading, rendering, and transitioning to the main menu after a specified duration.
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "splash.h"
 
 SplashState::SplashState()
@@ -22,27 +38,15 @@ void SplashState::Load() {
 }
 
 void SplashState::Initialize() {
-    // Setup initial state data.
     mTimeElapsed = 0.0f;
 }
 
 void SplashState::Update(f32 deltaTime) {
     mTimeElapsed += deltaTime;
-    // Optionally, you can add input handling to skip the splash here.
 }
 
 void SplashState::Draw() {
-    // Render the splash screen.
-    // For example, clear the screen and draw the splash image:
-    // AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f);
-    // AEGfxTextureSet(mSplashTexture, 0.0f, 0.0f);
-    // AEGfxMeshDraw(splashMesh, AE_GFX_MDM_TRIANGLES);
-    
-    // Assume you already have:
-    //- AEGfxTexture* digipenTex;   // The loaded texture
-    //- AEGfxVertexList* digipenMesh;  // The mesh (-0.5..+0.5 in x,y)
-
-// 1) Prepare rendering with texture & blending
+    // 1) Prepare rendering with texture & blending
     AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
     AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
     AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
@@ -97,7 +101,6 @@ void SplashState::Draw() {
 }
 
 void SplashState::Free() {
-    // Free any runtime resources if needed.
     AEGfxMeshFree(digipen_mesh);
 }
 
@@ -106,8 +109,6 @@ void SplashState::Unload() {
 }
 
 BaseState* SplashState::GetNextState() {
-    // When the elapsed time exceeds the splash duration,
-    // return a new MainMenuState. Otherwise, return nullptr.
     if (mTimeElapsed >= mSplashDuration) {
         return new MainMenuState();
     }

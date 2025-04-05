@@ -17,19 +17,14 @@ Technology is prohibited.
 
 #include "loseState.h"
 
-//const f32 kButtonW = 300.0f;
-//const f32 kButtonH = 100.0f;
-//const f32 kokY = -200.0f;
-//const f32 kokX = 0.0f;
-
+// Constructor
 LoseState::LoseState() : goMenu(false), loseFont(-1), buttonFont(-1), okButtonMesh(nullptr) {}
 
+// Load assets for the lose state
 void LoseState::Load() {
     AEGfxSetCamPosition(0.0f, 0.0f);
-    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f); // Dark red background
 
-    //loseFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
-    //buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
+    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f); 
 
     loseFont = FontManager::GetFont("Buggy80");
     buttonFont = FontManager::GetFont("NunitoBold70");
@@ -37,23 +32,20 @@ void LoseState::Load() {
     okButtonMesh = CreateButtonMesh(0xFF505050);
 }
 
+// Initialize the lose state
 void LoseState::Initialize() {
     goMenu = false;
 }
 
+// Update the lose state
 void LoseState::Update(f32 deltaTime) {
     (f32)deltaTime;
 
-    // Example: Press ENTER to return to main menu
     if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         goMenu = true;
     }
 
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
-        /*if (IsMouseInsideButton(kokX, kokY, kButtonW, kButtonH)) {
-            goMenu = true;
-        }*/
-
     // ---------------------------
     // "OK" Button
     // ---------------------------
@@ -72,6 +64,7 @@ void LoseState::Update(f32 deltaTime) {
     }
 }
 
+// Draw the lose state
 void LoseState::Draw() {
     float textWidth, textHeight;
     AEGfxGetPrintSize(loseFont, "GAME OVER", 1.5f, &textWidth, &textHeight);
@@ -80,8 +73,6 @@ void LoseState::Draw() {
     float centeredY = 0.0f;
 
     AEGfxPrint(loseFont, "GAME OVER", centeredX, centeredY, 1.5f, 1.0f, 0.0f, 0.0f, 1.0f);
-
-    //DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 
     // ==============================================================
     // Color Change on Hover 'OK' Button
@@ -104,6 +95,7 @@ void LoseState::Draw() {
     }
 }
 
+// Free runtime resources
 void LoseState::Free() {
     if (okButtonMesh) {
         AEGfxMeshFree(okButtonMesh);
@@ -111,14 +103,10 @@ void LoseState::Free() {
     }
 }
 
-void LoseState::Unload() {
-    /*if (loseFont != -1) {
-        AEGfxDestroyFont(loseFont);
-        loseFont = -1;
-    }*/
-}
+// Unload assets for the lose state
+void LoseState::Unload() {}
 
+// Return the next state
 BaseState* LoseState::GetNextState() {
-    // If goMenu is true, transition to main menu
     return goMenu ? new MainMenuState() : nullptr;
 }

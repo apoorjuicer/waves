@@ -1,28 +1,40 @@
+/* Start Header ************************************************************************/
+/*!
+\file		select.cpp
+\author		Henrey Hu
+\email		zhihenghenrey.hu@digipen.edu
+
+\brief      This file defines the selectState class, which manages the level selection screen.
+			It handles loading, rendering, and user interactions, allowing players to choose a level to play.
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #include "select.h"
 
 const f32 ButtonW = 100.0f;
 const f32 ButtonH = 100.0f;
-
 const f32 gamebuttonY = 0.0f;
-
 const f32 game1X = -300.0f;
 const f32 game2X = 0.0f;
 const f32 game3X = 300.0f;
-
-// We want the button’s center near the top-left corner in NDC:
-static const float BACK_BTN_CENTER_X_NDC = -0.95f; // x=-0.9 => near the left edge
-static const float BACK_BTN_CENTER_Y_NDC = 0.95f; // y=+0.9 => near the top edge
-
+static const float BACK_BTN_CENTER_X_NDC = -0.95f; 
+static const float BACK_BTN_CENTER_Y_NDC = 0.95f;
 f32 buttonSize = 0.0f;
 
+// Constructor
 LevelSelectState::LevelSelectState() :  game1(nullptr), game2(nullptr), game3(nullptr), back2main(nullptr), 
                                         selectFont(-1), 
                                         game1ButtonMesh(nullptr), game2ButtonMesh(nullptr), game3ButtonMesh(nullptr), back2mainButtonMesh(nullptr) {}
 
+// Load assets for the level select state
 void LevelSelectState::Load() {
     AEGfxSetBackgroundColor(0.f, 0.f, 0.f);
 
-    //selectFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-MediumItalic.ttf", 100);
     selectFont = FontManager::GetFont("NunitoMediumItalic100");
 
     game1ButtonMesh =       CreateButtonMesh(0xFFFFFFFF);
@@ -33,6 +45,7 @@ void LevelSelectState::Load() {
     pHomeIconTexture = AEGfxTextureLoad("Assets/Home Icon.png");
 }
 
+// Initialize the level select state
 void LevelSelectState::Initialize() {
     // Reset state data.
     game1 = false;
@@ -41,6 +54,7 @@ void LevelSelectState::Initialize() {
     back2main = false;
 }
 
+// Update the level select state
 void LevelSelectState::Update(f32 deltaTime) 
 {
     (f32)deltaTime;
@@ -52,15 +66,12 @@ void LevelSelectState::Update(f32 deltaTime)
     f32 halfW = (float)AEGfxGetWindowWidth() * 0.5f;
     f32 halfH = (float)AEGfxGetWindowHeight() * 0.5f;
 
-    // If you want the top-left corner at (-0.95, +0.95) in normalized space:
     float leftNDC = -1.0f;
     float topNDC = 1.0f;
 
-    // 1) Compute top-left
     float leftWorld = leftNDC * halfW;
     float topWorld = topNDC * halfH;
 
-    // 2) Compute center from top-left
     float centerX = leftWorld + (buttonSize * 0.5f);
     float centerY = topWorld - (buttonSize * 0.5f);
 
@@ -68,7 +79,6 @@ void LevelSelectState::Update(f32 deltaTime)
     float windowH = (float)AEGfxGetWindowHeight();
     float smallerDim = (windowW < windowH) ? windowW : windowH;
 
-    // For example, 0.15f * smallerDim => 15% of the smaller dimension
     buttonSize = smallerDim * 0.05f;
 
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
@@ -87,22 +97,16 @@ void LevelSelectState::Update(f32 deltaTime)
     }
 }
 
+// Draw the level select state
 void LevelSelectState::Draw() 
 {
     float textWidth, textHeight;
-
-    // Get text dimensions (normalized units) for "Game Paused":
     AEGfxGetPrintSize(selectFont, "Levels", 1.0f, &textWidth, &textHeight);
 
-    // Center the text horizontally by subtracting half its width,
-    // and center vertically by subtracting half its height from 0.0f
-    // so that it’s in the exact middle of the screen.
     float centerX = -textWidth * 0.5f;
     float centerY = textHeight * 0.5f + 0.5f;
 
-    // Print at scale = 1.0, with white color (1.0f,1.0f,1.0f,1.0f).
     AEGfxPrint(selectFont, "Levels", centerX, centerY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
-
 
     // Draw button "1"
     DrawButton(game1ButtonMesh, game1X, gamebuttonY, "1", selectFont, ButtonW, ButtonH, 0.0f, 0.0f, 0.0f, 1.0f);
@@ -131,8 +135,8 @@ void LevelSelectState::Draw()
         buttonSize, buttonSize);
 }
 
+// Free runtime resources
 void LevelSelectState::Free() {
-    // Free any runtime-created resources if needed.
     if (game1ButtonMesh) {
         AEGfxMeshFree(game1ButtonMesh);
         game1ButtonMesh = nullptr;
@@ -151,11 +155,12 @@ void LevelSelectState::Free() {
     }
 }
 
+// Unload assets for the level select state
 void LevelSelectState::Unload() {
-    // Unload assets (textures, fonts) that were loaded in Load().
     AEGfxTextureUnload(pHomeIconTexture);
 }
 
+// Return the next state
 BaseState* LevelSelectState::GetNextState() 
 {
     if (game1) {

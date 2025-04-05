@@ -18,14 +18,15 @@ Technology is prohibited.
 
 #include "gamePreview.h"
 
+// Constructor
 gamePreview::gamePreview(int i) : goGame(false), back2Main(false), previewFont(-1), maze1_mesh(nullptr), level_num{ i } {}
 
+// Load assets for the game preview
 void gamePreview::Load() {
     AEGfxSetCamPosition(0, 0);
 
     AEGfxSetBackgroundColor(0.3f, 0.3f, 0.3f);
 
-    //previewFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);
     previewFont = FontManager::GetFont("NunitoBold70");
 
     maze1_mesh = TextureMesh();
@@ -50,11 +51,13 @@ void gamePreview::Load() {
     }
 }
 
+// Initialize the game preview state
 void gamePreview::Initialize() {
     goGame = false;
     back2Main = false;
 }
 
+// Update the game preview state
 void gamePreview::Update(f32 deltaTime) {
     (f32)deltaTime;
 
@@ -85,6 +88,7 @@ void gamePreview::Update(f32 deltaTime) {
     }
 }
 
+// Draw the game preview state
 void gamePreview::Draw() {
     // ======================================================================
     // RENDER MAP PREVIEW
@@ -165,6 +169,7 @@ void gamePreview::Draw() {
     }
 }
 
+// Free runtime resources
 void gamePreview::Free() {
     if (maze1_mesh) {
         AEGfxMeshFree(maze1_mesh);
@@ -172,9 +177,10 @@ void gamePreview::Free() {
     }
 }
 
-void gamePreview::Unload() {
-}
+// Unload assets for the game preview
+void gamePreview::Unload() {}
 
+// Return the next state
 BaseState* gamePreview::GetNextState() {
 	// If back2Main is true, transition to main menu
 	if (back2Main) {

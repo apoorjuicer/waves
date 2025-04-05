@@ -17,19 +17,22 @@ Technology is prohibited.
 #include "pch.h"
 #include "mainMenu.h"
 
+// ========================================
+// creditState class for managing game credits
+// ========================================
 class creditState : public BaseState {
 private:
-    bool goMenu;   // Flag for returning to the main menu
-    AEGfxTexture* credit = nullptr;
-    AEGfxVertexList* credit_mesh = nullptr;
+    bool goMenu;                                // Flag for returning to the main menu
+	AEGfxTexture* credit = nullptr;             // Texture for the credits
+	AEGfxVertexList* credit_mesh = nullptr;     // Mesh for the credits
 public:
-    creditState();
-    void Load() override;
-    void Initialize() override;
-    void Update(f32 deltaTime) override;
-    void Draw() override;
-    void Free() override;
-    void Unload() override;
-    BaseState* GetNextState() override;
+	creditState();								// Constructor
+	void Load() override;						// Load assets
+	void Initialize() override;					// Setup initial state data
+	void Update(f32 deltaTime) override;		// Handle logic updates
+	void Draw() override;						// Render game objects
+	void Free() override;						// Free runtime resources
+	void Unload() override;						// Unload assets
+	BaseState* GetNextState() override;			// Return the next state
 };
 

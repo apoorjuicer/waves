@@ -17,21 +17,23 @@ Technology is prohibited.
 
 #pragma once
 #include "pch.h"
-
 #include "mainMenu.h"
 
+// ========================================
+// instructionState class for managing game instructions
+// ========================================
 class instructionState : public BaseState {
 private:
-    bool goMenu;   // Flag for returning to the main menu
-    AEGfxTexture* guide = nullptr;
-    AEGfxVertexList* guide_mesh = nullptr;
+    bool goMenu;                            // Flag for returning to the main menu
+	AEGfxTexture* guide = nullptr;          // Texture for the instructions
+	AEGfxVertexList* guide_mesh = nullptr;  // Mesh for the instructions
 public:
-    instructionState();
-    void Load() override;
-    void Initialize() override;
-    void Update(f32 deltaTime) override;
-    void Draw() override;
-    void Free() override;
-    void Unload() override;
-    BaseState* GetNextState() override;
+	instructionState();                     // Constructor
+	void Load() override;                   // Load assets
+	void Initialize() override;             // Initialize data
+	void Update(f32 deltaTime) override;    // Update logic
+	void Draw() override;					// Render game objects
+	void Free() override;					// Free runtime resources
+	void Unload() override;					// Unload assets
+	BaseState* GetNextState() override;		// Return the next state
 };

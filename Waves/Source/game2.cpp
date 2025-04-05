@@ -19,10 +19,12 @@ Technology is prohibited.
 
 #include "game2.h"
 
+// Enemy object
 namespace {
     Enemy enemy2;
 }
 
+// Constructor
 GameState2::GameState2() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), enemyMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
@@ -32,14 +34,22 @@ prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {
 }
 
+// Load assets
 void GameState2::Load() {
-    ClearMazeData(); // Ensure old maze is wiped
+    // Ensure old maze is wiped
+    ClearMazeData(); 
 
+    // Ensure old world items are wiped
     worldItems.clear();
+
+    // Read maze data from file
     if (!ImportMapDataFromFile("Assets/Maze2.txt")) {
         std::cerr << "Error: Failed to load maze file Assets/Maze1.txt. Quitting game.\n";
     }
 
+    // ==========================================================
+    // Load textures and meshes
+    // ==========================================================
     player.texture = AEGfxTextureLoad("Assets/Textures/Texture_Player.png");
     player.mesh = CreateTextureMesh(4, 2);
 
@@ -51,6 +61,7 @@ void GameState2::Load() {
     keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
     rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
+
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
     this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
     this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
@@ -62,26 +73,33 @@ void GameState2::Load() {
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
     wave_meshes[2] = Create_LineMesh();
 
+    // Create world items
     createWorldItems(tilesize);
-    //setEnemyPatrol(enemy2, maze);
+
+    // Set enemy patrol path
     enemy2.setEnemyPatrol(maze);
 }
 
+// Initialize data
 void GameState2::Initialize() {
+    // ============================================
+    // Initialize bool variables
+    // ============================================
     exitGame = false;
     dead = false;
     winGame = false;
+
+    // ============================================
+    // Initialize player and inventory
+    // ============================================
     player.x = 100.f;
     player.y = -100.f;
     player.inventory[0] = ROCK;
     player.lastRockPos = {};
-    //enemy2.x = 100.f;
-    //enemy2.y = -700.f;
-    //enemy2.startPatrol = { 2,7 };
-    //enemy2.endPatrol = { 10,10 };
-    //enemy2.x = enemy2.startPatrol.first * TILE_SIZE;
-    //enemy2.y = enemy2.startPatrol.second * -TILE_SIZE;
 
+    // ===========================================
+    // Set up enemy patrol
+    // ===========================================
     enemy2.startPatrol = enemy2.patrolPath.front();
     enemy2.endPatrol = enemy2.patrolPath.back();
     enemy2.x = enemy2.startPatrol.first * TILE_SIZE;
@@ -92,29 +110,37 @@ void GameState2::Initialize() {
     enemy2.patrol_timer = 20.f;
     //enemy2.pursuit_timer = 3.f;
     enemy2.updateGridPosition(); // need to call to init conversion
+    
+    // ===========================================
+    // Load and play audio
+    // ===========================================
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
     AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
     AudioManager::LoadAudio("GameBGM", "Assets/Audio/GameBGM.mp3", true, InGame);
     AudioManager::LoadAudio("Waves", "Assets/Audio/SonarWave.wav", false, InGame);
     AudioManager::LoadAudio("Rock Throw", "Assets/Audio/Throw.wav", false, RockThrow);
     AudioManager::LoadAudio("Collide", "Assets/Audio/Collision.wav", false, InGame);
-    //AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, InGame);
-    //AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, InGame);
     AudioManager::LoadAudio("Collect", "Assets/Audio/Collect.wav", false, InGame);
     AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
+
+    // Initialize pause overlay
     PauseOverlay::Init();
 }
 
+// Handle logic updates
 void GameState2::Update(f32 deltaTime) {
     if (!AudioManager::IsAudioPlaying("GameBGM")) {
         AudioManager::PlayAudio("GameBGM", 0.3f, 1.0f, -1);
     }
-    // Toggle pause when ESC is pressed if not already paused
+
+    // ===========================================
+    // Pause Overlay
+    // ===========================================
     if (AEInputCheckTriggered(AEVK_ESCAPE) && !PauseOverlay::IsPaused()) {
         PauseOverlay::SetPaused(true);
         AEInputReset();
     }
-    // If paused, update the pause overlay and skip game updates
+
     if (PauseOverlay::IsPaused()) {
         PauseOverlay::Update();
         if (PauseOverlay::ShouldExitToMenu()) {
@@ -123,7 +149,9 @@ void GameState2::Update(f32 deltaTime) {
         return;
     }
 
+    // ==========================================
     // Player movement
+    // ==========================================
     f32 speed = 200.0f; player.state = player.PLAYER_STATE::IS_IDLE;
     if (AEInputCheckCurr(AEVK_W)) {
         player.state = player.PLAYER_STATE::IS_MOVING;
@@ -145,19 +173,14 @@ void GameState2::Update(f32 deltaTime) {
     }
     GlobalCenter.x = player.x; GlobalCenter.y = player.y;
 
+    // Check for directional waves
     if (AEInputCheckTriggered(AEVK_SPACE) && !dir_wave.is_active) {
         // spawn a directional wave towards player mouse;
         spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
     }
 
-    //debug
-   /* if (AEInputCheckTriggered(AEVK_SPACE)) {
-        spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
-    }*/
-   // enemy2.print_debug();
     enemy2.UpdateEnemystate(player, deltaTime, enemy_wave, wave_meshes, dir_wave);
-    //enemy1.enemy_wave(enemy_wave, wave_meshes);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
@@ -193,28 +216,33 @@ void GameState2::Update(f32 deltaTime) {
     if (dead && !gameOverSoundPlayed)
     {
         AudioManager::PlayAudio("GameOver", 1.0f, 1.0f, 0);
-        gameOverSoundPlayed = true;  // Ensure it doesn't play again
+        gameOverSoundPlayed = true; 
     }
 
     if (winGame && !gameWinSoundPlayed)
     {
         AudioManager::PlayAudio("Win", 1.0f, 1.0f, 0);
-        gameWinSoundPlayed = true;  // Ensure it doesn't play again
+        gameWinSoundPlayed = true;  
     }
 }
 
+// Render game objects
 void GameState2::Draw() {
+    // Center camera on player
     AEGfxSetCamPosition(GlobalCenter.x, GlobalCenter.y);
 
-    // render maze elements;
+    // ============================================
+    // Draw maze, player, enemies, and other game objects
+    // ============================================
     RenderBackground(tilesize, pathMesh, pathTexture);
     RenderItems(keyMesh, rockMesh, keyTexture, rockTexture);
-    // render enemy;
     DrawTexturedEntity(AEVec2{ enemy2.x, enemy2.y }, enemyTexture, enemyMesh);
-    // render rock;
+
+    // Draw the rock if the player is not paused
     if (!PauseOverlay::IsPaused()) {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
     }
+
     // vision radius;
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
@@ -249,14 +277,17 @@ void GameState2::Draw() {
     }
 }
 
+// Free runtime resources
 void GameState2::Free() {
+	// ============================================
+	// Free all meshes and textures
+	// ============================================
     for (AEGfxVertexList* (&i) : wave_meshes) {
         if (i) {
             AEGfxMeshFree(i);
         }
     }
 
-    // free player
     AEGfxMeshFree(player.mesh);
     AEGfxTextureUnload(player.texture);
 
@@ -273,24 +304,27 @@ void GameState2::Free() {
     AEGfxTextureUnload(pathTexture);
     AEGfxTextureUnload(doorTexture);
     AEGfxTextureUnload(enemyTexture);
-    worldItems.clear();
 
+    // Free all world items
+    worldItems.clear();
     for (int i{};i < INVENTORY_SIZE;++i) {
         player.inventory[i] = NOTHING;
     }
+
+    // Free pause overlay resources
     PauseOverlay::Free();
 }
 
+// Unload assets
 void GameState2::Unload() {
     AudioManager::UnloadAudio("GameBGM");
     AudioManager::UnloadAudio("Waves");
     AudioManager::UnloadAudio("Rock Throw");
     AudioManager::UnloadAudio("Collide");
-    //AudioManager::UnloadAudio("GameOver");
-    //AudioManager::UnloadAudio("Win");
 	AudioManager::UnloadAudio("Collect");
 }
 
+// Return the next state
 BaseState* GameState2::GetNextState() {
     if (exitGame) {
         return new MainMenuState();

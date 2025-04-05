@@ -1,3 +1,19 @@
+/* Start Header ************************************************************************/
+/*!
+\file		select.h
+\author		Henrey Hu
+\email		zhihenghenrey.hu@digipen.edu
+
+\brief      This file defines the selectState class, which manages the level selection screen.
+            It handles loading, rendering, and user interactions, allowing players to choose a level to play.
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 #pragma once
 
 #include "pch.h"

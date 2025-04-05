@@ -18,9 +18,12 @@ Technology is prohibited.
 
 #include "pch.h"
 
+// ========================================
+// BaseState class for managing game states
+// ========================================
 class BaseState {
 public:
-    virtual ~BaseState() {}
+	virtual ~BaseState() {}                 // Destructor
 
     virtual void Load() = 0;                // Load assets
     virtual void Initialize() = 0;          // Setup initial state data

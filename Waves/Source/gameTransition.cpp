@@ -17,6 +17,7 @@ Technology is prohibited.
 
 #include "gameTransition.h"
 
+// Define constants for button positions and sizes
 const f32 kButtonW = 300.0f;
 const f32 kButtonH = 100.0f;
 const f32 kContinueY = -200.0f;
@@ -24,8 +25,10 @@ const f32 kContinueX = -300.0f;
 const f32 kQuitY = -200.0f;
 const f32 kQuitX = 300.0f;
 
+// Constructor
 gameTransition::gameTransition(BaseState* nextState) : continueGame(false), quitGame(false), transitionFont(-1), continueButtonMesh(nullptr), quitButtonMesh(nullptr), nNextState(nextState) {}
 
+// Load assets for the game transition
 void gameTransition::Load() {
     AEGfxSetBackgroundColor(0.4f, 0.4f, 0.4f);
 
@@ -36,11 +39,13 @@ void gameTransition::Load() {
     quitButtonMesh = CreateButtonMesh(0xFF505050);
 }
 
+// Initialize the game transition state
 void gameTransition::Initialize() {
     continueGame = false;
     quitGame = false;
 }
 
+// Update the game transition state
 void gameTransition::Update(f32 deltaTime) {
     (f32)deltaTime;
 
@@ -54,6 +59,7 @@ void gameTransition::Update(f32 deltaTime) {
     }
 }
 
+// Draw the game transition state
 void gameTransition::Draw() 
 {
     // --- Draw and center text on the Game Paused Text---
@@ -92,6 +98,7 @@ void gameTransition::Draw()
     DrawButton(quitButtonMesh, mainMenuCenterX, mainMenuCenterY, "NO", transitionFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 }
 
+// Free runtime resources
 void gameTransition::Free() {
 	if (continueButtonMesh) {
 		AEGfxMeshFree(continueButtonMesh);
@@ -103,13 +110,10 @@ void gameTransition::Free() {
 	}
 }
 
-void gameTransition::Unload() {
-	/*if (transitionFont != -1) {
-		AEGfxDestroyFont(transitionFont);
-		transitionFont = -1;
-	}*/
-}
+// Unload assets for the game transition
+void gameTransition::Unload() {}
 
+// Return the next state
 BaseState* gameTransition::GetNextState() {
     if (continueGame) {
         return nNextState;
