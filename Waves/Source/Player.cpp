@@ -88,27 +88,6 @@ void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32
     AEGfxMeshDraw(NameOfMesh, AE_GFX_MDM_TRIANGLES);
 }
 
-AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius)
-{
-    int slices = NumOfSlices;
-    f32 anglestep = 2.0f * PI / slices;
-    f32 centerX = 0.0f;
-    f32 centerY = 0.0f;
-
-    for (int i = 0; i < slices; ++i)
-    {
-        f32 angle1 = i * anglestep;
-        f32 angle2 = (i + 1) * anglestep;
-        AEGfxTriAdd(
-            centerX, centerY, colour, 0.5f, 0.5f,
-            centerX + radius * cos(angle1), centerY + radius * sin(angle1), colour, 0.5f + 0.5f * cos(angle1), 0.5f - 0.5f * sin(angle1),
-            centerX + radius * cos(angle2), centerY + radius * sin(angle2), colour, 0.5f + 0.5f * cos(angle2), 0.5f - 0.5f * sin(angle2)
-        );
-    }
-    return AEGfxMeshEnd();
-}
-
-
 bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY) {
     // Define the radius (world units) that must be walkable
     const f32 radius = 7.0f;
@@ -304,12 +283,12 @@ void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MA
     // Calculate the potential new position
     f32 newX = pplayer.x + dx * speed * dt;
     f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
-
+    f32 oldX{}, oldY{};
 
     int x_idx = static_cast<int>((pplayer.x - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
     int y_idx = abs(static_cast<int>((pplayer.y - TILE_SIZE / 2.f) / TILE_SIZE));
-    int newx_idx = static_cast<int>((newX + (dx * 15.f) - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
-    int newy_idx = abs(static_cast<int>((newY + (dy * 15.f) - TILE_SIZE / 2.f) / TILE_SIZE));
+    int newx_idx = static_cast<int>((newX + (dx * 20.f) - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
+    int newy_idx = abs(static_cast<int>((newY + (dy * 20.f) - TILE_SIZE / 2.f) / TILE_SIZE));
 
     // Check if the new position is walkable
     if (maze[y_idx][newx_idx] != 1/* && pplayer.x > (2.f * TILE_SIZE - (activeCol * TILE_SIZE / 2.f))*/) {

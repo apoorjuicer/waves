@@ -43,7 +43,7 @@ void GameState1::Load() {
     player.texture = AEGfxTextureLoad("Assets/Textures/Texture_Player.png");
     player.mesh = CreateTextureMesh(4, 2);
 
-    pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
+    pDonutMesh = CreateDonutMesh(1000.0f, 120.0f, 48, 0xFF000000);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateTextureMesh(1, 1);
     goalMesh = CreateTextureMesh(1, 1);
@@ -51,9 +51,8 @@ void GameState1::Load() {
     keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
     rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
-    this->keyTexture = AEGfxTextureLoad("Assets/key.png");
-    this->rockTexture = AEGfxTextureLoad("Assets/rock.png");
-    this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
+    this->keyTexture = AEGfxTextureLoad("Assets/Textures/Texture_Key.png");
+    this->rockTexture = AEGfxTextureLoad("Assets/Textures/Texture_Rock.png");
     this->pathTexture = AEGfxTextureLoad("Assets/Textures/Texture_Path2.png");
     this->doorTexture = AEGfxTextureLoad("Assets/Textures/Texture_Door.png");
     this->enemyTexture = AEGfxTextureLoad("Assets/Textures/Texture_Enemy.png");

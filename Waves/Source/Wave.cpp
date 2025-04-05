@@ -1112,7 +1112,7 @@ std::pair<int, int> find_wave_index(AEVec2 wpos) {
 	int x_idx{}, y_idx{};
 
 	// maze begins at 0,0; x -> positive, y -> negative;
-	x_idx = static_cast<int>((wpos.x - TILE_SIZE / 2.f) / TILE_SIZE) + 1;
+	x_idx = static_cast<int>((wpos.x - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
 	y_idx = abs(static_cast<int>((wpos.y - TILE_SIZE / 2.f) / TILE_SIZE));
 
 	return { x_idx, y_idx };
