@@ -128,7 +128,7 @@ Technology is prohibited.
 		bool seePlayer(Player player, float sightRange) const;
 		bool seeRock(Player& p,float sightRange) const;
 		//void chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
-		void chaseRock(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
+		void chaseRock(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		//bool seePlayer(float sightRange) const;
 		//bool seeRock(float sightRange);
 		bool hitbywave(DirectionalWave dir_wave, AEVec2& out) const;

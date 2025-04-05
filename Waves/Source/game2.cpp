@@ -216,7 +216,7 @@ void GameState2::Draw() {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
     }
     // vision radius;
-   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();

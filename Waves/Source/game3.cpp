@@ -168,9 +168,7 @@ void GameState3::Update(f32 deltaTime) {
     for (Wave& w : enemy_wave) {
         if (w.is_active) {
             w.update();
-
         }
-
     }
     for (Wave& r : reflections) {
         if (r.is_active) {
@@ -216,7 +214,7 @@ void GameState3::Draw() {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
 	}
     // vision radius;
-    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();

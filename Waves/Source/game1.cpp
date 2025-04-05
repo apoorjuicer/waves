@@ -18,7 +18,6 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "game1.h"
-bool waveSpawned = false;  // Flag to track if the wave has been spawned
 std::vector<WorldItem> worldItems;
 
 namespace{
@@ -118,28 +117,8 @@ void GameState1::Update(f32 deltaTime) {
         }
         return;
     }
-
-
     //debug
-    enemy1.print_debug();
-   // std::cout << player.x << player.y <<"\n";
-  /*  if (AEInputCheckCurr(AEVK_1)) {
-        enemy1.state = IDLE;
-        std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
-    }
-    if (AEInputCheckCurr(AEVK_2)) {
-        enemy1.state = PATROL;
-        std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
-    }
-    if (AEInputCheckCurr(AEVK_3)) {
-        enemy1.state = PURSUIT_PLAYER;
-        std::cout << "state changed to :" << enemy1. GetEnemyStateName() << "\n";
-    }
-    if (AEInputCheckCurr(AEVK_4)) {
-        enemy1.state = PURSUIT_ROCK;
-        std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
-    }
-    GlobalCenter.x = player.x; GlobalCenter.y = player.y;
+    //enemy1.print_debug();
 
     // Player movement
     f32 speed = 200.0f; player.state = player.PLAYER_STATE::IS_IDLE;
@@ -161,24 +140,14 @@ void GameState1::Update(f32 deltaTime) {
         MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
         player.dir = player.PLAYER_STATE::FACING_RIGHT;
     }
+    GlobalCenter.x = player.x; GlobalCenter.y = player.y;
 
-    if (AEInputCheckTriggered(AEVK_SPACE) && !dir_wave.is_active && !waveSpawned) {
+    if (AEInputCheckTriggered(AEVK_SPACE) && !dir_wave.is_active) {
         // spawn a directional wave towards player mouse;
         spawn_dir_wave(dir_wave, AEVec2{ player.x, player.y }, wave_meshes);
 
         AudioManager::PlayAudio("Waves", 1.0f, 1.0f, 0); // Play wave sound once
-        waveSpawned = true; // Set flag to prevent further triggers
     }
-
-    // Reset the flag when SPACE is released
-    if (!AEInputCheckCurr(AEVK_SPACE)) {
-        waveSpawned = false;
-    }
-    //debug
-   /* if (AEInputCheckTriggered(AEVK_SPACE)) {
-        spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
-    }*/
-
     enemy1.UpdateEnemystate(player,deltaTime, enemy_wave,wave_meshes,dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
@@ -195,9 +164,7 @@ void GameState1::Update(f32 deltaTime) {
     for (Wave& w : enemy_wave) {
         if (w.is_active) {
             w.update();
-
         }
-
     }
     for (Wave& r : reflections) {
         if (r.is_active) {
@@ -243,7 +210,7 @@ void GameState1::Draw() {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
     }
     // vision radius;
-   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();
