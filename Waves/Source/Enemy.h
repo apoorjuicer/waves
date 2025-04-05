@@ -61,7 +61,7 @@ Technology is prohibited.
 	// create shortcut for <double, pair<int, int>> pair
 	typedef std::pair<double, std::pair<int, int> > pPair; //contains fcost,i,j
 
-
+	//class Player;
 
 	enum class Path {
 		NO_PATH = 0,
@@ -120,8 +120,8 @@ Technology is prohibited.
 		void printPosition()const;
 		void enemy_wave(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) const;
 		void moveEnemy(Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
-		void EnemyState(float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
-		void UpdateEnemystate(float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, DirectionalWave dir_wave);
+		void EnemyState(Player& p,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
+		void UpdateEnemystate(Player& p, float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, DirectionalWave dir_wave);
 		void setEnemyPatrol(int grid[MAX_ROW][MAX_COL]);
 		void printEnemyPatrolpoints()const;
 		void print_debug() const;
@@ -130,7 +130,7 @@ Technology is prohibited.
 		std::string GetEnemyStateName() const;
 		void chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		bool seePlayer(float sightRange) const;
-		bool seeRock(float sightRange) const;
+		bool seeRock(Player& p,float sightRange) const;
 		bool hitbywave(DirectionalWave dir_wave, AEVec2& out) const;
 		void Update_Patrol(bool in_PatrolPath, Pair currIndexpos, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		

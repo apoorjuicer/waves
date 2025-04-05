@@ -19,7 +19,7 @@ Technology is prohibited.
 #include<iostream>
 #include <vector>
 #include "Maze.h"
-#include "Enemy.h"
+//#include "Enemy.h"
 
 enum InventoryItemType {
     NOTHING = 0,
@@ -38,22 +38,21 @@ struct WorldItem {
 const int INVENTORY_SIZE = 3;
 
 //struct Enemy;
-
-class Enemy;
+//class Enemy;
 
 
 struct Player {
     f32 x, y, rad=10.0f;  // Position in world space
     InventoryItemType inventory[3] = { NOTHING, NOTHING, NOTHING };
     //InventoryItem inventory[INVENTORY_SIZE] = { ROCK, NOTHING, NOTHING };'
-
+    AEVec2 lastRockPos{0.f,0.f};
     void PickUpItem(InventoryItemType itemType);
     void DropItem(f32 dropX, f32 dropY);
 };
 
 extern std::vector<WorldItem> worldItems;
 extern Player player; // Start at (50, 50) in world space
-extern Player lastRock;
+//extern Player lastRock;
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color);
 void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
 AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
@@ -61,7 +60,7 @@ bool IsWalkable(f32 x, f32 y, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 maze
 void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze[MAX_ROW][MAX_COL], f32 tileSize);
 void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh, AEGfxTexture* playerTexture);
 void CheckItem(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
-bool PlayerEnemyCollision(Player &player, Enemy &enemy, f32 tilesize);
+bool PlayerEnemyCollision(Player &player, AEVec2 enemy_pos, f32 tilesize);
 bool checkGoal(Player& player, int maze[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
 AEGfxVertexList* CreateBoxMesh(u32 color);
 void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh,AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh,AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);

@@ -183,7 +183,7 @@ void GameState1::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    enemy1.UpdateEnemystate(deltaTime, enemy_wave,wave_meshes,dir_wave);
+    enemy1.UpdateEnemystate(player,deltaTime, enemy_wave,wave_meshes,dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
@@ -217,7 +217,7 @@ void GameState1::Update(f32 deltaTime) {
 
     CheckItem(player, maze, tilesize, 0.0f, 0); 
 
-    dead = PlayerEnemyCollision(player, enemy1, tilesize);
+    dead = PlayerEnemyCollision(player, { enemy1.x, enemy1.y }, tilesize);
 
     // Inside your game loop:
     if (dead && !gameOverSoundPlayed)
@@ -240,7 +240,7 @@ void GameState1::Update(f32 deltaTime) {
 void GameState1::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
 	if (!PauseOverlay::IsPaused()) {
-		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
+		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
 	}
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
 

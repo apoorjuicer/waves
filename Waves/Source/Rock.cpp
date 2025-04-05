@@ -97,7 +97,7 @@ namespace rock {
     f32 rockThrowSoundTimer = 0.0f; // Timer for the rock throw sound
     const f32 rockThrowSoundDuration = 0.3f; // Duration to play the sound (in seconds)
 
-    void drawRock(Player& rplayer, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, Player& lastRock1, AEGfxVertexList* rockMesh, AEGfxTexture* rockTexture) {
+    void drawRock(Player& rplayer, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, AEGfxVertexList* rockMesh, AEGfxTexture* rockTexture) {
         f32 rockRad = 10.0f;
         s32 mouseX = 0, mouseY = 0;
         AEVec2 normalisedVec{ 0.0f, 0.0f };
@@ -212,8 +212,8 @@ namespace rock {
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
                 spawn_wave(MainWaves, prevX, prevY, mesh);
                 rockActive = false;
-                lastRock1.x = rock.x;
-                lastRock1.y = rock.y;
+                rplayer.lastRockPos.x = rock.x;
+                rplayer.lastRockPos.y = rock.y;
                 rplayer.DropItem(rock.x, rock.y);
             }
 

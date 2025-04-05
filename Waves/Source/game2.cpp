@@ -81,7 +81,7 @@ void GameState2::Initialize() {
     enemy2.x = enemy2.startPatrol.first * TILE_SIZE;
     enemy2.y = enemy2.startPatrol.second * -TILE_SIZE;
     enemy2.state = PATROL;
-    enemy2.previousState =PATROL;
+    enemy2.previousState = PATROL;
     //enemy2.idle_timer = 3.f;
     enemy2.patrol_timer = 20.f;
     //enemy2.pursuit_timer = 3.f;
@@ -138,7 +138,7 @@ void GameState2::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    enemy2.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes, dir_wave);
+    enemy2.UpdateEnemystate(player, deltaTime, enemy_wave, wave_meshes, dir_wave);
     //enemy1.enemy_wave(enemy_wave, wave_meshes);
 
     // UPDATE WAVES-----------------------------------------------------
@@ -172,7 +172,7 @@ void GameState2::Update(f32 deltaTime) {
     // -----------------------------------------------------------------
 
     CheckItem(player, maze, tilesize, 0.0f, 0);
-    dead = PlayerEnemyCollision(player, enemy2, tilesize);
+    dead = PlayerEnemyCollision(player, {enemy2.x, enemy2.y}, tilesize);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
     if (dead && !gameOverSoundPlayed)
     {
@@ -190,7 +190,7 @@ void GameState2::Update(f32 deltaTime) {
 void GameState2::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     if (!PauseOverlay::IsPaused()) {
-        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
+        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
     }
     RenderMesh(enemyMesh, enemy2.x, enemy2.y, enemy2.w, enemy2.h, 0.0f);
 

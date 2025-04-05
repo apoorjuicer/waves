@@ -20,7 +20,7 @@ Technology is prohibited.
 #include "game3.h"
 
 namespace {
-   Enemy enemy3;
+    Enemy enemy3;
 }
 
 GameState3::GameState3() : exitGame(false), winGame(false), tilesize(100.0f),
@@ -145,7 +145,7 @@ void GameState3::Update(f32 deltaTime) {
     }*/
 
     //UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
-    enemy3.UpdateEnemystate(deltaTime, enemy_wave, wave_meshes, dir_wave);
+    enemy3.UpdateEnemystate(player,deltaTime, enemy_wave, wave_meshes, dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
@@ -179,7 +179,7 @@ void GameState3::Update(f32 deltaTime) {
 
     CheckItem(player, maze, tilesize, 0.0f, 0);
 
-    dead = PlayerEnemyCollision(player, enemy3, tilesize);
+    dead = PlayerEnemyCollision(player, { enemy3.x, enemy3.y }, tilesize);
     winGame = checkGoal(player, maze, tilesize, 0.0f, 0.0f);
     if (dead && !gameOverSoundPlayed)
     {
@@ -198,7 +198,7 @@ void GameState3::Update(f32 deltaTime) {
 void GameState3::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     if (!PauseOverlay::IsPaused()) {
-        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
+        rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
 	}
     RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
 

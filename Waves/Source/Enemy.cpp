@@ -338,7 +338,7 @@ namespace {// Utility Functions
 	}//end of func
 
 
-	void Enemy::EnemyState(float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
+	void Enemy::EnemyState(Player& p,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		static float accumulatedTime = 0.0f;
 		const float updateInterval = 0.1f;  // Move every 0.1 seconds
 		accumulatedTime += dt;
@@ -346,8 +346,8 @@ namespace {// Utility Functions
 		bool inPatrolPath = std::find(patrolPath.begin(), patrolPath.end(), currIndex) != patrolPath.end();
 		//std::cout << "current enemy index :" << currIndex.first << "," << currIndex.second << "\n";
 		//pursuit rock
-		static int destX = static_cast<int>((lastRock.x + TILE_SIZE / 2) / TILE_SIZE);
-		static int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+		static int destX = static_cast<int>((p.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE);
+		static int destY = static_cast<int>((p.lastRockPos.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 		// Enemy position conversion
 		int srcX = static_cast<int>(x / TILE_SIZE);
 		int srcY = static_cast<int>(y / TILE_SIZE) * -1;
@@ -414,7 +414,7 @@ namespace {// Utility Functions
 		}
 	}
 
-	void Enemy::UpdateEnemystate(float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, DirectionalWave dir_wave) {
+	void Enemy::UpdateEnemystate(Player& p,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, DirectionalWave dir_wave) {
 
 		// Clear path and reset index when state changes
 		if (previousState != state) {
@@ -427,8 +427,8 @@ namespace {// Utility Functions
 		}
 
 
-		int destX = static_cast<int>((lastRock.x + (TILE_SIZE / 2)) / TILE_SIZE);
-		int destY = static_cast<int>((lastRock.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
+		int destX = static_cast<int>((p.lastRockPos.x + (TILE_SIZE / 2)) / TILE_SIZE);
+		int destY = static_cast<int>((p.lastRockPos.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 		enemy_wave(MainWaves, mesh);
 
 		//const float IDLE_TIME = idle_timer;       // Time to stay idle
@@ -446,7 +446,7 @@ namespace {// Utility Functions
 		switch (state) {
 		case IDLE:
 
-			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave, wave_col_pos) && state != PURSUIT_PLAYER) {
@@ -463,7 +463,7 @@ namespace {// Utility Functions
 
 			break;
 		case PATROL:
-			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave,wave_col_pos) && state != PURSUIT_PLAYER) {
@@ -483,7 +483,7 @@ namespace {// Utility Functions
 
 			break;
 		case PURSUIT_PLAYER:
-			if (seeRock(sightRangeRock) && state != PURSUIT_ROCK) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK) {
 				SetPursuitRockState();
 			}
 			else if (!seePlayer(sightRangePlayer) && (stateTimer <= 0.0f)) { //player zao alr
@@ -523,7 +523,7 @@ namespace {// Utility Functions
 		//call enemystate after update
 		//std::cout << "enemy state is "<< GetEnemyStateName(e.state) << "\n";
 		updateGridPosition();
-		EnemyState(dt, (&MainWaves)[MAX_NUM_WAVES], mesh);
+		EnemyState(p,dt, (&MainWaves)[MAX_NUM_WAVES], mesh);
 	}
 
 
@@ -548,9 +548,9 @@ namespace {// Utility Functions
 		return distSq <= rangeSq;  // Compare squared values
 	}
 
-	bool Enemy::seeRock(float sightRange) const {
-		float dist_x = lastRock.x - x;
-		float dist_y = lastRock.y - y;
+	bool Enemy::seeRock(Player& p,float sightRange) const {
+		float dist_x = p.lastRockPos.x - x;
+		float dist_y = p.lastRockPos.y - y;
 		//return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
 		float distSq = dist_x * dist_x + dist_y * dist_y;
 		float rangeSq = sightRange * sightRange;
