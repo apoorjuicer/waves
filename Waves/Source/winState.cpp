@@ -17,15 +17,16 @@ Technology is prohibited.
 
 #include "winState.h"
 
-const f32 kButtonW = 300.0f;
-const f32 kButtonH = 100.0f;
-const f32 kokY = -200.0f;
-const f32 kokX = 0.0f;
+//const f32 kButtonW = 300.0f;
+//const f32 kButtonH = 100.0f;
+//const f32 kokY = -200.0f;
+//const f32 kokX = 0.0f;
 
 WinState::WinState() : goNext(false), winFont(-1), buttonFont(-1), okButtonMesh(nullptr) {}
 
 void WinState::Load() {
-    AEGfxSetBackgroundColor(0.0f, 0.5f, 0.0f); // Dark green background
+    AEGfxSetCamPosition(0.0f, 0.0f);
+    AEGfxSetBackgroundColor(0.0f, 0.0f, 0.0f); // Dark green background
 
     /*winFont = AEGfxCreateFont("Assets/buggy-font.ttf", 80);
     buttonFont = AEGfxCreateFont("Assets/Fonts/Nunito/Nunito-Bold.ttf", 70);*/
@@ -43,14 +44,29 @@ void WinState::Initialize() {
 void WinState::Update(f32 deltaTime) {
     (f32)deltaTime;
 
-    // Example: Press ENTER to proceed to next level
     if (AEInputCheckTriggered(AEVK_ESCAPE)) {
         goNext = true;
     }
 
     if (AEInputCheckTriggered(AEVK_LBUTTON)) {
-        if (IsMouseInsideButton(kokX, kokY, kButtonW, kButtonH)) {
+        /*if (IsMouseInsideButton(kokX, kokY, kButtonW, kButtonH)) {
             goNext = true;
+        }*/
+
+    // ---------------------------
+    // "OK" Button
+    // ---------------------------
+        {
+            f32 textW, textH;
+            AEGfxGetPrintSize(buttonFont, "OK", 1.0f, &textW, &textH);
+
+            f32 centerX_NDC = 0.0f;
+            f32 centerY_NDC = -0.5f;
+
+            if (IsMouseInsideButtonNDC(centerX_NDC, centerY_NDC, textW, textH))
+            {
+                goNext = true;
+            }
         }
     }
 }
@@ -62,9 +78,29 @@ void WinState::Draw() {
     float centeredX = -textWidth * 0.5f;
     float centeredY = 0.0f;
 
-    AEGfxPrint(winFont, "YOU WIN", centeredX, centeredY, 1.5f, 0.0f, 0.0f, 0.0f, 1.0f);
+    AEGfxPrint(winFont, "YOU WIN", centeredX, centeredY, 1.5f, 0.0f, 1.0f, 0.0f, 1.0f);
 
-    DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
+    //DrawButton(okButtonMesh, kokX + player.x, kokY + player.y, "OK", buttonFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
+
+    // ==============================================================
+    // Color Change on Hover 'OK' Button
+    // ==============================================================    
+    {
+        f32 ExitTextWidthNDC, ExitTextHeightNDC;
+        AEGfxGetPrintSize(buttonFont, "OK", 1.0f, &ExitTextWidthNDC, &ExitTextHeightNDC);
+
+        f32 ExitCenterX_NDC = 0.0f;
+        f32 ExitCenterY_NDC = -0.5f;
+
+        bool ExitHovered = IsMouseInsideButtonNDC(ExitCenterX_NDC, ExitCenterY_NDC, ExitTextWidthNDC, ExitTextHeightNDC);
+        f32 Exit_r = (ExitHovered) ? 0.0f : 1.0f;
+        f32 Exit_g = (ExitHovered) ? 0.5f : 1.0f;
+        f32 Exit_b = (ExitHovered) ? 0.0f : 1.0f;
+
+        f32 ExitTextX_NDC = ExitCenterX_NDC - (ExitTextWidthNDC * 0.5f);
+        f32 ExitTextY_NDC = ExitCenterY_NDC - (ExitTextHeightNDC * 0.5f);
+        AEGfxPrint(buttonFont, "OK", ExitTextX_NDC, ExitTextY_NDC, 1.0f, Exit_r, Exit_g, Exit_b, 1.0f);
+    }
 }
 
 void WinState::Free() {
