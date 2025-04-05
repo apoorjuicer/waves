@@ -18,7 +18,6 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #include "Wave.h"
-#include <iostream>
 
 namespace {
 

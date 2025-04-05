@@ -205,3 +205,6 @@ namespace FontManager {
         fontCache.clear();
     }
 }
+
+
+AEVec2 GlobalCenter{};

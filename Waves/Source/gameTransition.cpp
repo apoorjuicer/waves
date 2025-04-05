@@ -79,15 +79,15 @@ void gameTransition::Draw()
 
     
     // Button center in world space:
-    float resumeCenterX = player.x + kContinueX;
-    float resumeCenterY = player.y + kContinueY;
+    float resumeCenterX = GlobalCenter.x + kContinueX;
+    float resumeCenterY = GlobalCenter.y + kContinueY;
 
     DrawButton(continueButtonMesh, resumeCenterX, resumeCenterY, "YES", transitionFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 
     // --- Draw and center text on the Main Menu button ---
     // Button center in world space:
-    float mainMenuCenterX = player.x + kQuitX;
-    float mainMenuCenterY = player.y + kQuitY;
+    float mainMenuCenterX = GlobalCenter.x + kQuitX;
+    float mainMenuCenterY = GlobalCenter.y + kQuitY;
 
     DrawButton(quitButtonMesh, mainMenuCenterX, mainMenuCenterY, "NO", transitionFont, kButtonW, kButtonH, 1.0f, 1.0f, 1.0f, 1.0f);
 }

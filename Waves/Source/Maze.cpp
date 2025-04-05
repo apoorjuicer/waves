@@ -14,7 +14,6 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-#include "AEEngine.h"
 #include "Maze.h"
 #include "Player.h"
 
@@ -218,13 +217,10 @@ void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTextu
     }
 }
 
-void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh) {
+void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxTexture* pathTexture) {
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tilesize; // Y starts at the top (10 tiles * tile size)
-
-    AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-    AEGfxSetColorToMultiply(1.f, 1.f, 1.f, 1.0f);
 
     for (int y = 0; y < MAX_ROW; ++y) {
         for (int x = 0; x < MAX_COL; ++x) {
@@ -232,21 +228,39 @@ void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* 
             f32 posX = startX + (x * tilesize);
             f32 posY = startY - ((y + 1) * tilesize); // Subtract to flip the direction
 
-            AEMtx33 transform = { 0 };
-            AEMtx33Trans(&transform, posX, posY);
-            AEGfxSetTransform(transform.m);
-            // Draw walls or paths
-            if (maze[y][x] != 1) {
-                AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
+            // skip walls;
+            if (maze[y][x] == 1) {
+                continue;
             }
+
+            // render settings
+            AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+            AEGfxSetColorToMultiply(1.f, 1.f, 1.f, 1.0f);
+            AEGfxSetColorToAdd(0.f, 0.f, 0.f, 0.f);
+
+            // transforms
+            AEMtx33 transform = { 0 }; AEMtx33 scale{}; AEMtx33 trans{};
+            AEMtx33Scale(&scale, TILE_SIZE, TILE_SIZE);
+            AEMtx33Trans(&trans, posX, posY);
+            AEMtx33Concat(&transform, &trans, &scale);
+
+            AEGfxSetTransform(transform.m);
+
+            // Draw paths
+            AEGfxTextureSet(pathTexture, 0.f, 0.f);
+            AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
+
+            // Goal tile
             if (maze[y][x] == 2) {
-                AEGfxMeshDraw(goalMesh, AE_GFX_MDM_TRIANGLES);
+                // floor texture art;
+                AEGfxTextureSet(pathTexture, 0.75f, 0.f);
+                AEGfxMeshDraw(pathMesh, AE_GFX_MDM_TRIANGLES);
             }
         }
     }
 }
 
-void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh) {
+void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh, AEGfxVertexList* goalMesh, AEGfxTexture* doortexture) {
     // Calculate the top-left corner of the maze
     float startX = 0.0f; // X starts at 0
     float startY = tilesize; // Y starts at the top (10 tiles * tile size)
@@ -260,13 +274,31 @@ void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh) {
             f32 posX = startX + (x * tilesize);
             f32 posY = startY - ((y + 1) * tilesize); // Subtract to flip the direction
 
-            AEMtx33 transform = { 0 };
-            AEMtx33Trans(&transform, posX, posY);
-            AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-            AEGfxSetTransform(transform.m);
             // Draw walls or paths
             if (maze[y][x] == 1) {
+                AEMtx33 transform = { 0 };
+                AEMtx33Trans(&transform, posX, posY);
+                AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+                AEGfxSetTransform(transform.m);
+
                 AEGfxMeshDraw(wallMesh, AE_GFX_MDM_TRIANGLES);
+            }
+            if (maze[y][x] == 2) {
+                // draw door on wall;
+                AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+                AEGfxSetColorToMultiply(1.f, 1.f, 1.f, 1.0f);
+                AEGfxSetColorToAdd(0.f, 0.f, 0.f, 0.f);
+
+                AEMtx33 transform = { 0 }; AEMtx33 scale{}; AEMtx33 trans{};
+                AEMtx33Scale(&scale, TILE_SIZE, TILE_SIZE);
+                AEMtx33Trans(&trans, posX, posY + TILE_SIZE);
+                AEMtx33Concat(&transform, &trans, &scale);
+
+                // Choose the transform to use
+                AEGfxSetTransform(transform.m);
+                // door to next level;
+                AEGfxTextureSet(doortexture, 0.f, 0.f);
+                AEGfxMeshDraw(goalMesh, AE_GFX_MDM_TRIANGLES);
             }
         }
     }

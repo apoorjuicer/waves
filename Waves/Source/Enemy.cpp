@@ -265,7 +265,7 @@ namespace {// Utility Functions
 
 
 
-	void Enemy::chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
+	void Enemy::chasePlayer(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		// Convert player's world position to grid coordinates
 		//std::cout << "chasePlayer called\n";
 		
@@ -321,7 +321,7 @@ namespace {// Utility Functions
 		case PURSUIT_PLAYER:
 			//std::cout << "Enemy is chasing player!\n";
 			// Implement chase behavior
-			chasePlayer(accumulatedTime, updateInterval, MainWaves, mesh);
+			chasePlayer(p, accumulatedTime, updateInterval, MainWaves, mesh);
 			break;
 		case PURSUIT_ROCK:
 		
@@ -393,14 +393,14 @@ namespace {// Utility Functions
 		switch (state) {
 		case IDLE:
 
-			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK  && player.rockActive) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK  && p.rockActive) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave, wave_col_pos) && state != PURSUIT_PLAYER) {
 				//std::cout << "change state to pursuit player!\n";
 				SetPursuitPlayerState();
 			}
-			else if (seePlayer(sightRangePlayer)) {
+			else if (seePlayer(p, sightRangePlayer)) {
 				SetPursuitPlayerState();
 			}
 			else if (stateTimer <= 0.0f) {
@@ -410,14 +410,14 @@ namespace {// Utility Functions
 
 			break;
 		case PATROL:
-			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK  && player.rockActive) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK  && p.rockActive) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave,wave_col_pos) && state != PURSUIT_PLAYER) {
 				//std::cout << "change state to pursuit player!\n";
 				SetPursuitPlayerState();
 			}
-			else if (seePlayer(sightRangePlayer)) {
+			else if (seePlayer(p, sightRangePlayer)) {
 				SetPursuitPlayerState();
 			}
 			else if (stateTimer <= 0.0f) { //idle
@@ -430,10 +430,10 @@ namespace {// Utility Functions
 
 			break;
 		case PURSUIT_PLAYER:
-			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK   && player.rockActive) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK   && p.rockActive) {
 				SetPursuitRockState();
 			}
-			else if (!seePlayer(sightRangePlayer) && (stateTimer <= 0.0f)) { //player zao alr
+			else if (!seePlayer(p, sightRangePlayer) && (stateTimer <= 0.0f)) { //player zao alr
 				SetPatrolState();
 			}
 
@@ -467,7 +467,7 @@ namespace {// Utility Functions
 	}
 
 
-	bool Enemy::seePlayer(float sightRange) const {
+	bool Enemy::seePlayer(Player player, float sightRange) const {
 		float dist_x = player.x - x;
 		float dist_y = player.y - y;
 		//return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;

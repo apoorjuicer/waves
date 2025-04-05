@@ -117,7 +117,7 @@ namespace rock {
         }
 
         // Launch the rock when the left mouse button is clicked (and if not already active)
-        if (AEInputCheckCurr(AEVK_RBUTTON) && !player.rockActive && hasRock) {
+        if (AEInputCheckCurr(AEVK_RBUTTON) && !rplayer.rockActive && hasRock) {
 
           
             f32 speed = 15.0f;
@@ -149,11 +149,11 @@ namespace rock {
                 rock.dx = normalisedVec.x * speed;
                 rock.dy = normalisedVec.y * speed;
                 rock.currBounce = 0;
-                player.rockActive = true;
+                rplayer.rockActive = true;
             }
         }
 
-        if (player.rockActive) {
+        if (rplayer.rockActive) {
             // Assume dt is the time elapsed this frame in seconds
             f32 dt = (f32)AEFrameRateControllerGetFrameTime();
 
@@ -212,10 +212,10 @@ namespace rock {
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
                 spawn_wave(MainWaves, prevX, prevY, mesh);
-                player.rockActive = false;
+                rplayer.rockActive = false;
                 rplayer.lastRockPos.x = rock.x;
                 rplayer.lastRockPos.y = rock.y;
-                std::cout << prevX << ","<< prevY << "\n";
+                std::cout << prevX << "," << prevY << "\n";
                 rplayer.DropItem(rock.x, rock.y);
                 
             }

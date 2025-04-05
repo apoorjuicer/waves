@@ -32,18 +32,13 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 #pragma once
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "Player.h"
 #include "Maze.h"
 #include "Wave.h"
 //#include "game.h"
 
-#include <utility> // pair
-#include <vector> //vector
-#include <iostream> //debug check
-#include <cmath> //sqrt
-#include <limits> //infinity()
-#include <algorithm> //sort
 
 
 
@@ -129,8 +124,8 @@ Technology is prohibited.
 		void EnterPatrolPath();
 		void Update_EnemyPos(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		std::string GetEnemyStateName() const;
-		void chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
-		bool seePlayer(float sightRange) const;
+		void chasePlayer(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
+		bool seePlayer(Player player, float sightRange) const;
 		bool seeRock(Player& p,float sightRange) const;
 		bool hitbywave(DirectionalWave dir_wave, AEVec2& out) const;
 		void Update_Patrol(bool in_PatrolPath, Pair currIndexpos, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);

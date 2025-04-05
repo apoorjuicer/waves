@@ -16,15 +16,14 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "baseStates.h"
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "game1.h"
 #include "select.h"
 #include "gamePreview.h"
 #include "instructions.h"
 #include "Audio.h"
 #include "Player.h"
-#include "utility.h"
 #include "settingsOverlay.h"
 #include "credits.h"
 #include "exitOverlay.h"
