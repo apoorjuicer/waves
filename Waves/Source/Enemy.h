@@ -127,7 +127,7 @@ Technology is prohibited.
 		std::string GetEnemyStateName() const;
 		void chasePlayer(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		bool seePlayer(Player player, float sightRange) const;
-		bool seeRock(Player& p,float sightRange) const;
+		bool seeRock(Player p,float sightRange) const;
 		//void chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		void chaseRock(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		//bool seePlayer(float sightRange) const;

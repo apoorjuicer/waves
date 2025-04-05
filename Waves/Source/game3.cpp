@@ -210,7 +210,6 @@ void GameState3::Draw() {
     DrawTexturedEntity(AEVec2{ enemy3.x, enemy3.y }, enemyTexture, enemyMesh);
     // render rock;
     if (!PauseOverlay::IsPaused()) {
-        std::cout << "no rock lol";
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
 	}
     // vision radius;

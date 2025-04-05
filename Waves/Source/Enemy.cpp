@@ -303,31 +303,27 @@ namespace {// Utility Functions
 
 	}//end of func
 
-	void Enemy::chaseRock(Player player,float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
-		
-		//std::cout << "CHASING ROCK!\n";
-		//std::cout << "TIMER IN CHASE ROCK" << AT <<"\n";
-
+	void Enemy::chaseRock(Player p,float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		Pair rockCurrDest = {
-		static_cast<int>((player.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE),
-		static_cast<int>((player.lastRockPos.y - TILE_SIZE / 2) / TILE_SIZE) * -1
+		static_cast<int>((p.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE),
+		static_cast<int>((p.lastRockPos.y - TILE_SIZE / 2) / TILE_SIZE) * -1
 		};
 		// If the destination (rock's position) has changed, recalculate the path
 
-		if (player.rockLanded && (gridX!= rockCurrDest.first &&  gridY!= rockCurrDest.second)) {
+		if (p.rockLanded && (gridX!= rockCurrDest.first &&  gridY!= rockCurrDest.second)) {
 
 			path.clear();   // Clear old path
 			pathIndex = 0;  // Reset path index
 			Pair src = { gridX, gridY };
 			Pair dest = rockCurrDest;
 			if (astarsearch(maze, src, dest, path) == Path::NO_PATH) {
-				std::cout << "No path pursuit_rock\n";
+				//std::cout << "No path pursuit_rock\n";
 			}
 			//in enemy state
 			//std::cout << "last rock pos in UpdateEnemystate : " << player.lastRockPos.x << "," << player.lastRockPos.y << "\n";
 
-			int gX = static_cast<int>((player.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE);
-			int gY = static_cast<int>((player.lastRockPos.y - TILE_SIZE / 2) / -TILE_SIZE);
+			//int gX = static_cast<int>((player.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE);
+			//int gY = static_cast<int>((player.lastRockPos.y - TILE_SIZE / 2) / -TILE_SIZE);
 
 			//std::cout << "last rock grid in chaseRock : " << gX << "," << gY << "\n";
 	/*		if (!path.empty()) {
@@ -359,13 +355,10 @@ namespace {// Utility Functions
 		switch (state) { //activate corresponding state
 
 		case IDLE:
-			/*std::cout << "Enemy is idle.\n";*/
 			break;
 		case PATROL: Update_Patrol(inPatrolPath, currIndex, accumulatedTime, updateInterval, MainWaves, mesh);
 			break;
 		case PURSUIT_PLAYER:
-			//std::cout << "Enemy is chasing player!\n";
-			// Implement chase behavior
 			chasePlayer(p, accumulatedTime, updateInterval, MainWaves, mesh);
 			break;
 		case PURSUIT_ROCK:
@@ -376,22 +369,15 @@ namespace {// Utility Functions
 
 	void Enemy::UpdateEnemystate(Player& p,float dt, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh, DirectionalWave dir_wave) {
 
-		//std::cout << "IS ROCK ACTIVE IN ENEMY STATE?" << player.rockActive << "\n";
-
-	//	std::cout << "IS PLAYTER SEE ROCK?" << seeRock(sightRangeRock) << "\n";
-
 		// Clear path and reset index when state changes
 		if (previousState != state) {
 			/*std::cout << "State changed from " << GetEnemyStateName(e.previousState)
 				<< " to " << GetEnemyStateName(e.state) << "\n";*/
 			path.clear();      // Clear old path when switching states
 			pathIndex = 0;     // Reset path index
-
 			previousState = state;  // Update previous state
 		}
 
-		//int destX = static_cast<int>((p.lastRockPos.x + (TILE_SIZE / 2)) / TILE_SIZE);
-		//int destY = static_cast<int>((p.lastRockPos.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 		enemy_wave(MainWaves, mesh);
 		
 	/*	std::cout << "reached rock or not?" << reachedRock << "\n";
@@ -408,7 +394,6 @@ namespace {// Utility Functions
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave, wave_col_pos) && state != PURSUIT_PLAYER) {
-				//std::cout << "change state to pursuit player!\n";
 				SetPursuitPlayerState();
 			}
 			else if (seePlayer(p, sightRangePlayer)) {
@@ -425,7 +410,6 @@ namespace {// Utility Functions
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave,wave_col_pos) && state != PURSUIT_PLAYER) {
-				//std::cout << "change state to pursuit player!\n";
 				SetPursuitPlayerState();
 			}
 			else if (seePlayer(p, sightRangePlayer)) {
@@ -455,7 +439,7 @@ namespace {// Utility Functions
 				//std::cout << GetEnemyStateName() << "\n";
 			}
 			else {
-				std::cout << "reached rock! setting idle\n";
+				//std::cout << "reached rock! setting idle\n";
 				reachedRock = true;
 				SetIdleState();
 			}
@@ -470,7 +454,7 @@ namespace {// Utility Functions
 
 
 			if (gridX == rockPrevDest.first && gridY == rockPrevDest.second) {
-				std::cout << "reached rock! setting patrol\n";
+				//std::cout << "reached rock! setting patrol\n";
 				reachedRock = true;
 				//SetIdleState(); // Reached rock
 				SetPatrolState();
@@ -496,9 +480,9 @@ namespace {// Utility Functions
 	}
 
 
-	bool Enemy::seePlayer(Player player, float sightRange) const {
-		float dist_x = player.x - x;
-		float dist_y = player.y - y;
+	bool Enemy::seePlayer(Player p, float sightRange) const {
+		float dist_x = p.x - x;
+		float dist_y = p.y - y;
 		//return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
 		float distSq = dist_x * dist_x + dist_y * dist_y;
 		float rangeSq = sightRange * sightRange;
@@ -506,7 +490,7 @@ namespace {// Utility Functions
 		return distSq <= rangeSq;  // Compare squared values
 	}
 
-	bool Enemy::seeRock(Player& p, float sightRange) const {
+	bool Enemy::seeRock(Player p, float sightRange) const {
 		////for (const auto& item : worldItems) {
 		////	if (item.type == ROCK && !item.collected) {
 		////		float dx = item.x - x;
@@ -586,10 +570,10 @@ namespace {// Utility Functions
 	}
 
 	void Enemy::print_debug() const {
-		std::cout << GetEnemyStateName() << "\n"; //print enemy state
+		//std::cout << GetEnemyStateName() << "\n"; //print enemy state
 		//std::cout << "reached rock?:" <<static_cast<bool>(reachedRock) << "\n";
 		//printPosition(); //print enemy position
-		std::cout << "state timer:" << stateTimer << "\n";
+		//std::cout << "state timer:" << stateTimer << "\n";
 		//printEnemyPatrolpoints();
 
 		//for (Pair p : path) {
@@ -602,37 +586,21 @@ namespace {// Utility Functions
 
 		state = IDLE;
 		stateTimer = idle_timer;
-		std::cout << "Set to idle state!\n";
-		std::cout << "reached rock or not?" << !reachedRock << "\n";
-		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
-		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	void Enemy::SetPatrolState() {
 	
 		state = PATROL;
 		stateTimer = patrol_timer;
-		std::cout << "Set to patrol state!\n";
-		std::cout << "reached rock or not?" << !reachedRock << "\n";
-		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
-		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	void Enemy::SetPursuitPlayerState() {
 
 		state = PURSUIT_PLAYER;
 		stateTimer = pursuitp_timer;
-		std::cout << "Set to pursuit  pstate!\n";
-		std::cout << "reached rock or not?" << !reachedRock << "\n";
-		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
-		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	void Enemy::SetPursuitRockState() {
 
 		state = PURSUIT_ROCK;
 		stateTimer = pursuitr_timer;
-		std::cout << "Set to pursit r state!\n";
-		std::cout << "reached rock or not?" << !reachedRock << "\n";
-		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
-		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	
 
@@ -716,7 +684,6 @@ namespace {// Utility Functions
 					gridNodes[new_i][new_j].parent_i = i;
 					gridNodes[new_i][new_j].parent_j = j;
 					//std::cout << "The destination cell is found\n";
-					//printPath(gridNodes, dest);
 					reconstructPath(gridNodes, dst, path);
 					return Path::PATH_FOUND;
 				}

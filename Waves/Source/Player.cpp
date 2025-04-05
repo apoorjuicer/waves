@@ -301,6 +301,7 @@ AEGfxVertexList* CreateTextureMesh(int spritesheet_cols, int spritesheet_rows) {
 
 void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
 
+    UNREFERENCED_PARAMETER(tileSize);
     // Calculate the potential new position
     f32 newX = pplayer.x + dx * speed * dt;
     f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
@@ -312,10 +313,10 @@ void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MA
     int newy_idx = abs(static_cast<int>((newY + (dy * 15.f) - TILE_SIZE / 2.f) / TILE_SIZE));
 
     // Check if the new position is walkable
-    if (maze[y_idx][newx_idx] != 1/* && pplayer.x > (2.f * TILE_SIZE - (activeCol * TILE_SIZE / 2.f))*/) {
+    if (maze1[y_idx][newx_idx] != 1/* && pplayer.x > (2.f * TILE_SIZE - (activeCol * TILE_SIZE / 2.f))*/) {
         pplayer.x = newX;
     }
-    if (maze[newy_idx][x_idx] != 1/* && pplayer.y < ((activeRow * TILE_SIZE / 2.f) - TILE_SIZE)*/) {
+    if (maze1[newy_idx][x_idx] != 1/* && pplayer.y < ((activeRow * TILE_SIZE / 2.f) - TILE_SIZE)*/) {
         pplayer.y = newY;
     }
 }
