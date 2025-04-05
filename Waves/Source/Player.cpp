@@ -15,14 +15,9 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-#include "AEEngine.h"
 #include "Player.h"
 #include "Maze.h"
-#include<iostream>
 #include "Audio.h"
-
-extern Player player = { 100.0f, -100.0f };
-extern Player lastRock = { 0.0f, 0.0f };
 
 // Function to create a donut mesh with an empty center
 AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegments, u32 color)
@@ -165,10 +160,10 @@ bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 maz
 void CheckItem(Player& player1) {
 
     if (AEInputCheckTriggered(AEVK_E)) {
-        f32 playerMinX = player1.x - player1.rad;
-        f32 playerMaxX = player1.x + player1.rad;
-        f32 playerMinY = player1.y - player1.rad;
-        f32 playerMaxY = player1.y + player1.rad;
+        f32 playerMinX = player1.x - player1.rad - 30.f;
+        f32 playerMaxX = player1.x + player1.rad + 30.f;
+        f32 playerMinY = player1.y - player1.rad - 30.f;
+        f32 playerMaxY = player1.y + player1.rad + 30.f;
 
         for (auto& item : worldItems) {
             if (!item.collected &&
@@ -178,27 +173,27 @@ void CheckItem(Player& player1) {
                 AudioManager::PlayAudio("Collect", 0.2f, 1.0f, 0);
 
                 // Pick up the item (add it to the player's inventory)
-                player1.PickUpItem(item.type);
-
-                // Mark the item as collected
-                item.collected = true;
-                break;
+                item.collected = player1.PickUpItem(item.type);
+                if (item.collected) {
+                    break;
+                }
             }
         }
     }
 }
 
-void Player::PickUpItem(InventoryItemType itemType) {
+bool Player::PickUpItem(InventoryItemType itemType) {
     for (int i = 0; i < INVENTORY_SIZE; ++i) {
         if (inventory[i] == NOTHING) {
             inventory[i] = itemType;
-            return;
+            return true;
         }
     }
+    return false;
 }
 
 void Player::DropItem(f32 dropX, f32 dropY) {
-    for (int i = {INVENTORY_SIZE -1 }; i >=0; --i) {
+    for (int i = { INVENTORY_SIZE - 1 }; i >= 0; --i) {
         if (inventory[i] == ROCK) {
             // Drop the item and add it to worldItems
             worldItems.emplace_back(WorldItem(inventory[i], dropX, dropY));
@@ -208,21 +203,119 @@ void Player::DropItem(f32 dropX, f32 dropY) {
     }
 }
 
+void DrawTexturedEntity(AEVec2 pos, AEGfxTexture* texture, AEGfxVertexList* mesh, AEVec2 offset) {
+    // render settings;
+    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+    AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+    AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
+    // Set the texture to pTex
+    AEGfxTextureSet(texture, offset.x, offset.y);
 
+    AEMtx33 scale = { 0 }; AEMtx33 translate{ 0 }; AEMtx33 transform{};
+    AEMtx33Scale(&scale, 50.0f, 50.0f);
+    AEMtx33Trans(&translate, pos.x, pos.y);
+    AEMtx33Concat(&transform, &translate, &scale);
+
+    // Choose the transform to use
+    AEGfxSetTransform(transform.m);
+
+    // Actually drawing the mesh 
+    AEGfxMeshDraw(mesh, AE_GFX_MDM_TRIANGLES);
+}
+
+void DrawPlayer(Player const& player) {
+    static f32 current_sprite_uv_offset_x{ 0.f };   // 0.2f offsets;
+    static f32 current_sprite_uv_offset_y{ 0.5f };   // 0.5f offset;
+
+    if (player.dir == player.FACING_RIGHT) {
+        current_sprite_uv_offset_y = 0.f;
+    }
+    else if (player.dir == player.FACING_LEFT) {
+        current_sprite_uv_offset_y = 0.5f;
+    }
+
+    if (player.state == player.IS_IDLE) {
+        current_sprite_uv_offset_x = 0.f;
+    }
+    else if (player.state == player.IS_MOVING) {
+        // animation speed;
+        const f32 animation_duration_per_frame = 0.1f;
+        static f32 animation_timer = 0.f;
+
+        // Update the animation timer.
+        animation_timer += (f32)AEFrameRateControllerGetFrameTime();
+
+        if (animation_timer >= animation_duration_per_frame) {
+            current_sprite_uv_offset_x += 0.25f;
+
+            if (current_sprite_uv_offset_x >= 0.75f) {
+                current_sprite_uv_offset_x = 0.f;
+            }
+            animation_timer = 0.f;
+        }
+    }
+    // render settings;
+    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
+    AEGfxSetColorToMultiply(1.0f, 1.0f, 1.0f, 1.0f);
+    AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
+
+    // Set the texture to pTex
+    AEGfxTextureSet(player.texture, current_sprite_uv_offset_x, current_sprite_uv_offset_y);
+
+    AEMtx33 scale = { 0 }; AEMtx33 translate{ 0 }; AEMtx33 transform{};
+    AEMtx33Scale(&scale, 50.0f, 50.0f);
+    AEMtx33Trans(&translate, player.x, player.y);
+    AEMtx33Concat(&transform, &translate, &scale);
+
+    // Choose the transform to use
+    AEGfxSetTransform(transform.m);
+
+    // Actually drawing the mesh 
+    AEGfxMeshDraw(player.mesh, AE_GFX_MDM_TRIANGLES);
+}
+
+AEGfxVertexList* CreateTextureMesh(int spritesheet_cols, int spritesheet_rows) {
+
+    const f32 sprite_uv_width = 1.f / spritesheet_cols;
+    const f32 sprite_uv_height = 1.f / spritesheet_rows;
+
+    AEGfxVertexList* pMesh;
+
+    AEGfxMeshStart();
+
+    AEGfxTriAdd(
+        -0.5f, -0.5f, 0xFFFFFFFF, 0.0f, sprite_uv_height, // bottom left
+        0.5f, -0.5f, 0xFFFFFFFF, sprite_uv_width, sprite_uv_height, // bottom right 
+        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);  // top left
+
+    AEGfxTriAdd(
+        0.5f, -0.5f, 0xFFFFFFFF, sprite_uv_width, sprite_uv_height, // bottom right 
+        0.5f, 0.5f, 0xFFFFFFFF, sprite_uv_width, 0.0f,   // top right
+        -0.5f, 0.5f, 0xFFFFFFFF, 0.0f, 0.0f);  // top left
+
+    // Saving the mesh (list of triangles) in pMesh
+    pMesh = AEGfxMeshEnd();
+    return pMesh;
+}
 
 void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
-    //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position
     f32 newX = pplayer.x + dx * speed * dt;
     f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
 
+
+    int x_idx = static_cast<int>((pplayer.x - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
+    int y_idx = abs(static_cast<int>((pplayer.y - TILE_SIZE / 2.f) / TILE_SIZE));
+    int newx_idx = static_cast<int>((newX + (dx * 15.f) - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
+    int newy_idx = abs(static_cast<int>((newY + (dy * 15.f) - TILE_SIZE / 2.f) / TILE_SIZE));
+
     // Check if the new position is walkable
-    if (IsWalkable(newX, pplayer.y, maze1, tileSize, 0.0f, 0)) {
+    if (maze[y_idx][newx_idx] != 1/* && pplayer.x > (2.f * TILE_SIZE - (activeCol * TILE_SIZE / 2.f))*/) {
         pplayer.x = newX;
     }
-    if (IsWalkable(pplayer.x, newY, maze1, tileSize, 0.0f, 0)) {
+    if (maze[newy_idx][x_idx] != 1/* && pplayer.y < ((activeRow * TILE_SIZE / 2.f) - TILE_SIZE)*/) {
         pplayer.y = newY;
     }
 }
@@ -246,8 +339,8 @@ void DrawInventory(const Player& player1, AEGfxVertexList* boxMesh,
     AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh,
     AEGfxTexture* keyTexture, AEGfxTexture* rockTexture) {
 
-    f32 worldScreenLeft = player1.x - (AEGfxGetWindowWidth() / 2);
-    f32 worldScreenBottom = player1.y - (AEGfxGetWindowHeight() / 2);
+    f32 worldScreenLeft = player1.x - (f32)(AEGfxGetWindowWidth() / 2.f);
+    f32 worldScreenBottom = player1.y - (f32)(AEGfxGetWindowHeight() / 2.f);
 
     f32 offsetX = 100.0f;
     f32 offsetY = 100.0f;
@@ -349,16 +442,4 @@ bool checkGoal(Player& player1, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 m
 
     // Check if the player has the key and is standing on the goal tile (maze value == 2)
     return (hasKey && maze1[gridY][gridX] == 2 && AEInputCheckCurr(AEVK_E));
-}
-
-
-
-void RenderPlayer(const Player& pplayer, AEGfxVertexList* playerMesh,AEGfxTexture* playerTexture) {
-    AEMtx33 transform = { 0 };
-    AEMtx33Trans(&transform, pplayer.x, pplayer.y); // Adjust for screen space
-    AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
-    AEGfxSetTransform(transform.m);
-    AEGfxTextureSet(playerTexture, 0, 0);
-    AEGfxMeshDraw(playerMesh, AE_GFX_MDM_TRIANGLES);
-    AEGfxTextureSet(nullptr, 0, 0);
 }

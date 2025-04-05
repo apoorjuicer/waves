@@ -10,7 +10,7 @@ Handles the rock mechanics in the game, including rendering, movement, collision
 and interaction with the maze.
 
 This module allows the player to throw a rock, checks for collisions with the maze,
-applies velocity damping, and updates the rock’s position. It also tracks the rock’s
+applies velocity damping, and updates the rockï¿½s position. It also tracks the rockï¿½s
 final resting position and modifies the maze accordingly.
 
 \details
@@ -117,7 +117,7 @@ namespace rock {
         }
 
         // Launch the rock when the left mouse button is clicked (and if not already active)
-        if (AEInputCheckCurr(AEVK_RBUTTON) && !player.rockActive && hasRock) {
+        if (AEInputCheckCurr(AEVK_RBUTTON) && !rplayer.rockActive && hasRock) {
 
           
             f32 speed = 15.0f;
@@ -149,11 +149,11 @@ namespace rock {
                 rock.dx = normalisedVec.x * speed;
                 rock.dy = normalisedVec.y * speed;
                 rock.currBounce = 0;
-                player.rockActive = true;
+                rplayer.rockActive = true;
             }
         }
 
-        if (player.rockActive) {
+        if (rplayer.rockActive) {
             // Assume dt is the time elapsed this frame in seconds
             f32 dt = (f32)AEFrameRateControllerGetFrameTime();
 
@@ -212,25 +212,25 @@ namespace rock {
 
             if ((rock.currBounce >= rock.maxBounce) || (rock.dx == 0 && rock.dy == 0)) {
                 spawn_wave(MainWaves, prevX, prevY, mesh);
-                player.rockActive = false;
+                rplayer.rockActive = false;
                 rplayer.lastRockPos.x = rock.x;
                 rplayer.lastRockPos.y = rock.y;
                 rplayer.rockLanded = true;
           
                 ////debug
-                std::cout << "last rock pos in Rock.cpp : " << rplayer.lastRockPos.x << "," << rplayer.lastRockPos.y << "\n";
-                int gX, gY;
-                gX = static_cast<int>((rplayer.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE);
-                gY = static_cast<int>((rplayer.lastRockPos.y - TILE_SIZE / 2) / -TILE_SIZE);
+                // std::cout << "last rock pos in Rock.cpp : " << rplayer.lastRockPos.x << "," << rplayer.lastRockPos.y << "\n";
+                // int gX, gY;
+                // gX = static_cast<int>((rplayer.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE);
+                // gY = static_cast<int>((rplayer.lastRockPos.y - TILE_SIZE / 2) / -TILE_SIZE);
                 
-                std::cout << "last rock grid in Rock .cpp : " << gX << "," << gY << "\n";
+                // std::cout << "last rock grid in Rock .cpp : " << gX << "," << gY << "\n";
 
-                if ((maze[gY][gX] != 1)) {
-                    std::cout << "ROCK IS IN WALKABLE SPOT !!!" << "\n";
-                }
-                else {
-                    std::cout << "ROCK NOT IN WALKABLE SPOT LOL" << "\n";
-                }
+                // if ((maze[gY][gX] != 1)) {
+                //     std::cout << "ROCK IS IN WALKABLE SPOT !!!" << "\n";
+                // }
+                // else {
+                //     std::cout << "ROCK NOT IN WALKABLE SPOT LOL" << "\n";
+                // }
   
                 rplayer.DropItem(rock.x, rock.y);
                 

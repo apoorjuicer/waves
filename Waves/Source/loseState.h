@@ -16,12 +16,13 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "baseStates.h"
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "mainMenu.h"
 #include "Audio.h"
-#include "utility.h"
 #include "gameTransition.h"
+
+extern AEVec2 GlobalCenter;
 
 class LoseState : public BaseState {
 private:

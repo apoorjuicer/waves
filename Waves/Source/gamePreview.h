@@ -16,9 +16,8 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "baseStates.h"
-#include "AEEngine.h"
-#include "utility.h"
+#include "pch.h"
+
 #include "mainMenu.h"
 #include "game1.h"
 #include "Player.h"

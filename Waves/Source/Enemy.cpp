@@ -265,7 +265,7 @@ namespace {// Utility Functions
 
 
 
-	void Enemy::chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
+	void Enemy::chasePlayer(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		// Convert player's world position to grid coordinates
 		//std::cout << "chasePlayer called\n";
 		
@@ -303,7 +303,7 @@ namespace {// Utility Functions
 
 	}//end of func
 
-	void Enemy::chaseRock(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
+	void Enemy::chaseRock(Player player,float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh) {
 		
 		//std::cout << "CHASING ROCK!\n";
 		//std::cout << "TIMER IN CHASE ROCK" << AT <<"\n";
@@ -366,10 +366,10 @@ namespace {// Utility Functions
 		case PURSUIT_PLAYER:
 			//std::cout << "Enemy is chasing player!\n";
 			// Implement chase behavior
-			chasePlayer(accumulatedTime, updateInterval, MainWaves, mesh);
+			chasePlayer(p, accumulatedTime, updateInterval, MainWaves, mesh);
 			break;
 		case PURSUIT_ROCK:
-			chaseRock(accumulatedTime, updateInterval, MainWaves, mesh);
+			chaseRock(p, accumulatedTime, updateInterval, MainWaves, mesh);
 			break;
 		}
 	}
@@ -404,14 +404,14 @@ namespace {// Utility Functions
 		switch (state) {
 		case IDLE:
 
-			if (!reachedRock && seeRock(sightRangeRock) && player.rockLanded) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK  && p.rockActive) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave, wave_col_pos) && state != PURSUIT_PLAYER) {
 				//std::cout << "change state to pursuit player!\n";
 				SetPursuitPlayerState();
 			}
-			else if (seePlayer(sightRangePlayer)) {
+			else if (seePlayer(p, sightRangePlayer)) {
 				SetPursuitPlayerState();
 			}
 			else if (stateTimer <= 0.0f) {
@@ -421,14 +421,14 @@ namespace {// Utility Functions
 
 			break;
 		case PATROL:
-			if (!reachedRock && seeRock(sightRangeRock)&& player.rockLanded) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK  && p.rockActive) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave,wave_col_pos) && state != PURSUIT_PLAYER) {
 				//std::cout << "change state to pursuit player!\n";
 				SetPursuitPlayerState();
 			}
-			else if (seePlayer(sightRangePlayer)) {
+			else if (seePlayer(p, sightRangePlayer)) {
 				SetPursuitPlayerState();
 			}
 			else if (stateTimer <= 0.0f) { //idle
@@ -441,10 +441,10 @@ namespace {// Utility Functions
 
 			break;
 		case PURSUIT_PLAYER:
-			if (!reachedRock && seeRock(sightRangeRock) && player.rockLanded) {
+			if (seeRock(p,sightRangeRock) && state != PURSUIT_ROCK   && p.rockActive) {
 				SetPursuitRockState();
 			}
-			else if (!seePlayer(sightRangePlayer) && (stateTimer <= 0.0f)) { //player zao alr
+			else if (!seePlayer(p, sightRangePlayer) && (stateTimer <= 0.0f)) { //player zao alr
 				SetPatrolState();
 			}
 
@@ -460,13 +460,13 @@ namespace {// Utility Functions
 				SetIdleState();
 			}
 
-			//AEVec2 previousRock = p.lastRockPos;
-			//AEVec2 oldTarget = p.lastRockPos;
-			//bool foundNewRock = seeRock(sightRangeRock); // seeRock now loops all worldItems
-			//if (foundNewRock && player.rockLanded) {
-			//	// New rock found; force path recalculation
-			//	rockPrevDest = { -1, -1 };
-			//}
+			AEVec2 previousRock = p.lastRockPos;
+			AEVec2 oldTarget = p.lastRockPos;
+			bool foundNewRock = seeRock(p, sightRangeRock); // seeRock now loops all worldItems
+			if (foundNewRock && p.rockLanded) {
+				// New rock found; force path recalculation
+				rockPrevDest = { -1, -1 };
+			}
 
 
 			if (gridX == rockPrevDest.first && gridY == rockPrevDest.second) {
@@ -496,7 +496,7 @@ namespace {// Utility Functions
 	}
 
 
-	bool Enemy::seePlayer(float sightRange) const {
+	bool Enemy::seePlayer(Player player, float sightRange) const {
 		float dist_x = player.x - x;
 		float dist_y = player.y - y;
 		//return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
@@ -506,7 +506,7 @@ namespace {// Utility Functions
 		return distSq <= rangeSq;  // Compare squared values
 	}
 
-	bool Enemy::seeRock(float sightRange)  {
+	bool Enemy::seeRock(Player& p, float sightRange) const {
 		////for (const auto& item : worldItems) {
 		////	if (item.type == ROCK && !item.collected) {
 		////		float dx = item.x - x;
@@ -547,8 +547,8 @@ namespace {// Utility Functions
 		//}
 
 
-		float dist_x = player.lastRockPos.x - x;
-		float dist_y = player.lastRockPos.y - y;
+		float dist_x = p.lastRockPos.x - x;
+		float dist_y = p.lastRockPos.y - y;
 		//return sqrt(dist_x * dist_x + dist_y * dist_y) <= sightRange;
 		float distSq = dist_x * dist_x + dist_y * dist_y;
 		float rangeSq = sightRange * sightRange;

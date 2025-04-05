@@ -15,8 +15,6 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 
-#include "AEEngine.h"
-#include <iostream>
 #include "draw_map.h"
 #include "Player.h"
 
