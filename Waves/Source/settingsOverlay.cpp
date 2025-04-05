@@ -36,7 +36,7 @@ namespace SettingsOverlay {
         sVisible = false;
         currentVolume = AudioManager::GetMasterVolume();
         volumeFont = FontManager::GetFont("NunitoBold50");
-        panelMesh = CreateButtonMesh(0xFF606060);
+        panelMesh = CreateButtonMesh(0xFF202020);
         sliderTrackMesh = CreateButtonMesh(0xFFFFFFFF); 
         sliderHandleMesh = CreateButtonMesh(0xFF000000); 
 		okButtonMesh = CreateButtonMesh(0xFFFFFFFF); 
