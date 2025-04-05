@@ -103,8 +103,8 @@ void GameState1::Initialize() {
     //enemy1.x = 1 * TILE_SIZE;
     //enemy1.y = 1 * -TILE_SIZE;
     //enemy1.patrolPath = { {1,7},{2,7},{3,7},{4,7},{5,7},{6,7},{7,7},{8,7} };
-    enemy1.state = PURSUIT_PLAYER;
-    enemy1.previousState = PURSUIT_PLAYER;
+    enemy1.state = IDLE;
+    enemy1.previousState = IDLE;
     enemy1.updateGridPosition(); // need to call to init conversion
     AEAudioGroup InGame = AEAudioCreateGroup();  // For background music
 	AEAudioGroup RockThrow = AEAudioCreateGroup();  // Diff Grp to cancel sound
@@ -183,7 +183,7 @@ void GameState1::Update(f32 deltaTime) {
         spawn_wave(enemy_wave, enemy1.x, enemy1.y, wave_meshes);
     }*/
 
-    enemy1.UpdateEnemystate(deltaTime, enemy_wave,wave_meshes,dir_wave);
+    enemy1.UpdateEnemystate(player,deltaTime, enemy_wave,wave_meshes,dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
     dir_wave.update();
@@ -217,7 +217,7 @@ void GameState1::Update(f32 deltaTime) {
 
     CheckItem(player); 
 
-    dead = PlayerEnemyCollision(player, enemy1, tilesize);
+    dead = PlayerEnemyCollision(player, { enemy1.x, enemy1.y }, tilesize);
 
     // Inside your game loop:
     if (dead && !gameOverSoundPlayed)
@@ -240,7 +240,7 @@ void GameState1::Update(f32 deltaTime) {
 void GameState1::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
 	if (!PauseOverlay::IsPaused()) {
-		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture);
+		rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
 	}
 
     /*RenderMesh(PlayerMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);*/
