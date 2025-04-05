@@ -95,7 +95,7 @@ void gamePreview::Draw() {
                 AEGfxSetColorToMultiply(0.0f, 0.0f, 0.0f, 1.0f);
                 break;
             case 2:
-                AEGfxSetColorToMultiply(0.0f, 1.0f, 0.0f, 1.0f);
+                AEGfxSetColorToMultiply(0.0f, 0.8f, 0.0f, 1.0f);
                 break;
             default:
                 AEGfxSetColorToMultiply(0.2f, 0.2f, 0.2f, 0.2f);

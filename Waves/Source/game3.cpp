@@ -102,20 +102,20 @@ void GameState3::Update(f32 deltaTime) {
     f32 speed = 200.0f; player.state = player.PLAYER_STATE::IS_IDLE;
     if (AEInputCheckCurr(AEVK_W)) {
         player.state = player.PLAYER_STATE::IS_MOVING;
-        MovePlayer(player, 0.0f, 1.0f, speed, deltaTime, maze, tilesize);
+        MovePlayer(player, 0.0f, 1.0f, speed, deltaTime);
     }
     if (AEInputCheckCurr(AEVK_S)) {
         player.state = player.PLAYER_STATE::IS_MOVING;
-        MovePlayer(player, 0.0f, -1.0f, speed, deltaTime, maze, tilesize);
+        MovePlayer(player, 0.0f, -1.0f, speed, deltaTime);
     }
     if (AEInputCheckCurr(AEVK_A)) {
         player.state = player.PLAYER_STATE::IS_MOVING;
-        MovePlayer(player, -1.0f, 0.0f, speed, deltaTime, maze, tilesize);
+        MovePlayer(player, -1.0f, 0.0f, speed, deltaTime);
         player.dir = player.PLAYER_STATE::FACING_LEFT;
     }
     if (AEInputCheckCurr(AEVK_D)) {
         player.state = player.PLAYER_STATE::IS_MOVING;
-        MovePlayer(player, 1.0f, 0.0f, speed, deltaTime, maze, tilesize);
+        MovePlayer(player, 1.0f, 0.0f, speed, deltaTime);
         player.dir = player.PLAYER_STATE::FACING_RIGHT;
     }
     GlobalCenter.x = player.x; GlobalCenter.y = player.y;

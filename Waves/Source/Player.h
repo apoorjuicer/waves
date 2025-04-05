@@ -51,7 +51,7 @@ AEGfxVertexList* CreateDonutMesh(f32 outerRadius, f32 innerRadius, int numSegmen
 void RenderMesh(AEGfxVertexList* NameOfMesh, f32 posX, f32 posY, f32 scaleX, f32 scaleY, f32 rotation);
 //AEGfxVertexList* Player_Mesh(int NumOfSlices, u32 colour, f32 radius);
 bool IsWalkable(f32 x, f32 y, int maze1[MAX_ROW][MAX_COL], f32 tileSize, f32 mazeStartX, f32 mazeStartY);
-void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize);
+void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt);
 //void RenderPlayer(const Player& player, AEGfxVertexList* playerMesh, AEGfxTexture* playerTexture);
 void CheckItem(Player& player, std::vector<WorldItem>&);
 //bool PlayerCollision(Player &player, Enemy &enemy, f32 tilesize);

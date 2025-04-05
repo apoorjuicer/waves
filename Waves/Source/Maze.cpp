@@ -182,12 +182,13 @@ void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh, AEGfxVertexList* goalM
             f32 posX = startX + (x * tilesize);
             f32 posY = startY - ((y + 1) * tilesize); // Subtract to flip the direction
 
-            AEMtx33 transform = { 0 };
-            AEMtx33Trans(&transform, posX, posY);
-            AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-            AEGfxSetTransform(transform.m);
             // Draw walls or paths
             if (maze[y][x] == 1) {
+                AEMtx33 transform = { 0 };
+                AEMtx33Trans(&transform, posX, posY);
+                AEGfxSetRenderMode(AE_GFX_RM_COLOR);
+                AEGfxSetTransform(transform.m);
+
                 AEGfxMeshDraw(wallMesh, AE_GFX_MDM_TRIANGLES);
             }
             if (maze[y][x] == 2) {

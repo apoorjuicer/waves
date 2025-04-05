@@ -316,7 +316,7 @@ void Player::DropItem(f32 dropX, f32 dropY, std::vector<WorldItem>& worldItems) 
     }
 }
 
-void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MAX_ROW][MAX_COL], f32 tileSize) {
+void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt) {
     //f32 mazeStartY = 10 * tileSize; // Ensure consistent mazeStartY calculation
 
     // Calculate the potential new position
