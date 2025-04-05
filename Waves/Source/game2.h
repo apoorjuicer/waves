@@ -48,6 +48,7 @@ private:
     AEGfxTexture* rockTexture;
     AEGfxTexture* playerTexture;
     AEGfxTexture* pathTexture;
+    AEGfxTexture* doorTexture;
     int prevDestX = -1;
     int prevDestY = -1;
     bool gameOverSoundPlayed = false;  // Declare this outside the game loop

@@ -22,7 +22,7 @@ Technology is prohibited.
 GameState3::GameState3() : exitGame(false), winGame(false), tilesize(100.0f),
 pDonutMesh(nullptr), PlayerMesh(nullptr), wallMesh(nullptr),
 pathMesh(nullptr), rockMesh(nullptr), keyMesh(nullptr),
-goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), pathTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
+goalMesh(nullptr), boxMesh(nullptr), keyTexture(nullptr), rockTexture(nullptr), playerTexture(nullptr), pathTexture(nullptr), doorTexture(nullptr), prevDestX(-1), prevDestY(-1), gameOverSoundPlayed(false),
 gameWinSoundPlayed(false) {}
 
 void GameState3::Load() {
@@ -40,15 +40,16 @@ void GameState3::Load() {
     pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
     PlayerMesh = CreateSquareMesh(50.0f, 0xFFFFFFFF);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
-    pathMesh = CreateSquareMesh(tilesize, 0x55555555);
-    goalMesh = CreateSquareMesh(tilesize, 0x5500FF00);
+    pathMesh = CreateTextureMesh(1, 1);
+    goalMesh = CreateTextureMesh(1, 1);
     keyMesh = CreateSquareMesh(30.0f, 0xFFFFD700);
     rockMesh = CreateSquareMesh(50.0f, 0x8B4513FF);
     boxMesh = CreateBoxMesh(0xFFFFFFFF);
     this->keyTexture = AEGfxTextureLoad("Assets/key.png");
     this->rockTexture = AEGfxTextureLoad("Assets/Textures/Texture_Rock.png");
     this->playerTexture = AEGfxTextureLoad("Assets/character_malePerson_idle.png");
-    this->pathTexture = AEGfxTextureLoad("Assets/Textures/Texture_Path.png");
+    this->pathTexture = AEGfxTextureLoad("Assets/Textures/Texture_Path2.png");
+    this->doorTexture = AEGfxTextureLoad("Assets/Textures/Texture_Door.png");
 
     wave_meshes[0] = CreateWaveMesh(1.0f, 0.95f, 36);
     wave_meshes[1] = Create_SemiCircle_Mesh(1.0f, 0.98f, 36, 4);
@@ -174,14 +175,15 @@ void GameState3::Update(f32 deltaTime) {
 void GameState3::Draw() {
     AEGfxSetCamPosition(GlobalCenter.x, GlobalCenter.y);
     // render maze elements;
-    RenderBackground(tilesize, pathMesh, goalMesh, pathTexture);
+    RenderBackground(tilesize, pathMesh, pathTexture);
     RenderItems(keyMesh, rockMesh, keyTexture, rockTexture, worldItems);
+    RenderGoal(tilesize, pathMesh, pathTexture);
     // render enemy;
     //RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
-    // vision radius;
     if (!PauseOverlay::IsPaused()) {
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, lastRock, rockMesh, rockTexture, worldItems);
 	}
+    // vision radius;
     RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     // DRAW WAVES-----------------------------------------
@@ -203,10 +205,9 @@ void GameState3::Draw() {
     }
     // ---------------------------------------------------
     // render player;
-    //RenderPlayer(player, PlayerMesh, playerTexture);
     player.draw();
     // render walls;
-    RenderWalls(tilesize, wallMesh);
+    RenderWalls(tilesize, wallMesh, goalMesh, doorTexture);
 
     DrawInventory(player, boxMesh, keyMesh, rockMesh, keyTexture, rockTexture);
 
@@ -237,6 +238,7 @@ void GameState3::Free() {
     AEGfxTextureUnload(keyTexture);
     AEGfxTextureUnload(rockTexture);
     AEGfxTextureUnload(pathTexture);
+    AEGfxTextureUnload(doorTexture);
     worldItems.clear();
 
     for (int i{};i < INVENTORY_SIZE;++i) {

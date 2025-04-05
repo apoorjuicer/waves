@@ -55,5 +55,6 @@ void PrintMapData();
 //void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);
 
-void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh);
-void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxTexture* pathTexture/*, AEGfxTexture* goalTexture*/);
+void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh, AEGfxVertexList* goalMesh, AEGfxTexture* doortexture);
+void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxTexture* pathTexture);
+void RenderGoal(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxTexture* floortexture);
