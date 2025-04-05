@@ -1,11 +1,28 @@
+/* Start Header ************************************************************************/
+/*!
+\file		Main.cpp
+\author		Henrey Hu
+\email		zhihenghenrey.hu@digipen.edu
+
+\brief		This file contains the entry point for the game, initializing the Alpha Engine system and managing the game loop. 
+			It sets up the GameStateManager, starts in the main menu, and continuously updates and renders the game until the application exits.
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
+
 // ---------------------------------------------------------------------------
 // includes
 
 #include <crtdbg.h> // To check for memory leaks
 #include "AEEngine.h"
-#include "Player.h"
-#include "Maze.h"
-#include "Enemy.h"
+
+#include "GSM.h"
+#include "mainMenu.h"
+#include "splash.h"
 
 
 // ---------------------------------------------------------------------------
@@ -137,40 +154,57 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	UNREFERENCED_PARAMETER(hPrevInstance);
 	UNREFERENCED_PARAMETER(lpCmdLine);
 
-	int gGameRunning = 1;
-
 	// Using custom window procedure
 	AESysInit(hInstance, nCmdShow, 1600, 900, 1, 60, false, NULL);
-	// Initialization of your own variables go here
 
 	// Changing the window title
-	AESysSetWindowTitle("My New Demo!");
+	AESysSetWindowTitle("Waves");
+
+	int gGameRunning = 1;
+
+	// Initialize fonts globally
+	FontManager::InitializeFonts();
+
+	AEAudioGroup keyAudio = AEAudioCreateGroup();  // For background music
+	AudioManager::LoadAudio("GameOver", "Assets/Audio/GameOver.wav", false, keyAudio);
+	AudioManager::LoadAudio("Win", "Assets/Audio/Win.wav", false, keyAudio);
+
+	GameStateManager gameStateManager;
+	gameStateManager.SetGameRunningPtr(&gGameRunning); // Provide the pointer to GSM
+
+	//// Create main menu
+	//MainMenuState* menu = new MainMenuState();
+	//gameStateManager.SetState(menu);
+
+	// Start with the splash state
+	SplashState* splash = new SplashState();
+	gameStateManager.SetState(splash);
 
 	// reset the system modules
 	AESysReset();
-	init();
-
+	
 	// Game Loop
 	while (gGameRunning)
 	{
 		// Informing the system about the loop's start
 		AESysFrameStart();
-		AEGfxSetBackgroundColor(0.5, 0.5, 0.5);
-		// Basic way to trigger exiting the application
-		// when ESCAPE is hit or when the window is closed
-		if (AEInputCheckTriggered(AEVK_ESCAPE) || 0 == AESysDoesWindowExist())
-			gGameRunning = 0;
-
 		AEGfxSetRenderMode(AE_GFX_RM_COLOR);
-		// Your own update logic goes here
-	
-		update();
-		// Your own rendering logic goes here
-		draw();
+
+		f32 dt = (f32)AEFrameRateControllerGetFrameTime();
+		gameStateManager.Update(dt);
+		gameStateManager.Draw();
+
+		if (0 == AESysDoesWindowExist()) {
+			gGameRunning = 0;
+		}
+
+		// Informing the system about the loop's end
 		AESysFrameEnd();
 	}
-	free();
 
+	// Shutdown audio and free fonts
+	FontManager::ShutdownFonts();
+	AudioManager::ShutdownAllAudio();
 
 	// free the system
 	AESysExit();
