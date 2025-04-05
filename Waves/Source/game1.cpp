@@ -91,7 +91,7 @@ void GameState1::Initialize() {
     winGame = false;
     player.x = 300.f;
     player.y = -100.f;
-    
+    player.lastRockPos = {};
     player.inventory[0] = ROCK;
     //enemy1.x = 100.f;
     //enemy1.y = -700.f;
@@ -139,9 +139,9 @@ void GameState1::Update(f32 deltaTime) {
 
 
     //debug
-    //enemy1.print_debug();
+    enemy1.print_debug();
    // std::cout << player.x << player.y <<"\n";
-    if (AEInputCheckCurr(AEVK_1)) {
+  /*  if (AEInputCheckCurr(AEVK_1)) {
         enemy1.state = IDLE;
         std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
     }
@@ -156,7 +156,7 @@ void GameState1::Update(f32 deltaTime) {
     if (AEInputCheckCurr(AEVK_4)) {
         enemy1.state = PURSUIT_ROCK;
         std::cout << "state changed to :" << enemy1.GetEnemyStateName() << "\n";
-    }
+    }*/
     AEGfxSetBackgroundColor(0.1f, 0.1f, 0.1f);
 
     // Player movement
@@ -253,7 +253,7 @@ void GameState1::Draw() {
     // render enemy;
     RenderMesh(enemyMesh, enemy1.x, enemy1.y, enemy1.w, enemy1.h, 0.0f);
     // vision radius;
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+   // RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
     
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();

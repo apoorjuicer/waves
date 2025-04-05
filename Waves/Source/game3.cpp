@@ -73,7 +73,7 @@ void GameState3::Initialize() {
     winGame = false;
     player.x = 100.f;
     player.y = -100.f;
-
+    player.lastRockPos = {};
     player.inventory[0] = ROCK;
     //enemy3.x = 100.f;
     //enemy3.y = -700.f;
@@ -86,8 +86,8 @@ void GameState3::Initialize() {
     enemy3.y = enemy3.startPatrol.second * -TILE_SIZE;
 
     // enemy1.state = PATROL;
-    enemy3.state = PATROL;
-    enemy3.previousState = PATROL;
+    enemy3.state = IDLE;
+    enemy3.previousState = IDLE;
     //enemy1.state = IDLE;
    // enemy1.state = PURSUIT_ROCK;
 
@@ -145,6 +145,7 @@ void GameState3::Update(f32 deltaTime) {
     }*/
 
     //UpdateEnemystate(enemy3, deltaTime, enemy_wave, wave_meshes);
+    enemy3.print_debug();
     enemy3.UpdateEnemystate(player,deltaTime, enemy_wave, wave_meshes, dir_wave);
 
     // UPDATE WAVES-----------------------------------------------------
@@ -198,6 +199,7 @@ void GameState3::Update(f32 deltaTime) {
 void GameState3::Draw() {
     AEGfxSetCamPosition(player.x, player.y);
     if (!PauseOverlay::IsPaused()) {
+        std::cout << "no rock lol";
         rock::drawRock(player, maze, tilesize, 0.0f, 0.0f, wave, wave_meshes, rockMesh, rockTexture);
 	}
 
@@ -207,7 +209,7 @@ void GameState3::Draw() {
     // render enemy;
     RenderMesh(enemyMesh, enemy3.x, enemy3.y, enemy3.w, enemy3.h, 0.0f);
     // vision radius;
-    RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
+    //RenderMesh(pDonutMesh, player.x, player.y, 1.0f, 1.0f, 45.0f);
 
     // DRAW WAVES-----------------------------------------
     dir_wave.draw();
