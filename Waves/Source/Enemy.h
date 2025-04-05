@@ -105,11 +105,12 @@ Technology is prohibited.
 		Pair prevPlayerPos;
 		int pathIndex = 0; // Current target in path
 		bool reachPath = false;
-		//Wave enemy_waves[MAX_NUM_WAVES];
-		float stateTimer = 0.f;
+		//Wave enemy_waves[MAX_NUM_WAVES];	
 		float idle_timer = 6.f;
+		float stateTimer = idle_timer;
 		float patrol_timer = 10.f;
-		float pursuit_timer = 4.f;
+		float pursuitp_timer = 4.f;
+		float pursuitr_timer = 4.f;
 		//bool hasPursuedRock = false;
 		Pair rockPrevDest = { -1, -1 };
 		//bool reachedRock = false;

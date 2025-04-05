@@ -447,8 +447,8 @@ namespace {// Utility Functions
 			break;
 		case PURSUIT_ROCK:
 			if (stateTimer > 0) {
-				std::cout << "Statetimer" << stateTimer <<"\n";
-				std::cout << GetEnemyStateName() << "\n";
+				//std::cout << "Statetimer" << stateTimer <<"\n";
+				//std::cout << GetEnemyStateName() << "\n";
 			}
 			else {
 				std::cout << "reached rock! setting idle\n";
@@ -596,23 +596,27 @@ namespace {// Utility Functions
 
 		state = IDLE;
 		stateTimer = idle_timer;
+		std::cout << "Set to idle state!\n";
 
 	}
 	void Enemy::SetPatrolState() {
 	
 		state = PATROL;
 		stateTimer = patrol_timer;
+		std::cout << "Set to patrol state!\n";
 
 	}
 	void Enemy::SetPursuitPlayerState() {
 
 		state = PURSUIT_PLAYER;
-		stateTimer = pursuit_timer;
+		stateTimer = pursuitp_timer;
+		std::cout << "Set to pursuit  pstate!\n";
 	}
 	void Enemy::SetPursuitRockState() {
 
 		state = PURSUIT_ROCK;
-		stateTimer = pursuit_timer;
+		stateTimer = pursuitr_timer;
+		std::cout << "Set to pursit r state!\n";
 	}
 	
 
