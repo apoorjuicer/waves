@@ -1,10 +1,7 @@
 ﻿#ifndef AUDIO_MANAGER_H
 #define AUDIO_MANAGER_H
 
-#include "AEEngine.h"
-#include <unordered_map>
-#include <string>
-#include <iostream>
+#include "pch.h"
 
 struct Audio {
     AEAudio sound = {};

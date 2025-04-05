@@ -77,7 +77,7 @@ namespace PauseOverlay {
         AEGfxSetColorToAdd(0.0f, 0.0f, 0.0f, 0.0f);
 
         // Draw pause screen background (using player's world position as base)
-        AEMtx33Trans(&t, player.x, player.y);
+        AEMtx33Trans(&t, GlobalCenter.x, GlobalCenter.y);
         AEMtx33Scale(&scaleMtx, pauseMenuX, pauseMenuY);
         AEMtx33Concat(&finalMtx, &t, &scaleMtx);
         AEGfxSetTransform(finalMtx.m);
@@ -99,10 +99,10 @@ namespace PauseOverlay {
         AEGfxPrint(mFont, "GAME PAUSED", centerX, centerY, 1.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
         // --- Draw the Resume Button using DrawButton() ---
-        DrawButton(sResumeMesh, player.x + kResumeX, player.y + kResumeY, "Resume", sFont, 300.0f, 100.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        DrawButton(sResumeMesh, GlobalCenter.x + kResumeX, GlobalCenter.y + kResumeY, "Resume", sFont, 300.0f, 100.0f, 1.0f, 1.0f, 1.0f, 1.0f);
 
         // --- Draw the Main Menu Button using DrawButton() ---
-        DrawButton(sMainMenuMesh, player.x + kMainMenuX, player.y + kMainMenuY, "Main Menu", sFont, 300.0f, 100.0f, 1.0f, 1.0f, 1.0f, 1.0f);
+        DrawButton(sMainMenuMesh, GlobalCenter.x + kMainMenuX, GlobalCenter.y + kMainMenuY, "Main Menu", sFont, 300.0f, 100.0f, 1.0f, 1.0f, 1.0f, 1.0f);
     }
 
     void Free() {

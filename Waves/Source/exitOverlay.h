@@ -1,7 +1,6 @@
 #pragma once
 
-#include "AEEngine.h"
-#include "utility.h"
+#include "pch.h"
 
 namespace ExitConfirmOverlay {
     void Init();

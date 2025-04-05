@@ -14,12 +14,8 @@ Technology is prohibited.
 */
 /* End Header **************************************************************************/
 #pragma once
-#include "AEEngine.h"
+#include "pch.h"
 #include "GSM.h"
-#include <iostream>
-#include <fstream>
-#include <sstream>
-#include <string>
 
 
 constexpr int MAX_ROW = 20;
@@ -61,6 +57,8 @@ void PrintMapData();
 void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize, AEGfxVertexList* wallMesh, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh, AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);
 AEGfxVertexList* CreateSquareMesh(float size, u32 color);
 
-void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxVertexList* goalMesh);
-void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh);
+void RenderBackground(f32 tilesize, AEGfxVertexList* pathMesh, AEGfxTexture* pathTexture);
+void RenderWalls(f32 tilesize, AEGfxVertexList* wallMesh, AEGfxVertexList* goalMesh, AEGfxTexture* doortexture);
 void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTexture* keyTexture, AEGfxTexture* rockTexture);
+
+AEGfxVertexList* CreateTextureMesh(int spritesheet_cols, int spritesheet_rows);

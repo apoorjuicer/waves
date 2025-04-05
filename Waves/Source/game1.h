@@ -18,8 +18,8 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "baseStates.h"
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "gameTransition.h"
 #include "Player.h"
 #include "Maze.h"
@@ -51,11 +51,15 @@ private:
     AEGfxTexture* keyTexture;
     AEGfxTexture* rockTexture;
     AEGfxTexture* playerTexture;
+    AEGfxTexture* pathTexture;
+    AEGfxTexture* doorTexture;
+    AEGfxTexture* enemyTexture;
     int prevDestX = -1;
     int prevDestY = -1;
     bool gameOverSoundPlayed = false;  // Declare this outside the game loop
     bool gameWinSoundPlayed = false;  // Declare this outside the game loop
 
+    Player player;
 
     DirectionalWave dir_wave;
     Wave wave[MAX_NUM_WAVES];

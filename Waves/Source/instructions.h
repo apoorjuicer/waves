@@ -16,8 +16,8 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "baseStates.h"
-#include "AEEngine.h"
+#include "pch.h"
+
 #include "mainMenu.h"
 
 class instructionState : public BaseState {

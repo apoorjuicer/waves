@@ -17,9 +17,7 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 #pragma once
 
-#include "baseStates.h"
-#include "AEEngine.h"
-#include <iostream>
+#include "pch.h"
 
 class GameStateManager {
 private:

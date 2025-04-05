@@ -13,9 +13,10 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include "AEEngine.h"
-#include "utility.h"
+#include "pch.h"
 #include "Player.h"
+
+extern AEVec2 GlobalCenter;
 
 namespace PauseOverlay {
     void Init();
