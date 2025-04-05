@@ -321,7 +321,7 @@ namespace {// Utility Functions
 			Pair src = { gridX, gridY };
 			Pair dest = rockCurrDest;
 			if (astarsearch(maze, src, dest, path) == Path::NO_PATH) {
-				//std::cout << "No path pursuit_rock\n";
+				std::cout << "No path pursuit_rock\n";
 			}
 			//in enemy state
 			//std::cout << "last rock pos in UpdateEnemystate : " << player.lastRockPos.x << "," << player.lastRockPos.y << "\n";
@@ -394,13 +394,17 @@ namespace {// Utility Functions
 		//int destY = static_cast<int>((p.lastRockPos.y - (TILE_SIZE / 2)) / TILE_SIZE) * -1;
 		enemy_wave(MainWaves, mesh);
 		
+	/*	std::cout << "reached rock or not?" << reachedRock << "\n";
+		std::cout << "can see rock or not?"<<seeRock(sightRangeRock) << "\n";
+		std::cout<< "rock landed or not?" << player.rockLanded << "\n";*/
+
 		AEVec2 wave_col_pos{};
 		stateTimer -= dt; //always decremeting
 
 		switch (state) {
 		case IDLE:
 
-			if (seeRock(sightRangeRock) && player.rockLanded) {
+			if (!reachedRock && seeRock(sightRangeRock) && player.rockLanded) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave, wave_col_pos) && state != PURSUIT_PLAYER) {
@@ -417,7 +421,7 @@ namespace {// Utility Functions
 
 			break;
 		case PATROL:
-			if (seeRock(sightRangeRock)&& player.rockLanded) {
+			if (!reachedRock && seeRock(sightRangeRock)&& player.rockLanded) {
 				SetPursuitRockState();
 			}
 			else if (hitbywave(dir_wave,wave_col_pos) && state != PURSUIT_PLAYER) {
@@ -437,7 +441,7 @@ namespace {// Utility Functions
 
 			break;
 		case PURSUIT_PLAYER:
-			if (seeRock(sightRangeRock) && player.rockLanded) {
+			if (!reachedRock && seeRock(sightRangeRock) && player.rockLanded) {
 				SetPursuitRockState();
 			}
 			else if (!seePlayer(sightRangePlayer) && (stateTimer <= 0.0f)) { //player zao alr
@@ -446,26 +450,28 @@ namespace {// Utility Functions
 
 			break;
 		case PURSUIT_ROCK:
-			if (stateTimer > 0) {
+			if (stateTimer > 0 && (gridX != rockPrevDest.first && gridY != rockPrevDest.second)) {
 				//std::cout << "Statetimer" << stateTimer <<"\n";
 				//std::cout << GetEnemyStateName() << "\n";
 			}
 			else {
 				std::cout << "reached rock! setting idle\n";
+				reachedRock = true;
 				SetIdleState();
 			}
 
-			AEVec2 previousRock = p.lastRockPos;
-			AEVec2 oldTarget = p.lastRockPos;
-			bool foundNewRock = seeRock(sightRangeRock); // seeRock now loops all worldItems
-			if (foundNewRock && player.rockLanded) {
-				// New rock found; force path recalculation
-				rockPrevDest = { -1, -1 };
-			}
+			//AEVec2 previousRock = p.lastRockPos;
+			//AEVec2 oldTarget = p.lastRockPos;
+			//bool foundNewRock = seeRock(sightRangeRock); // seeRock now loops all worldItems
+			//if (foundNewRock && player.rockLanded) {
+			//	// New rock found; force path recalculation
+			//	rockPrevDest = { -1, -1 };
+			//}
 
 
 			if (gridX == rockPrevDest.first && gridY == rockPrevDest.second) {
 				std::cout << "reached rock! setting patrol\n";
+				reachedRock = true;
 				//SetIdleState(); // Reached rock
 				SetPatrolState();
 			}
@@ -597,26 +603,36 @@ namespace {// Utility Functions
 		state = IDLE;
 		stateTimer = idle_timer;
 		std::cout << "Set to idle state!\n";
-
+		std::cout << "reached rock or not?" << !reachedRock << "\n";
+		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
+		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	void Enemy::SetPatrolState() {
 	
 		state = PATROL;
 		stateTimer = patrol_timer;
 		std::cout << "Set to patrol state!\n";
-
+		std::cout << "reached rock or not?" << !reachedRock << "\n";
+		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
+		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	void Enemy::SetPursuitPlayerState() {
 
 		state = PURSUIT_PLAYER;
 		stateTimer = pursuitp_timer;
 		std::cout << "Set to pursuit  pstate!\n";
+		std::cout << "reached rock or not?" << !reachedRock << "\n";
+		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
+		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	void Enemy::SetPursuitRockState() {
 
 		state = PURSUIT_ROCK;
 		stateTimer = pursuitr_timer;
 		std::cout << "Set to pursit r state!\n";
+		std::cout << "reached rock or not?" << !reachedRock << "\n";
+		std::cout << "can see rock or not?" << seeRock(sightRangeRock) << "\n";
+		std::cout << "rock landed or not?" << player.rockLanded << "\n";
 	}
 	
 

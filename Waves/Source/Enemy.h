@@ -109,11 +109,11 @@ Technology is prohibited.
 		float idle_timer = 6.f;
 		float stateTimer = idle_timer;
 		float patrol_timer = 10.f;
-		float pursuitp_timer = 4.f;
-		float pursuitr_timer = 4.f;
+		float pursuitp_timer = 5.f;
+		float pursuitr_timer = 6.f;
 		//bool hasPursuedRock = false;
 		Pair rockPrevDest = { -1, -1 };
-		//bool reachedRock = false;
+		bool reachedRock = false;
 		Enemy() : x{ 100.f }, y{ -200.f }, gridX{ 1 }, gridY{ 1 }, w{ 50.f }, h{ 50.f }, state{ IDLE }
 			, previousState{ IDLE } {}
 
