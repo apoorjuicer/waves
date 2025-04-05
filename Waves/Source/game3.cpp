@@ -42,7 +42,7 @@ void GameState3::Load() {
     player.texture = AEGfxTextureLoad("Assets/Textures/Texture_Player.png");
     player.mesh = CreateTextureMesh(4, 2);
 
-    pDonutMesh = CreateDonutMesh(1000.0f, 100.0f, 48, 0xFF000000);
+    pDonutMesh = CreateDonutMesh(1000.0f, 120.0f, 48, 0xFF000000);
     wallMesh = CreateSquareMesh(tilesize, 0xFF000000);
     pathMesh = CreateTextureMesh(1, 1);
     goalMesh = CreateTextureMesh(1, 1);
