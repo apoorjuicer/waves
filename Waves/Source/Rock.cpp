@@ -59,7 +59,6 @@ namespace rock {
 
         // Check for out-of-bounds
         if (gridX < 0 || gridX >= MAX_ROW || gridY < 0 || gridY >= MAX_COL) {
-            //std::cout << "Out of Bounds\n";
             return false;
         }
 
@@ -216,21 +215,6 @@ namespace rock {
                 rplayer.lastRockPos.x = rock.x;
                 rplayer.lastRockPos.y = rock.y;
                 rplayer.rockLanded = true;
-          
-                ////debug
-                // std::cout << "last rock pos in Rock.cpp : " << rplayer.lastRockPos.x << "," << rplayer.lastRockPos.y << "\n";
-                // int gX, gY;
-                // gX = static_cast<int>((rplayer.lastRockPos.x + TILE_SIZE / 2) / TILE_SIZE);
-                // gY = static_cast<int>((rplayer.lastRockPos.y - TILE_SIZE / 2) / -TILE_SIZE);
-                
-                // std::cout << "last rock grid in Rock .cpp : " << gX << "," << gY << "\n";
-
-                // if ((maze[gY][gX] != 1)) {
-                //     std::cout << "ROCK IS IN WALKABLE SPOT !!!" << "\n";
-                // }
-                // else {
-                //     std::cout << "ROCK NOT IN WALKABLE SPOT LOL" << "\n";
-                // }
   
                 rplayer.DropItem(rock.x, rock.y);
                 
