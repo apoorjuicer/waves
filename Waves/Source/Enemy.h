@@ -1,12 +1,11 @@
 /* Start Header ************************************************************************/
 /*!
 \file		Enemy.h
+\project    Waves
+
 \author		Benjamin Ban
 \email		k.ban@digipen.edu
-\co-author  Jordain
-\email
-\co-author  Henry
-\email
+\co-author  Jordain(15%), Henry(15%)
 
 \brief	This header file declares functions that are necessary for dealing with
 		enemy movement and ai path finding
@@ -126,7 +125,7 @@ Technology is prohibited.
 		void Update_EnemyPos(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		std::string GetEnemyStateName() const;
 		void chasePlayer(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
-		bool seePlayer(Player player, float sightRange) const;
+		bool seePlayer(Player p, float sightRange) const;
 		bool seeRock(Player p,float sightRange) const;
 		//void chasePlayer(float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);
 		void chaseRock(Player player, float& AT, float UT, Wave(&MainWaves)[MAX_NUM_WAVES], AEGfxVertexList** mesh);

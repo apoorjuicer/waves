@@ -1,9 +1,11 @@
 /* Start Header ************************************************************************/
 /*!
 \file		gamePreview.cpp
+\project    Waves
+
 \author		Henrey Hu
-\co-author  Chewn Thing Kwan
 \email		zhihenghenrey.hu@digipen.edu
+\co-author  Chewn Thing Kwan(10%)
 
 \brief      This file defines the gamePreview class, which represents a preview state before entering the main game. 
             It manages the loading, rendering, and interactions within the preview, 

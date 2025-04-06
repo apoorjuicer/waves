@@ -1,6 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file		mainMenu.h
+\project    Waves
+
 \author		Jordain Ng
 \email		jordainyingzhe.ng@digipen.edu
 

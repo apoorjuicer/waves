@@ -1,9 +1,11 @@
 /* Start Header ************************************************************************/
 /*!
 \file		Maze.h
+\project    Waves
+
 \author		Jordain
-\co-author	Guan Shao Jun
 \email		jordainyingzhe.ng@digipen.edu
+\co-author	Guan Shao Jun(15%)
 
 \brief      This folder includes functions, to help with drawing of the maze, with a 2d array
 
@@ -31,19 +33,6 @@ extern int maze[MAX_ROW][MAX_COL];
 //constexpr int ROW = 10;
 //constexpr int COL = 10;
 constexpr float TILE_SIZE = 100.0f;
-
-//int maze[ROW][COL] = {
-//    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 },
-//    { 1, 0, 0, 0, 0, 0, 1, 0, 2, 1 },
-//    { 1, 0, 1, 1, 1, 0, 1, 0, 1, 1 },
-//    { 1, 3, 4, 0, 1, 0, 0, 0, 0, 1 },
-//    { 1, 1, 1, 0, 1, 1, 1, 1, 0, 1 },
-//    { 1, 0, 0, 0, 0, 0, 0, 1, 0, 1 },
-//    { 1, 0, 1, 1, 1, 1, 0, 1, 0, 1 },
-//    { 1, 0, 0, 0, 0, 0, 0, 0, 0, 1 },
-//    { 1, 1, 1, 1, 1, 1, 1, 1, 0, 1 },
-//    { 1, 1, 1, 1, 1, 1, 1, 1, 1, 1 }
-//};
 
 // File I/O data reading:
 bool ImportMapDataFromFile(const std::string& filename);

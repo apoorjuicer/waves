@@ -1,25 +1,13 @@
 /* Start Header ************************************************************************/
 /*!
 \file		Rock.h
+\project    Waves
+
 \author		Guan Shao Jun
 \email		shaojun.g@digipen.edu
 
-\brief
-Handles the rock mechanics in the game, including rendering, movement, collision detection,
-and interaction with the maze.
-
-This module allows the player to throw a rock, checks for collisions with the maze,
-applies velocity damping, and updates the rock’s position. It also tracks the rock’s
-final resting position and modifies the maze accordingly.
-
-\details
-- `drawRock()`: Manages the rock's lifecycle, from launch to collision and final placement.
-- `BounceCollision()`: Checks if the rock collides with walls and handles bounce behavior.
-- `Rock_Mesh()`: Generates the graphical representation of the rock.
-- The rock's last resting position is stored in the maze (`maze[ROW][COL] = 4`).
-
-The rock is only launched if the player has one in their inventory, and upon collision,
-it bounces off walls until stopping. The last position is recorded in the maze grid.
+\brief      Handles the rock mechanics in the game, including rendering, movement, collision detection,
+            and interaction with the maze.
 
 Copyright (C) 2025 DigiPen Institute of Technology.
 Reproduction or disclosure of this file or its contents

@@ -1,9 +1,11 @@
 /* Start Header ************************************************************************/
 /*!
 \file		Maze.h
+\project    Waves
+
 \author		Jordain Ng
-\co-author  Guan Shao Jun
 \email		jordainyingzhe.ng@digipen.edu
+\co-author  Guan Shao Jun(15%)
 
 \brief      This folder includes functions, to help with drawing of the maze, with a 2d array
 
@@ -108,7 +110,6 @@ void createWorldItems(f32 tileSize) {
     float startY = tileSize; // Y starts at the top (10 tiles * tile size)
 
 
-    //std::cout << "Rendering Maze and World Items:" << std::endl;
     for (int y{};y < MAX_ROW;++y) {
         for (int x{}; x < MAX_COL; ++x) {
             int tileValue = maze[y][x];
@@ -117,11 +118,9 @@ void createWorldItems(f32 tileSize) {
 
             if (tileValue == 3) {
                 worldItems.emplace_back(WorldItem(KEY, worldX, worldY));
-             //   std::cout << "WorldItem KEY at (" << worldX << ", " << worldY << ")" << std::endl;
             }
             else if (tileValue == 4) {
                 worldItems.emplace_back(WorldItem(ROCK, worldX, worldY));
-                //std::cout << "WorldItem ROCK at (" << worldX << ", " << worldY << ")" << std::endl;
             }
         }
     }
@@ -159,7 +158,7 @@ void RenderMaze(int maze1[MAX_ROW][MAX_COL], f32 tileSize,
     f32 time = static_cast<f32>(AEGetTime(nullptr));
 
     for (const auto& item : worldItems) {
-      //  std::cout << "." << item.type << ", x:" << item.x << ", y:" << item.y<<", collected?"<< item.collected << std::endl;
+
         if (!item.collected) {
             f32 bobbingOffset = (item.type == KEY) ? sin(time * 2.0f) * 5.0f : 0.0f;
 
@@ -192,7 +191,7 @@ void RenderItems(AEGfxVertexList* keyMesh, AEGfxVertexList* rockMesh, AEGfxTextu
     AEGfxSetRenderMode(AE_GFX_RM_TEXTURE);
 
     for (const auto& item : worldItems) {
-        //std::cout << "." << item.type << ", x:" << item.x << ", y:" << item.y << ", collected?" << item.collected << std::endl;
+
         if (!item.collected) {
             f32 bobbingOffset = (item.type == KEY) ? sin(time * 2.0f) * 5.0f : 0.0f;
 

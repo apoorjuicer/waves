@@ -1,6 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file		instructions.cpp
+\project    Waves
+
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 

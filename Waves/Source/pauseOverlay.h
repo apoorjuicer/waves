@@ -1,8 +1,11 @@
 /* Start Header ************************************************************************/
 /*!
 \file		pauseOverlay.h
+\project    Waves
+
 \author		Henry Hu
 \email		zhihenghenrey.hu@digipen.edu
+
 \brief		This file defines the PauseOverlay namespace, which manages the pause overlay in the game.
 			It provides functionality for initializing, updating, drawing, and freeing the overlay resources.
 

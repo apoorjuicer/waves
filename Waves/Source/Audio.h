@@ -1,9 +1,11 @@
 ﻿/* Start Header ************************************************************************/
 /*!
 \file		audio.h
+\project    Waves
+
 \author		Jordain
-\co-author	Henrey Hu
 \email		jordainyingzhe.ng@digipen.edu
+\co-author	Henrey Hu(15%)
 
 \brief      This file defines the `AudioManager` class and related structures for managing audio in the game.
             It provides functionality for loading, playing, stopping, and managing audio files and groups.

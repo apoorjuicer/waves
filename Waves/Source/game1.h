@@ -1,8 +1,10 @@
 /* Start Header ************************************************************************/
 /*!
 \file		game1.h
+\project    Waves
+
 \author		Henry Hu
-\co-author  Jordain Ng, Benjamin Ban, Chewn Thing Kwan, Guan Shao Jun
+\co-author  Jordain Ng(15%), Benjamin Ban(15%), Chewn Thing Kwan(15%), Guan Shao Jun(15%)
 \email		zhihenghenrey.hu@digipen.edu
 
 \brief      This file defines the GameState class, which manages the core gameplay logic and rendering. 

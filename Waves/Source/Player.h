@@ -1,9 +1,11 @@
 /* Start Header ************************************************************************/
 /*!
 \file		mainMenu.h
+\project    Waves
+
 \author		Jordain Ng
-\co-author  Guan Shao Jun
 \email		jordainyingzhe.ng@digipen.edu
+\co-author  Guan Shao Jun(15%)
 
 \brief      this file includes functions, to for player movement and collision checking, to
             prevent the player from going into the wall

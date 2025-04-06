@@ -1,6 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file       Wave.cpp
+\project    Waves
+
 \author     Chewn Thing Kwan
 \email      kwan.c@digipen.edu
 
@@ -210,29 +212,6 @@ DIRECTION operator-(DIRECTION& dir) {
 
 	return dir;
 }
-// TO PRINT DIRECTIONS TO STD::COUT FOR DEBUGGING;
-//static std::ostream& operator<<(std::ostream& os, DIRECTION& dir) {
-//
-//	switch (dir) {
-//	case (DIR_LEFT):
-//		os << "Direction Left";
-//		break;
-//	case (DIR_RIGHT):
-//		os << "Direction Right";
-//		break;
-//	case (DIR_UP):
-//		os << "Direction Up";
-//		break;
-//	case (DIR_DOWN):
-//		os << "Direction Down";
-//		break;
-//	default:
-//		os << "Direction Null";
-//	}
-//
-//	return os;
-//
-//}
 
 //==================================================================================================================
 // CLASS CONSTRUCTORS;

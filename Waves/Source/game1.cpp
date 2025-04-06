@@ -1,9 +1,11 @@
 /* Start Header ************************************************************************/
 /*!
 \file		game1.cpp
+\project    Waves
+
 \author		Henrey Hu
-\co-author  Jordain Ng, Benjamin Ban, Chewn Thing Kwan, Guan Shao Jun
 \email		zhihenghenrey.hu@digipen.edu
+\co-author  Jordain Ng(15%), Benjamin Ban(15%), Chewn Thing Kwan(15%), Guan Shao Jun(15%)
 
 \brief      This file defines the GameState class, which manages the core gameplay logic and rendering. 
             It handles game state transitions, updates, 

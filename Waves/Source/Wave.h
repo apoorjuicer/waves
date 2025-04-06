@@ -1,6 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file       Wave.h
+\project    Waves
+
 \author     Chewn Thing Kwan
 \email      kwan.c@digipen.edu
 

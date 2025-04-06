@@ -1,8 +1,10 @@
 /* Start Header ************************************************************************/
 /*!
 \file		Player.cpp
+\project    Waves
+
 \author		Jordain Ng
-\co-author  Guan Shao Jun (40%)
+\co-author  Guan Shao Jun(40%)
 \email		jordainyingzhe.ng@digipen.edu
 
 \brief      this file includes functions, to for player movement and collision checking, to 

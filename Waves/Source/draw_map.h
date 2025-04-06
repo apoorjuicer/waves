@@ -1,6 +1,8 @@
 /* Start Header ************************************************************************/
 /*!
 \file		draw_map.h
+\project    Waves
+
 \author		Henrey Hu
 \email		zhihenghenrey.hu@digipen.edu
 
