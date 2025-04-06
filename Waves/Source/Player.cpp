@@ -2,7 +2,7 @@
 /*!
 \file		Player.cpp
 \author		Jordain Ng
-\co-author  Guan Shao Jun
+\co-author  Guan Shao Jun (40%)
 \email		jordainyingzhe.ng@digipen.edu
 
 \brief      this file includes functions, to for player movement and collision checking, to 
