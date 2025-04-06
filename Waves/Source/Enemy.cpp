@@ -534,10 +534,7 @@ namespace {// Utility Functions
 		float distSq = dist_x * dist_x + dist_y * dist_y;
 		float rangeSq = sightRange * sightRange;
 
-		return distSq <= rangeSq;  // Compare squared values
-
-
-		return false; // No new rock or same one
+		return distSq <= rangeSq;  // Compare squared 
 	}
 
 
