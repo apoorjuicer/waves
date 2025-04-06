@@ -1,10 +1,10 @@
 /* Start Header ************************************************************************/
 /*!
-\file		mainMenu.h
+\file		draw_map.cpp
 \project    Waves
 
-\author		Jordain Ng
-\email		jordainyingzhe.ng@digipen.edu
+\author		Henrey Hu
+\email		zhihenghenrey.hu@digipen.edu
 
 \brief		This file defines functions and structures for managing and rendering walls and boundaries in the game world. 
 			It provides functionality to create meshes, 
