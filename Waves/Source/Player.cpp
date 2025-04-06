@@ -284,7 +284,6 @@ void MovePlayer(Player& pplayer, f32 dx, f32 dy, f32 speed, f32 dt, int maze1[MA
     // Calculate the potential new position
     f32 newX = pplayer.x + dx * speed * dt;
     f32 newY = pplayer.y + dy * speed * dt; // Ensure y decreases in world space leading increasing index
-    f32 oldX{}, oldY{};
 
     int x_idx = static_cast<int>((pplayer.x - TILE_SIZE / 2.f + TILE_SIZE) / TILE_SIZE);
     int y_idx = abs(static_cast<int>((pplayer.y - TILE_SIZE / 2.f) / TILE_SIZE));
