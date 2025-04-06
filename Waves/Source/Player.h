@@ -16,10 +16,8 @@ Technology is prohibited.
 /* End Header **************************************************************************/
 
 #pragma once
-#include<iostream>
-#include <vector>
+#include "pch.h"
 #include "Maze.h"
-//#include "Enemy.h"
 
 enum InventoryItemType {
     NOTHING = 0,

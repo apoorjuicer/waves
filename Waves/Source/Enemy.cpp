@@ -3,10 +3,7 @@
 \file		Enemy.cpp
 \author		Benjamin Ban
 \email		k.ban@digipen.edu
-\co-author  Jordain
-\email
-\co-author  Henry
-\email
+\co-author  Jordain, Henrey
 
 \brief		This header file declares functions that are necessary for dealing with
 			enemy movement and ai path finding

@@ -1,4 +1,18 @@
-#pragma once
+/* Start Header ************************************************************************/
+/*!
+\file       pch.h
+\author     Chewn Thing Kwan
+\email      kwan.c@digipen.edu
+
+\brief      Pre-compile header file containing standard libraries to improve compiling
+			speeds;
+
+Copyright (C) 2025 DigiPen Institute of Technology.
+Reproduction or disclosure of this file or its contents
+without the prior written consent of DigiPen Institute of
+Technology is prohibited.
+*/
+/* End Header **************************************************************************/
 
 #ifndef PCH_H
 #define PCH_H

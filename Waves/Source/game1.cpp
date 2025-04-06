@@ -1,7 +1,7 @@
 /* Start Header ************************************************************************/
 /*!
 \file		game1.cpp
-\author		Henry Hu
+\author		Henrey Hu
 \co-author  Jordain Ng, Benjamin Ban, Chewn Thing Kwan, Guan Shao Jun
 \email		zhihenghenrey.hu@digipen.edu
 
