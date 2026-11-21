@@ -6,6 +6,8 @@ but the waves can also draw the enemy. Find the key and reach the exit.
 5-person team, 1 trimester (Spring 2025), DigiPen Institute of Technology
 Singapore.
 
+![Waves gameplay](waves-gameplay.png)
+
 ## My part (enemy AI)
 - **A\* pathfinding** on the maze grid, with frame-rate independent movement
 - **Enemy state machine**: patrol, return to patrol route, chase, with
